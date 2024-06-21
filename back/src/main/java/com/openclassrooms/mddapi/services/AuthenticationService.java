@@ -6,4 +6,5 @@ import com.openclassrooms.mddapi.dto.AuthDTO;
 
 public interface AuthenticationService {
     Optional<String>registerUser(AuthDTO authDTO);
+    Optional<String>loginUser(AuthDTO authDTO);
 }

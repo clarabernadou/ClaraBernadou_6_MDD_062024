@@ -7,10 +7,10 @@ import javax.validation.constraints.NotBlank;
 @Data
 public class AuthDTO {
     @NotBlank
-    private String username;
+    private String email;
 
     @NotBlank
-    private String email;
+    private String username;
 
     @NotBlank
     private String password;

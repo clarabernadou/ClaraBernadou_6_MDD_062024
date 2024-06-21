@@ -1,9 +1,7 @@
 package com.openclassrooms.mddapi.entity;
 
 import lombok.Data;
-import org.hibernate.annotations.UpdateTimestamp;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
