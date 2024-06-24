@@ -1,10 +1,13 @@
 package com.openclassrooms.mddapi.services;
 
+import java.security.Principal;
 import java.util.Optional;
 
 import com.openclassrooms.mddapi.dto.AuthDTO;
+import com.openclassrooms.mddapi.model.AuthResponse;
 
 public interface AuthenticationService {
     Optional<String>registerUser(AuthDTO authDTO);
     Optional<String>loginUser(AuthDTO authDTO);
+    AuthResponse me(String email, Principal principalUser, AuthDTO authDTO);
 }

@@ -1,13 +1,16 @@
 package com.openclassrooms.mddapi.services;
 
 import com.openclassrooms.mddapi.entity.Auth;
+import com.openclassrooms.mddapi.model.AuthResponse;
 import com.openclassrooms.mddapi.repository.AuthenticationRepository;
 import com.openclassrooms.mddapi.dto.AuthDTO;
 
 import org.modelmapper.ModelMapper;
+import org.springframework.security.access.method.P;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.security.Principal;
 import java.util.Optional;
 
 @Service
@@ -58,5 +61,28 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         }
 
         return Optional.of(jwtService.generateToken(authDTO));
+    }
+    
+    @Override
+    public AuthResponse me(String usernameOrEmail, Principal principalUser, AuthDTO authDTO) {
+        Optional<Auth> user = Optional.empty();
+
+        if (usernameOrEmail.contains("@")) {
+            user = authenticationRepository.findByEmail(usernameOrEmail);
+        } else {
+            user = authenticationRepository.findByUsername(usernameOrEmail);
+        }
+
+        // Debugging logs
+        System.out.println("email = " + authenticationRepository.findByEmail(usernameOrEmail));
+        System.out.println("username = " + authenticationRepository.findByUsername(usernameOrEmail));
+        System.out.println("principal user = " + principalUser.getName());
+        System.out.println("user = " + user);
+
+        if (user.isPresent()) {
+            return modelMapper.map(user.get(), AuthResponse.class);
+        }
+
+        return null;
     }
 }

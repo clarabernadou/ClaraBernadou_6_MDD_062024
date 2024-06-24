@@ -31,7 +31,7 @@ public class SpringSecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth ->
-                        auth.antMatchers("/api/auth/register", "/api/auth/login").permitAll()
+                        auth.antMatchers("/api/auth/register", "/api/auth/login", "/api/auth/me").permitAll()
                                 .anyRequest().authenticated())
                 .oauth2ResourceServer((oauth2) -> oauth2.jwt(Customizer.withDefaults()))
                 .build();

@@ -3,6 +3,7 @@ package com.openclassrooms.mddapi.controllers;
 import javax.validation.Valid;
 
 import com.openclassrooms.mddapi.dto.AuthDTO;
+import com.openclassrooms.mddapi.model.AuthResponse;
 import com.openclassrooms.mddapi.model.MessageResponse;
 import com.openclassrooms.mddapi.model.TokenResponse;
 import com.openclassrooms.mddapi.services.AuthenticationService;
@@ -11,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.Optional;
 
 
@@ -41,5 +43,15 @@ public class AuthenticationController {
         }
 
         return ResponseEntity.ok(new TokenResponse(token.get()));
+    }
+
+    @GetMapping("/auth/me")
+    public ResponseEntity<AuthResponse> me(Principal principalUser, AuthDTO authDTO){
+        System.out.println("principal user = " + principalUser.getName());
+        if(principalUser == null) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+
+        return ResponseEntity.ok(authenticationService.me(principalUser.getName(), principalUser, authDTO));
     }
 }

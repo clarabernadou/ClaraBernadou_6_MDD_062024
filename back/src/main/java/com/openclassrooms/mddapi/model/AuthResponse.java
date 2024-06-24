@@ -7,9 +7,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import com.openclassrooms.mddapi.dto.AuthDTO;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
-@EqualsAndHashCode(callSuper = true)
 @Data
 public class AuthResponse extends AuthDTO {
 
