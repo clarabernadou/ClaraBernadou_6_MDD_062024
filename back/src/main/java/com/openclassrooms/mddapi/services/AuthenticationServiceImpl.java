@@ -62,7 +62,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         return Optional.of(jwtService.generateToken(authDTO));
     }
-    
+
     @Override
     public AuthResponse me(String usernameOrEmail, Principal principalUser, AuthDTO authDTO) {
         Optional<Auth> user = Optional.empty();
@@ -72,12 +72,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         } else {
             user = authenticationRepository.findByUsername(usernameOrEmail);
         }
-
-        // Debugging logs
-        System.out.println("email = " + authenticationRepository.findByEmail(usernameOrEmail));
-        System.out.println("username = " + authenticationRepository.findByUsername(usernameOrEmail));
-        System.out.println("principal user = " + principalUser.getName());
-        System.out.println("user = " + user);
 
         if (user.isPresent()) {
             return modelMapper.map(user.get(), AuthResponse.class);
