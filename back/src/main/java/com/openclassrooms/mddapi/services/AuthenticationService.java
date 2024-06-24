@@ -10,4 +10,5 @@ public interface AuthenticationService {
     Optional<String>registerUser(AuthDTO authDTO);
     Optional<String>loginUser(AuthDTO authDTO);
     AuthResponse me(String email, Principal principalUser, AuthDTO authDTO);
+    AuthResponse updateMe(String email, Principal principalUser, AuthDTO authDTO);
 }
