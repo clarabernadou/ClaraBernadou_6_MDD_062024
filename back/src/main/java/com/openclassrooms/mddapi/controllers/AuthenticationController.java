@@ -47,11 +47,19 @@ public class AuthenticationController {
 
     @GetMapping("/auth/me")
     public ResponseEntity<AuthResponse> me(Principal principalUser, AuthDTO authDTO){
-        System.out.println("principal user = " + principalUser.getName());
         if(principalUser == null) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
 
         return ResponseEntity.ok(authenticationService.me(principalUser.getName(), principalUser, authDTO));
+    }
+
+    @PutMapping("/auth/me")
+    public ResponseEntity<AuthResponse> updateMe(Principal principalUser, @Valid @RequestBody AuthDTO authDTO){
+        if(principalUser == null) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+
+        return ResponseEntity.ok(authenticationService.updateMe(principalUser.getName(), principalUser, authDTO));
     }
 }

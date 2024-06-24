@@ -79,4 +79,25 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         return null;
     }
+
+    @Override
+    public AuthResponse updateMe(String usernameOrEmail, Principal principalUser, AuthDTO authDTO) {
+        Optional<Auth> user = Optional.empty();
+
+        if (usernameOrEmail.contains("@")) {
+            user = authenticationRepository.findByEmail(usernameOrEmail);
+        } else {
+            user = authenticationRepository.findByUsername(usernameOrEmail);
+        }
+
+        if (user.isPresent()) {
+            user.get().setEmail(authDTO.getEmail());
+            user.get().setUsername(authDTO.getUsername());
+            user.get().setPassword(passwordEncoder.encode(authDTO.getPassword()));
+            authenticationRepository.save(user.get());
+            return modelMapper.map(user.get(), AuthResponse.class);
+        }
+
+        return null;
+    }
 }
