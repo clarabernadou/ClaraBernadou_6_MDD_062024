@@ -31,4 +31,14 @@ public class ArticleController {
         System.out.println("articleDTO = " + articleDTO);
         return ResponseEntity.ok(new MessageResponse(articleService.createArticle(articleDTO, principalUser).get()));
     }
+
+    @GetMapping("/articles/{id}")
+    public ResponseEntity<?> getArticle(@PathVariable Long id) {
+        return ResponseEntity.ok(articleService.getArticle(id));
+    }
+
+    @GetMapping("/articles")
+    public ResponseEntity<?> getArticles() {
+        return ResponseEntity.ok(articleService.getArticles());
+    }
 }
