@@ -10,7 +10,10 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.security.Principal;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @Service
 public class ArticleServiceImpl implements ArticleService {
@@ -40,5 +43,25 @@ public class ArticleServiceImpl implements ArticleService {
 
         articleRepository.save(article);
         return Optional.of("Article created !");
+    }
+
+    @Override
+    public Optional<ArticleDTO> getArticle(Long id) {
+        Optional<Article> article = articleRepository.findById(id);
+
+        if (article.isEmpty()) return Optional.empty();
+
+        return Optional.of(modelMapper.map(article.get(), ArticleDTO.class));
+    }
+
+    @Override
+    public List<ArticleDTO> getArticles() {
+        Iterable<Article> articlesIterable = articleRepository.findAll();
+        List<Article> articles = StreamSupport.stream(articlesIterable.spliterator(), false)
+                                        .collect(Collectors.toList());
+
+        return articles.stream()
+                    .map(article -> modelMapper.map(article, ArticleDTO.class))
+                    .collect(Collectors.toList());
     }
 }
