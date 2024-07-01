@@ -17,8 +17,8 @@ public class Comment {
     private String content;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
-    private Auth userId;
+    @JoinColumn(name = "owner_id")
+    private Auth owner;
 
     @ManyToOne
     @JoinColumn(name = "article_id")

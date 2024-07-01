@@ -6,6 +6,7 @@ import com.openclassrooms.mddapi.repository.AuthenticationRepository;
 import com.openclassrooms.mddapi.dto.ArticleDTO;
 
 import org.modelmapper.ModelMapper;
+import org.modelmapper.PropertyMap;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -28,6 +29,14 @@ public class ArticleServiceImpl implements ArticleService {
         this.authenticationRepository = authenticationRepository;
         this.articleRepository = articleRepository;
         this.modelMapper = modelMapper;
+
+        PropertyMap<ArticleDTO, Article> commentMap = new PropertyMap<ArticleDTO, Article>() {
+            @Override
+            protected void configure() {
+                map().setId(source.getOwnerId());
+            }
+        };
+        this.modelMapper.addMappings(commentMap);
     }
 
     @Override
