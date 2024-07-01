@@ -11,8 +11,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Data
 public class ArticleDTO {
-//    @JsonProperty("theme_id")
-//    private String themeId;
+    @JsonProperty("theme_id")
+    private Long themeId;
 
     @NotBlank
     private String title;

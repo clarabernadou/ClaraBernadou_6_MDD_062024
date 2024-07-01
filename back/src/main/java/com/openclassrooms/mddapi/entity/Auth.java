@@ -6,6 +6,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import java.time.LocalDate;
+import java.util.List;
 
 @Data
 @Entity
@@ -27,13 +28,14 @@ public class Auth {
     @NotNull
     private String password;
 
-//    @ManyToMany
-//    @JoinTable(name = "user_subscriptions", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "theme_id"))
-//    private List<Theme> subscriptions;
+    @ManyToMany
+    @JoinTable(name = "user_subscriptions", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "theme_id"))
+    private List<Theme> subscriptions;
 
-    @Column(updatable = false)
+    @Column(updatable = false, name = "created_at")
     private LocalDate createdAt;
 
+    @Column(updatable = true, name = "updated_at")
     private LocalDate updatedAt;
 
     @PrePersist

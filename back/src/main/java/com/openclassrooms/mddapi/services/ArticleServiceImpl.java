@@ -33,7 +33,6 @@ public class ArticleServiceImpl implements ArticleService {
     @Override
     public Optional<String> createArticle(ArticleDTO articleDTO, Principal principalUser) throws IOException {
         Article article = modelMapper.map(articleDTO, Article.class);
-        System.out.println(article);
 
         if (principalUser.getName().contains("@")) {
             authenticationRepository.findByEmail(principalUser.getName()).ifPresent(article::setOwner);

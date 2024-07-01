@@ -17,13 +17,13 @@ import java.util.Optional;
 
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/auth")
 public class AuthenticationController {
 
     @Autowired
     private AuthenticationService authenticationService;
 
-    @PostMapping("/auth/register")
+    @PostMapping("/register")
     public ResponseEntity<?> registerUser(@Valid @RequestBody AuthDTO authDTO) {
         Optional<String> token = authenticationService.registerUser(authDTO);
 
@@ -34,7 +34,7 @@ public class AuthenticationController {
         return ResponseEntity.ok(new TokenResponse(token.get()));
     }
 
-    @PostMapping("/auth/login")
+    @PostMapping("/login")
     public ResponseEntity<?> loginUser(@Valid @RequestBody AuthDTO authDTO) {
         Optional<String> token = authenticationService.loginUser(authDTO);
 
@@ -45,7 +45,7 @@ public class AuthenticationController {
         return ResponseEntity.ok(new TokenResponse(token.get()));
     }
 
-    @GetMapping("/auth/me")
+    @GetMapping("/me")
     public ResponseEntity<AuthResponse> me(Principal principalUser, AuthDTO authDTO){
         if(principalUser == null) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
@@ -54,7 +54,7 @@ public class AuthenticationController {
         return ResponseEntity.ok(authenticationService.me(principalUser.getName(), principalUser, authDTO));
     }
 
-    @PutMapping("/auth/me")
+    @PutMapping("/me")
     public ResponseEntity<AuthResponse> updateMe(Principal principalUser, @Valid @RequestBody AuthDTO authDTO){
         if(principalUser == null) {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
