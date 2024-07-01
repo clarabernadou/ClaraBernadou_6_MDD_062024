@@ -16,7 +16,7 @@ import java.io.IOException;
 import java.security.Principal;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/auth")
 public class ArticleController {
 
     @Autowired
