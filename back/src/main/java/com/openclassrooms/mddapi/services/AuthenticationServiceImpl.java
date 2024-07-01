@@ -6,7 +6,6 @@ import com.openclassrooms.mddapi.repository.AuthenticationRepository;
 import com.openclassrooms.mddapi.dto.AuthDTO;
 
 import org.modelmapper.ModelMapper;
-import org.springframework.security.access.method.P;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
