@@ -1,5 +1,7 @@
 package com.openclassrooms.mddapi.controllers;
 
+import java.security.Principal;
+
 import javax.validation.Valid;
 
 import org.modelmapper.internal.Errors;
@@ -23,10 +25,10 @@ public class CommentController {
     private CommentService commentService;
 
     @PostMapping("/comments")
-    public ResponseEntity<?> createComment(@Valid @RequestBody CommentDTO commentDTO, Errors errors) {
+    public ResponseEntity<?> createComment(@Valid @RequestBody CommentDTO commentDTO, Principal principalUser, Errors errors) {
         if(errors.hasErrors()) {
             return new ResponseEntity<>(new MessageResponse("error"), HttpStatus.UNAUTHORIZED);
         }
-        return ResponseEntity.ok(new MessageResponse(commentService.createComment(commentDTO).get()));
+        return ResponseEntity.ok(new MessageResponse(commentService.createComment(commentDTO, principalUser).get()));
     }
 }
