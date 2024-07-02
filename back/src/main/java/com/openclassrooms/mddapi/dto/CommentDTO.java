@@ -14,8 +14,8 @@ public class CommentDTO {
     private String content;
 
     @NotNull
-    @JsonProperty("owner_id")
-    private Long ownerId;
+    @JsonProperty("user_id")
+    private Long userId;
 
     @NotNull
     @JsonProperty("article_id")

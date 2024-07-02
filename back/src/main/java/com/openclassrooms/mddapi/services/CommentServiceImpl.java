@@ -29,7 +29,7 @@ public class CommentServiceImpl implements CommentService {
         PropertyMap<CommentDTO, Comment> commentMap = new PropertyMap<CommentDTO, Comment>() {
             @Override
             protected void configure() {
-                map().setId(source.getOwnerId());
+                map().setId(source.getUserId());
             }
         };
         this.modelMapper.addMappings(commentMap);
@@ -40,9 +40,9 @@ public class CommentServiceImpl implements CommentService {
         Comment comment = modelMapper.map(commentDTO, Comment.class);
 
         if (principalUser.getName().contains("@")) {
-            authenticationRepository.findByEmail(principalUser.getName()).ifPresent(comment::setOwner);
+            authenticationRepository.findByEmail(principalUser.getName()).ifPresent(comment::setUser);
         } else {
-            authenticationRepository.findByUsername(principalUser.getName()).ifPresent(comment::setOwner);
+            authenticationRepository.findByUsername(principalUser.getName()).ifPresent(comment::setUser);
         }
 
         commentRepository.save(comment);
