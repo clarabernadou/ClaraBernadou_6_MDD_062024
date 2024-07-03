@@ -1,6 +1,5 @@
 package com.openclassrooms.mddapi.services;
 
-import com.openclassrooms.mddapi.entity.Article;
 import com.openclassrooms.mddapi.entity.Auth;
 import com.openclassrooms.mddapi.entity.Theme;
 import com.openclassrooms.mddapi.exceptions.SubscriptionAlreadyExistsException;
@@ -40,13 +39,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public Optional<String> registerUser(AuthDTO authDTO) {
-
-        if(authenticationRepository.findByEmail(authDTO.getEmail()).isPresent()) {
-            return Optional.empty();
-        }
         Auth user = modelMapper.map(authDTO, Auth.class);
         user.setPassword(passwordEncoder.encode(authDTO.getPassword()));
         authenticationRepository.save(user);
+
         return Optional.of(jwtService.generateToken(authDTO));
     }
 
@@ -56,16 +52,11 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         if (authDTO.getUsername() != null && !authDTO.getUsername().isEmpty()) {
             user = authenticationRepository.findByUsername(authDTO.getUsername());
-        }
-
-        if (user.isEmpty() && authDTO.getEmail() != null && !authDTO.getEmail().isEmpty()) {
+        } else if (authDTO.getEmail() != null && !authDTO.getEmail().isEmpty()) {
             user = authenticationRepository.findByEmail(authDTO.getEmail());
         }
 
-        if (user.isEmpty() || !passwordEncoder.matches(authDTO.getPassword(), user.get().getPassword())) {
-            return Optional.empty();
-        }
-
+        if (user.isEmpty() || !passwordEncoder.matches(authDTO.getPassword(), user.get().getPassword())) return Optional.empty();
         return Optional.of(jwtService.generateToken(authDTO));
     }
 
@@ -79,11 +70,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             user = authenticationRepository.findByUsername(usernameOrEmail);
         }
 
-        if (user.isPresent()) {
-            return modelMapper.map(user.get(), AuthResponse.class);
-        }
-
-        return null;
+        if (user.isEmpty()) return null;
+        return modelMapper.map(user.get(), AuthResponse.class);
     }
 
     @Override
@@ -96,15 +84,13 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             user = authenticationRepository.findByUsername(usernameOrEmail);
         }
 
-        if (user.isPresent()) {
-            user.get().setEmail(authDTO.getEmail());
-            user.get().setUsername(authDTO.getUsername());
-            user.get().setPassword(passwordEncoder.encode(authDTO.getPassword()));
-            authenticationRepository.save(user.get());
-            return modelMapper.map(user.get(), AuthResponse.class);
-        }
+        if (user.isEmpty()) return null;
 
-        return null;
+        user.get().setEmail(authDTO.getEmail());
+        user.get().setUsername(authDTO.getUsername());
+        user.get().setPassword(passwordEncoder.encode(authDTO.getPassword()));
+        authenticationRepository.save(user.get());
+        return modelMapper.map(user.get(), AuthResponse.class);
     }
 
     @Override
