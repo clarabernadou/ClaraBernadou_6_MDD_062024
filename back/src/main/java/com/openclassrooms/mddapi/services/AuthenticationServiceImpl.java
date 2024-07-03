@@ -3,6 +3,7 @@ package com.openclassrooms.mddapi.services;
 import com.openclassrooms.mddapi.entity.Article;
 import com.openclassrooms.mddapi.entity.Auth;
 import com.openclassrooms.mddapi.entity.Theme;
+import com.openclassrooms.mddapi.exceptions.SubscriptionAlreadyExistsException;
 import com.openclassrooms.mddapi.model.AuthResponse;
 import com.openclassrooms.mddapi.repository.AuthenticationRepository;
 import com.openclassrooms.mddapi.repository.ThemeRepository;
@@ -108,6 +109,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public Optional<String> subscription(Principal principalUser, Long themeId) {
+        Optional<Theme> theme = themeRepository.findById(themeId);
         Optional<Auth> user = Optional.empty();
 
         if (principalUser.getName().contains("@")) {
@@ -116,15 +118,13 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             user = authenticationRepository.findByUsername(principalUser.getName());
         }
 
-        Optional<Theme> theme = themeRepository.findById(themeId); // Convert themeId to Integer
+        if (user.isEmpty()) return Optional.of("User not found !");
+        if (theme.isEmpty()) return Optional.of("Theme not found !");
+        if (user.get().getSubscriptions().contains(theme.get())) throw new SubscriptionAlreadyExistsException("Subscription already exists !");
 
-        if (user.isPresent() && theme.isPresent()) {
-            user.get().getSubscriptions().add(theme.get());
-            authenticationRepository.save(user.get());
-            return Optional.of("Subscription added !");
-        }
-
-        return Optional.empty();
+        user.get().getSubscriptions().add(theme.get());
+        authenticationRepository.save(user.get());
+        return Optional.of("Subscription added !");
     }
 
 }
