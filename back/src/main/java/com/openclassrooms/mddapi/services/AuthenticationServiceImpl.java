@@ -1,8 +1,11 @@
 package com.openclassrooms.mddapi.services;
 
+import com.openclassrooms.mddapi.entity.Article;
 import com.openclassrooms.mddapi.entity.Auth;
+import com.openclassrooms.mddapi.entity.Theme;
 import com.openclassrooms.mddapi.model.AuthResponse;
 import com.openclassrooms.mddapi.repository.AuthenticationRepository;
+import com.openclassrooms.mddapi.repository.ThemeRepository;
 import com.openclassrooms.mddapi.dto.AuthDTO;
 
 import org.modelmapper.ModelMapper;
@@ -17,15 +20,18 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     private final AuthenticationRepository authenticationRepository;
 
+    private final ThemeRepository themeRepository;
+
     private final ModelMapper modelMapper;
 
     private final JWTService jwtService;
 
     private final BCryptPasswordEncoder passwordEncoder;
 
-    public AuthenticationServiceImpl(AuthenticationRepository authenticationRepository, ModelMapper modelMapper,
+    public AuthenticationServiceImpl(AuthenticationRepository authenticationRepository, ThemeRepository themeRepository, ModelMapper modelMapper,
                                      JWTService jwtService,BCryptPasswordEncoder passwordEncoder) {
         this.authenticationRepository = authenticationRepository;
+        this.themeRepository = themeRepository;
         this.modelMapper = modelMapper;
         this.jwtService = jwtService;
         this.passwordEncoder = passwordEncoder;
@@ -99,4 +105,26 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         return null;
     }
+
+    @Override
+    public Optional<String> subscription(Principal principalUser, Long themeId) {
+        Optional<Auth> user = Optional.empty();
+
+        if (principalUser.getName().contains("@")) {
+            user = authenticationRepository.findByEmail(principalUser.getName());
+        } else {
+            user = authenticationRepository.findByUsername(principalUser.getName());
+        }
+
+        Optional<Theme> theme = themeRepository.findById(themeId); // Convert themeId to Integer
+
+        if (user.isPresent() && theme.isPresent()) {
+            user.get().getSubscriptions().add(theme.get());
+            authenticationRepository.save(user.get());
+            return Optional.of("Subscription added !");
+        }
+
+        return Optional.empty();
+    }
+
 }

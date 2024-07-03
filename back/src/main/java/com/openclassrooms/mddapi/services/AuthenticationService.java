@@ -11,4 +11,5 @@ public interface AuthenticationService {
     Optional<String>loginUser(AuthDTO authDTO);
     AuthResponse me(String email, Principal principalUser, AuthDTO authDTO);
     AuthResponse updateMe(String email, Principal principalUser, AuthDTO authDTO);
+    Optional<String> subscription(Principal principalUser, Long themeId);
 }

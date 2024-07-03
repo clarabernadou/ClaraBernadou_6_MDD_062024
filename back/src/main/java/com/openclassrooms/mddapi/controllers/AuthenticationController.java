@@ -62,4 +62,14 @@ public class AuthenticationController {
 
         return ResponseEntity.ok(authenticationService.updateMe(principalUser.getName(), principalUser, authDTO));
     }
+
+    @PostMapping("/subscribe/{id}")
+    public ResponseEntity<Optional<String>> subscription (Principal principalUser, @PathVariable Long id){
+        if(principalUser == null) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+
+        return ResponseEntity.ok(authenticationService.subscription(principalUser, id));
+    }
+
 }
