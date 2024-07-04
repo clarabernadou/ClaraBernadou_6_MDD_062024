@@ -1,6 +1,7 @@
 package com.openclassrooms.mddapi.services;
 
 import com.openclassrooms.mddapi.entity.Article;
+import com.openclassrooms.mddapi.exceptions.UnauthorizedRequestException;
 import com.openclassrooms.mddapi.repository.ArticleRepository;
 import com.openclassrooms.mddapi.repository.AuthenticationRepository;
 import com.openclassrooms.mddapi.dto.ArticleDTO;
@@ -36,6 +37,7 @@ public class ArticleServiceImpl implements ArticleService {
                 map().setId(source.getOwnerId());
             }
         };
+
         this.modelMapper.addMappings(commentMap);
     }
 
@@ -56,9 +58,7 @@ public class ArticleServiceImpl implements ArticleService {
     @Override
     public Optional<ArticleDTO> getArticle(Long id) {
         Optional<Article> article = articleRepository.findById(id);
-
-        if (article.isEmpty()) return Optional.empty();
-
+        if (article.isEmpty()) throw new UnauthorizedRequestException("Article not found");
         return Optional.of(modelMapper.map(article.get(), ArticleDTO.class));
     }
 
@@ -67,6 +67,8 @@ public class ArticleServiceImpl implements ArticleService {
         Iterable<Article> articlesIterable = articleRepository.findAll();
         List<Article> articles = StreamSupport.stream(articlesIterable.spliterator(), false)
                                         .collect(Collectors.toList());
+
+        if (articles.isEmpty()) throw new UnauthorizedRequestException("Articles not found");
 
         return articles.stream()
                     .map(article -> modelMapper.map(article, ArticleDTO.class))

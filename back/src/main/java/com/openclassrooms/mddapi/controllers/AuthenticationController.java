@@ -3,6 +3,7 @@ package com.openclassrooms.mddapi.controllers;
 import javax.validation.Valid;
 
 import com.openclassrooms.mddapi.dto.AuthDTO;
+import com.openclassrooms.mddapi.exceptions.NotFoundException;
 import com.openclassrooms.mddapi.model.AuthResponse;
 import com.openclassrooms.mddapi.model.MessageResponse;
 import com.openclassrooms.mddapi.model.TokenResponse;
@@ -27,9 +28,7 @@ public class AuthenticationController {
     public ResponseEntity<?> registerUser(@Valid @RequestBody AuthDTO authDTO) {
         Optional<String> token = authenticationService.registerUser(authDTO);
 
-        if(token.isEmpty()) {
-            return new ResponseEntity<>(new MessageResponse("error"), HttpStatus.UNAUTHORIZED);
-        }
+        if(token.isEmpty()) return new ResponseEntity<>(new MessageResponse("error"), HttpStatus.UNAUTHORIZED);
 
         return ResponseEntity.ok(new TokenResponse(token.get()));
     }
@@ -38,36 +37,28 @@ public class AuthenticationController {
     public ResponseEntity<?> loginUser(@Valid @RequestBody AuthDTO authDTO) {
         Optional<String> token = authenticationService.loginUser(authDTO);
 
-        if(token.isEmpty()) {
-            return new ResponseEntity<>(new MessageResponse("error"), HttpStatus.UNAUTHORIZED);
-        }
+        if(token.isEmpty()) return new ResponseEntity<>(new MessageResponse("error"), HttpStatus.UNAUTHORIZED);
 
         return ResponseEntity.ok(new TokenResponse(token.get()));
     }
 
     @GetMapping("/me")
     public ResponseEntity<AuthResponse> me(Principal principalUser, AuthDTO authDTO){
-        if(principalUser == null) {
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-        }
+        if(principalUser == null) return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
 
         return ResponseEntity.ok(authenticationService.me(principalUser.getName(), principalUser, authDTO));
     }
 
     @PutMapping("/me")
     public ResponseEntity<AuthResponse> updateMe(Principal principalUser, @Valid @RequestBody AuthDTO authDTO){
-        if(principalUser == null) {
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-        }
+        if(principalUser == null) throw new NotFoundException("User is not found");
 
         return ResponseEntity.ok(authenticationService.updateMe(principalUser.getName(), principalUser, authDTO));
     }
 
     @PostMapping("/subscribe/{id}")
     public ResponseEntity<Optional<String>> subscription (Principal principalUser, @PathVariable Long id){
-        if(principalUser == null) {
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-        }
+        if(principalUser == null) throw new NotFoundException("User is not found");
 
         return ResponseEntity.ok(authenticationService.subscription(principalUser, id));
     }
