@@ -2,7 +2,9 @@ package com.openclassrooms.mddapi.services;
 
 import com.openclassrooms.mddapi.entity.Auth;
 import com.openclassrooms.mddapi.entity.Theme;
-import com.openclassrooms.mddapi.exceptions.SubscriptionAlreadyExistsException;
+import com.openclassrooms.mddapi.exceptions.GlobalException;
+import com.openclassrooms.mddapi.exceptions.NotFoundException;
+import com.openclassrooms.mddapi.exceptions.UnauthorizedRequestException;
 import com.openclassrooms.mddapi.model.AuthResponse;
 import com.openclassrooms.mddapi.repository.AuthenticationRepository;
 import com.openclassrooms.mddapi.repository.ThemeRepository;
@@ -56,7 +58,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             user = authenticationRepository.findByEmail(authDTO.getEmail());
         }
 
-        if (user.isEmpty() || !passwordEncoder.matches(authDTO.getPassword(), user.get().getPassword())) return Optional.empty();
+        if (user.isEmpty() || !passwordEncoder.matches(authDTO.getPassword(), user.get().getPassword())) throw new UnauthorizedRequestException("Invalid credentials !");
         return Optional.of(jwtService.generateToken(authDTO));
     }
 
@@ -70,7 +72,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             user = authenticationRepository.findByUsername(usernameOrEmail);
         }
 
-        if (user.isEmpty()) return null;
+        if (user.isEmpty()) throw new NotFoundException("User not found !");
         return modelMapper.map(user.get(), AuthResponse.class);
     }
 
@@ -84,7 +86,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             user = authenticationRepository.findByUsername(usernameOrEmail);
         }
 
-        if (user.isEmpty()) return null;
+        if (user.isEmpty()) throw new NotFoundException("User not found !");
 
         user.get().setEmail(authDTO.getEmail());
         user.get().setUsername(authDTO.getUsername());
@@ -104,9 +106,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             user = authenticationRepository.findByUsername(principalUser.getName());
         }
 
-        if (user.isEmpty()) return Optional.of("User not found !");
-        if (theme.isEmpty()) return Optional.of("Theme not found !");
-        if (user.get().getSubscriptions().contains(theme.get())) throw new SubscriptionAlreadyExistsException("Subscription already exists !");
+        if (user.isEmpty()) throw new NotFoundException("User not found !");
+        if (theme.isEmpty()) throw new NotFoundException("Theme not found !");
+        if (user.get().getSubscriptions().contains(theme.get())) throw new GlobalException("Subscription already exists !");
 
         user.get().getSubscriptions().add(theme.get());
         authenticationRepository.save(user.get());
