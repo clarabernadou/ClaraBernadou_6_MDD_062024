@@ -2,8 +2,8 @@ package com.openclassrooms.mddapi.controllers;
 
 import javax.validation.Valid;
 
+import com.openclassrooms.mddapi.controllers.advice.exceptions.UnauthorizedException;
 import com.openclassrooms.mddapi.dto.ArticleDTO;
-import com.openclassrooms.mddapi.exceptions.UnauthorizedRequestException;
 import com.openclassrooms.mddapi.model.MessageResponse;
 import com.openclassrooms.mddapi.services.ArticleService;
 
@@ -24,7 +24,7 @@ public class ArticleController {
 
     @PostMapping("/articles")
     public ResponseEntity<?> createArticle(@Valid @RequestBody ArticleDTO articleDTO, Principal principalUser, Errors errors) throws IOException {
-        if(errors.hasErrors()) throw new UnauthorizedRequestException("User is not found");
+        if(errors.hasErrors()) throw new UnauthorizedException("Invalid article data");
         return ResponseEntity.ok(new MessageResponse(articleService.createArticle(articleDTO, principalUser).get()));
     }
 
