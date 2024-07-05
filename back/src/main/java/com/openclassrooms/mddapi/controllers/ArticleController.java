@@ -29,14 +29,12 @@ public class ArticleController {
     }
 
     @GetMapping("/articles/{id}")
-    public ResponseEntity<?> getArticle(@PathVariable Long id, Errors errors) {
-        if(errors.hasErrors()) throw new UnauthorizedRequestException("User is not found");
+    public ResponseEntity<?> getArticle(@PathVariable Long id) {
         return ResponseEntity.ok(articleService.getArticle(id));
     }
 
     @GetMapping("/articles")
-    public ResponseEntity<?> getArticles(Errors errors) {
-        if(errors.hasErrors()) throw new UnauthorizedRequestException("User is not found");
+    public ResponseEntity<?> getArticles() {
         return ResponseEntity.ok(articleService.getArticles());
     }
 }
