@@ -40,7 +40,7 @@ public class AuthenticationController {
         }
 
         Optional<String> token = authenticationService.registerUser(authDTO);
-        return new TokenResponse(token.orElseThrow(() -> new UnauthorizedException("Registration failed")));
+        return new TokenResponse(token.get());
     }
 
     @PostMapping("/login")
@@ -53,7 +53,7 @@ public class AuthenticationController {
         }
 
         Optional<String> token = authenticationService.loginUser(loginDTO);
-        return new TokenResponse(token.orElseThrow(() -> new UnauthorizedException("Login failed")));
+        return new TokenResponse(token.get());
     }
 
     @GetMapping("/me")
