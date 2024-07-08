@@ -1,0 +1,36 @@
+<div class="center">
+  <img src="/assets/logo_p6.png" width="200px" alt="logo" />
+  <mat-icon aria-hidden="false" aria-label="Retourner à la page home" routerLink="/" fontIcon="keyboard_backspace"></mat-icon>
+  <h1>Inscription</h1>
+
+  <form [formGroup]="form" (ngSubmit)="submit()">
+    <mat-form-field>
+      <mat-label>Email</mat-label>
+      <input matInput formControlName="email">
+      <mat-error *ngIf="form.get('email')?.hasError('required')">
+        Ce champ est requis.
+      </mat-error>
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Nom d'utilisateur</mat-label>
+      <input matInput formControlName="username">
+      <mat-error *ngIf="form.get('username')?.hasError('required')">
+        Ce champ est requis.
+      </mat-error>
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Mot de passe</mat-label>
+      <input matInput type="password" formControlName="password">
+      <mat-error *ngIf="form.get('password')?.hasError('required')">
+        Ce champ est requis.
+      </mat-error>
+    </mat-form-field>
+    <button mat-raised-button color="primary" type="submit" [disabled]="loading">
+      {{ loading ? 'Inscription en cours...' : "S'inscrire" }}
+    </button>
+  </form>
+
+  <mat-error *ngIf="onError">
+    {{ errorMessage }}
+  </mat-error>
+</div>
