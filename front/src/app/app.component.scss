@@ -1,0 +1,29 @@
+h1 {
+    font-size: 24px;
+    font-weight: 400;
+    line-height: 29.05px;
+}
+
+.custom-input {
+    border: 1px solid black;
+    border-radius: 0.375rem;
+    padding: 0.5rem;
+}
+
+.primary-btn {
+    color: white;
+    font-weight: 500;
+    background-color: #7763C5;
+    padding: 0.7em 1.5em;
+    border-radius: 0.7em;
+    transition: background-color 0.3s ease, transform 0.3s ease; 
+
+    &:hover {
+      background-color: #917de0;
+      transform: scale(1.05);
+    }
+
+    &:active {
+      transform: scale(0.95);
+    }
+}
