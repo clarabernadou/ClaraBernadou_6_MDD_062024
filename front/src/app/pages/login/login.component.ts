@@ -4,16 +4,20 @@ import { Login } from 'src/app/interfaces/login.interface';
 import { AuthService } from 'src/app/services/auth.service';
 import { SessionService } from 'src/app/services/session.service';
 import { FormBuilder, Validators } from '@angular/forms';
+import { BreakpointService } from 'src/app/services/breakpoint.service';
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
-  styleUrls: ['./login.component.scss'],
+  styleUrls: ['../../app.component.scss'],
 })
 export class LoginComponent implements OnInit {
   public onError = false;
   public errorMessage = '';
   public loading = false;
+  public submitted = false;
+  public isSmallScreen = false;
+  public isLargeScreen = false;
 
   public form = this.fb.group({
     emailOrUsername: [
@@ -35,12 +39,21 @@ export class LoginComponent implements OnInit {
     private authService: AuthService,
     private sessionService: SessionService,
     private fb: FormBuilder,
-  ) {}
+    private breakpointService: BreakpointService) {}
 
-  ngOnInit(): void {}
+  ngOnInit() {
+    this.breakpointService.isSmallScreen().subscribe(isSmall => {
+      this.isSmallScreen = isSmall;
+    });
+
+    this.breakpointService.isLargeScreen().subscribe(isLarge => {
+      this.isLargeScreen = isLarge;
+    });
+  }
 
   public submit(): void {
     if (this.form.invalid) {
+      this.submitted = true;
       this.form.markAllAsTouched();
       return;
     }
