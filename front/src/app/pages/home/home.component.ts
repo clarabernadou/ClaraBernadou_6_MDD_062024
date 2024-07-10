@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { BreakpointService } from 'src/app/services/breakpoint.service';
 
 @Component({
   selector: 'app-home',
@@ -6,11 +7,18 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./home.component.scss'],
 })
 export class HomeComponent implements OnInit {
-  constructor() {}
+  public isSmallScreen = false;
+  public isLargeScreen = false;
 
-  ngOnInit(): void {}
+  constructor(private breakpointService: BreakpointService) {}
 
-  start() {
-    alert('Commencez par lire le README et à vous de jouer !');
+  ngOnInit() {
+    this.breakpointService.isSmallScreen().subscribe(isSmall => {
+      this.isSmallScreen = isSmall;
+    });
+
+    this.breakpointService.isLargeScreen().subscribe(isLarge => {
+      this.isLargeScreen = isLarge;
+    });
   }
 }
