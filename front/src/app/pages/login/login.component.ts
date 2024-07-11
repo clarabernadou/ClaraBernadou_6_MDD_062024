@@ -5,6 +5,7 @@ import { AuthService } from 'src/app/services/auth.service';
 import { SessionService } from 'src/app/services/session.service';
 import { FormBuilder, Validators } from '@angular/forms';
 import { BreakpointService } from 'src/app/services/breakpoint.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -39,7 +40,8 @@ export class LoginComponent implements OnInit {
     private authService: AuthService,
     private sessionService: SessionService,
     private fb: FormBuilder,
-    private breakpointService: BreakpointService) {}
+    private breakpointService: BreakpointService,
+    private router: Router) {}
 
   ngOnInit() {
     this.breakpointService.isSmallScreen().subscribe(isSmall => {
@@ -69,7 +71,7 @@ export class LoginComponent implements OnInit {
         this.sessionService.logIn(response);
         this.loading = false;
         localStorage.setItem('token', response.token);
-        // Redirect router navigate to articles page
+        this.router.navigate(['/articles']);
       },
       error: error => {
         this.loading = false;
