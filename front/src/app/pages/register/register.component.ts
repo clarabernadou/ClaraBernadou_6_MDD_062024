@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { AuthToken } from 'src/app/interfaces/authSession.interface';
 import { Register } from 'src/app/interfaces/login.interface';
 import { AuthService } from 'src/app/services/auth.service';
@@ -46,6 +47,7 @@ export class RegisterComponent implements OnInit {
     private sessionService: SessionService,
     private fb: FormBuilder,
     private breakpointService: BreakpointService,
+    private router: Router,
   ) {}
 
   ngOnInit() {
@@ -75,7 +77,7 @@ export class RegisterComponent implements OnInit {
         this.sessionService.logIn(response);
         this.loading = false;
         localStorage.setItem('token', response.token);
-        // Redirect router navigate to articles page
+        this.router.navigate(['/articles']);
       },
       error: error => {
         this.loading = false;
