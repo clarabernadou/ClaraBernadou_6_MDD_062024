@@ -9,7 +9,7 @@ import { environment } from '../../environments/environment';
   providedIn: 'root'
 })
 export class AuthService {
-  private baseUrl = environment.baseUrl + '/auth';
+  private baseUrl = environment.baseUrl;
 
   constructor(private httpClient: HttpClient) {}
 
