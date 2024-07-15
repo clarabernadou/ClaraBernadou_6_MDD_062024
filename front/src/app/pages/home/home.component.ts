@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { BreakpointService } from 'src/app/services/breakpoint.service';
 
 @Component({
@@ -10,9 +11,14 @@ export class HomeComponent implements OnInit {
   public isSmallScreen = false;
   public isLargeScreen = false;
 
-  constructor(private breakpointService: BreakpointService) {}
+  constructor(
+    private breakpointService: BreakpointService, 
+    private router: Router
+  ) {}
 
   ngOnInit() {
+    if (localStorage.getItem('token')) this.router.navigate(['/articles']);
+
     this.breakpointService.isSmallScreen().subscribe(isSmall => {
       this.isSmallScreen = isSmall;
     });

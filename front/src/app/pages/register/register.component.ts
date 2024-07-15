@@ -51,6 +51,8 @@ export class RegisterComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    if (localStorage.getItem('token')) this.router.navigate(['/articles']);
+
     this.breakpointService.isSmallScreen().subscribe(isSmall => {
       this.isSmallScreen = isSmall;
     });

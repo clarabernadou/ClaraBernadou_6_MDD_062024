@@ -44,6 +44,8 @@ export class LoginComponent implements OnInit {
     private router: Router) {}
 
   ngOnInit() {
+    if (localStorage.getItem('token')) this.router.navigate(['/articles']);
+
     this.breakpointService.isSmallScreen().subscribe(isSmall => {
       this.isSmallScreen = isSmall;
     });
