@@ -1,15 +1,5 @@
 <div class="center" class="flex flex-col justify-center items-center tracking-wider" [ngClass]="{'p-12': isSmallScreen}">
-    <div *ngIf="isLargeScreen" class="w-screen">
-      <img src="/assets/logo_p6.png" width="200px" alt="logo" />
-      <hr class="border-black opacity-100">
-    </div>
-
-    <div *ngIf="isSmallScreen" class="w-full flex flex-col gap-6">
-      <mat-icon aria-hidden="false" aria-label="Retourner à la page home" routerLink="/" fontIcon="keyboard_backspace" style="transform: scale(2); cursor: pointer;"></mat-icon>
-      <div class="w-full flex justify-center">
-        <img src="/assets/logo_p6.png" width="300px" alt="logo" />
-      </div>
-    </div>
+    <app-navbar></app-navbar>
 
     <div class="w-full flex flex-col gap-5" [ngClass]="{'p-12': isLargeScreen}">
       <mat-icon *ngIf="isLargeScreen"aria-hidden="false" aria-label="Retourner à la page home" routerLink="/" fontIcon="keyboard_backspace"style="transform: scale(2)">
