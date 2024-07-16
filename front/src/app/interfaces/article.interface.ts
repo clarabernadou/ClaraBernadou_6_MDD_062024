@@ -2,6 +2,10 @@ export interface Article {
     id: number;
     title: string;
     content: string;
-    createdAt: Date;
-    userId: number;
-}
+    created_at: Date;
+    owner_id: number;
+    theme_id: number;
+    updated_at?: Date;
+    author?: string;
+  }
+  

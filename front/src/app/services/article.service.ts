@@ -10,7 +10,7 @@ import { Article } from '../interfaces/article.interface';
   providedIn: 'root'
 })
 export class ArticleService {
-  private baseUrl = environment.baseUrl + '/auth';
+  private baseUrl = environment.baseUrl + '/auth/article';
 
   constructor(private httpClient: HttpClient) {}
 
@@ -21,6 +21,6 @@ export class ArticleService {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`
     });
-    return this.httpClient.get<Article[]>(`${this.baseUrl}/articles`, { headers });
+    return this.httpClient.get<Article[]>(`${this.baseUrl}/`, { headers });
   }
 }
