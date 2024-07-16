@@ -12,17 +12,13 @@ export class NavBarComponent implements OnInit {
     public isLargeScreen = false;
     public isLoginOrRegisterPage: boolean = false;
     public isOtherPage = false;
+    public openNavbarModal = false;
+    public currentUrl = this.router.url;
 
     constructor(
         private breakpointService: BreakpointService, 
         private router: Router
     ) {}
-
-    checkCurrentRoute() {
-        const currentUrl = this.router.url;
-        this.isLoginOrRegisterPage = currentUrl === '/login' || currentUrl === '/register';
-        this.isOtherPage = !this.isLoginOrRegisterPage;
-    }
 
     ngOnInit() {
         this.breakpointService.isSmallScreen().subscribe(isSmall => {
@@ -34,5 +30,14 @@ export class NavBarComponent implements OnInit {
         });
 
         this.checkCurrentRoute();
+    }
+
+    checkCurrentRoute() {
+        this.isLoginOrRegisterPage = this.router.url === '/login' || this.router.url === '/register';
+        this.isOtherPage = !this.isLoginOrRegisterPage;
+    }
+
+    toggleNavbarModal() {
+        this.openNavbarModal = !this.openNavbarModal;
     }
 }
