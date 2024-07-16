@@ -15,6 +15,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { ArticlesComponent } from './pages/articles/articles.component';
 import { NavBarComponent } from './components/navbar/navbar.component';
+import { MatDialogModule } from '@angular/material/dialog';
 
 @NgModule({
   declarations: [
@@ -36,6 +37,7 @@ import { NavBarComponent } from './components/navbar/navbar.component';
     MatButtonModule,
     MatIconModule,
     MatCardModule,
+    MatDialogModule,
     HttpClientModule, 
   ],
   providers: [],
