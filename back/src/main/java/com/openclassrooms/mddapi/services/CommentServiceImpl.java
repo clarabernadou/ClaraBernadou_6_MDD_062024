@@ -11,6 +11,7 @@ import com.openclassrooms.mddapi.dto.CommentDTO;
 import com.openclassrooms.mddapi.entity.Comment;
 import com.openclassrooms.mddapi.repository.AuthenticationRepository;
 import com.openclassrooms.mddapi.repository.CommentRepository;
+import com.openclassrooms.mddapi.services.interfaces.CommentService;
 
 @Service
 public class CommentServiceImpl implements CommentService {

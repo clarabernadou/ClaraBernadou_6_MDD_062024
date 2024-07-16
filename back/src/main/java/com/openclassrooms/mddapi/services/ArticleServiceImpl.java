@@ -3,6 +3,7 @@ package com.openclassrooms.mddapi.services;
 import com.openclassrooms.mddapi.entity.Article;
 import com.openclassrooms.mddapi.repository.ArticleRepository;
 import com.openclassrooms.mddapi.repository.AuthenticationRepository;
+import com.openclassrooms.mddapi.services.interfaces.ArticleService;
 import com.openclassrooms.mddapi.controllers.advice.exceptions.NotFoundException;
 import com.openclassrooms.mddapi.dto.ArticleDTO;
 
@@ -10,7 +11,6 @@ import org.modelmapper.ModelMapper;
 import org.modelmapper.PropertyMap;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
 import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
@@ -42,7 +42,7 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
-    public Optional<String> createArticle(ArticleDTO articleDTO, Principal principalUser) throws IOException {
+    public Optional<String> createArticle(ArticleDTO articleDTO, Principal principalUser) {
         Article article = modelMapper.map(articleDTO, Article.class);
 
         if (principalUser.getName().contains("@")) {
