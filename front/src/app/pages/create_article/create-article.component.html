@@ -1,0 +1,36 @@
+<div class="flex flex-col items-center justify-center">
+    <app-navbar></app-navbar>
+    <div class="w-screen flex flex-col p-5 gap-5">
+        <mat-icon aria-hidden="false" aria-label="Retourner à la page home" routerLink="/" fontIcon="keyboard_backspace" style="transform: scale(2); cursor: pointer;" class="absolute"></mat-icon>
+        <h2 class="text-center">Créer un nouvel article</h2>
+        <form [formGroup]="form" (ngSubmit)="submit()" class="w-full flex flex-col gap-6 items-center">
+            <div class="flex flex-col w-64">
+              <select matInput formControlName="theme_id" class="custom-form-input no-arrow" placeholder="Sélectionner un thème">
+                <option value="" disabled selected class="text-gray-500">Sélectionner un thème</option>
+                <option *ngFor="let theme of themes | async" [value]="theme.id">{{ theme.title }}</option>
+              </select>
+              <mat-error *ngIf="submitted && form.get('theme_id')?.hasError('required')" class="text-xs mt-1">
+                Ce champ est requis.
+              </mat-error>
+            </div>
+            <div class="flex flex-col w-64">
+              <input matInput formControlName="title" class="custom-form-input" placeholder="Titre de l’article">
+              <mat-error *ngIf="submitted && form.get('title')?.hasError('required')" class="text-xs mt-1">
+                Ce champ est requis.
+              </mat-error>
+            </div>
+            <div class="flex flex-col w-64">
+              <textarea matInput formControlName="content" class="custom-form-input" placeholder="Contenu de l’article"></textarea>
+              <mat-error *ngIf="submitted && form.get('content')?.hasError('required')" class="text-xs mt-1">
+                Ce champ est requis.
+              </mat-error>
+            </div>
+          <mat-error *ngIf="onError">
+            {{ errorMessage }}
+          </mat-error>
+          <button type="submit" [disabled]="loading" class="primary-btn">
+            {{ loading ? 'Création en cours...' : 'Créer' }}
+          </button>
+        </form>
+    </div>
+</div>
