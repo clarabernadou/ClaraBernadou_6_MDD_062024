@@ -32,4 +32,22 @@ export class ThemeService {
     });
     return this.httpClient.get<Theme[]>(`${this.baseUrl}/`, { headers });
   }
+
+  subscribeToTheme(id: number) {
+    const token = localStorage.getItem('token');
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    });
+    return this.httpClient.post(`${this.baseUrl}/subscribe/${id}`, {}, { headers });
+  }
+
+  unsubscribeToTheme(id: number) {
+    const token = localStorage.getItem('token');
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    });
+    return this.httpClient.delete(`${this.baseUrl}/unsubscribe/${id}`, { headers });
+  }
 }

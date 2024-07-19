@@ -1,6 +1,7 @@
 export interface Theme {
     id?: number;
     title: string;
-    content: string;
+    description: string;
     created_at?: Date;
+    subscribed?: boolean;
 }
