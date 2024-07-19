@@ -6,6 +6,7 @@ import { BreakpointService } from 'src/app/services/breakpoint.service';
 import { UserService } from 'src/app/services/user.service';
 import { forkJoin } from 'rxjs';
 import { map, mergeMap } from 'rxjs/operators';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-articles',
@@ -25,9 +26,12 @@ export class ArticlesComponent implements OnInit {
     private breakpointService: BreakpointService, 
     private articleService: ArticleService,
     private userService: UserService,
+    private router: Router,
   ) {}
 
   ngOnInit() {
+    if (!localStorage.getItem('token')) this.router.navigate(['/login']);
+
     this.breakpointService.isSmallScreen().subscribe(isSmall => {
       this.isSmallScreen = isSmall;
     });
@@ -43,7 +47,7 @@ export class ArticlesComponent implements OnInit {
     this.articleService.getAllArticles().pipe(
       mergeMap((articles: Article[]) => {
         const articleObservables = articles.map((article: Article) => {
-          return this.userService.getUserById(article.owner_id).pipe(
+          return this.userService.getUserById(article.owner_id!).pipe(
             map((user: User) => ({
               ...article,
               author: user.username
@@ -68,9 +72,9 @@ export class ArticlesComponent implements OnInit {
 
   sortArticles(): void {
     if (this.isAscendingOrder) {
-      this.articles.sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
+      this.articles.sort((a, b) => new Date(a.created_at!).getTime() - new Date(b.created_at!).getTime());
     } else {
-      this.articles.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+      this.articles.sort((a, b) => new Date(b.created_at!).getTime() - new Date(a.created_at!).getTime());
     }
     this.isAscendingOrder = !this.isAscendingOrder;
   }
