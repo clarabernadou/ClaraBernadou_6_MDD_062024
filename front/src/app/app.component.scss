@@ -30,6 +30,13 @@ p {
   padding: 0.5rem;
 }
 
+.custom-form-input {
+  border: 1.5px solid #7763C5;
+  border-radius: 0.375rem;
+  padding: 0.5rem;
+  width: 100%;
+}
+
 .primary-btn {
   color: white;
   font-weight: 500;
@@ -46,4 +53,17 @@ p {
   &:active {
     transform: scale(0.95);
   }
+}
+
+.custom-disconnect-text {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.ellipsis {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }

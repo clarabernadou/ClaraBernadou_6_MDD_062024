@@ -16,6 +16,10 @@ import { HttpClientModule } from '@angular/common/http';
 import { ArticlesComponent } from './pages/articles/articles.component';
 import { NavBarComponent } from './components/navbar/navbar.component';
 import { MatDialogModule } from '@angular/material/dialog';
+import { ArticleDetailComponent } from './pages/article_detail/article-detail.component';
+import { CreateArticleComponent } from './pages/create_article/create-article.component';
+import { ProfileComponent } from './pages/profile/profile.component';
+import { ThemesComponent } from './pages/themes/themes.component';
 
 @NgModule({
   declarations: [
@@ -24,7 +28,11 @@ import { MatDialogModule } from '@angular/material/dialog';
     RegisterComponent,
     LoginComponent,
     ArticlesComponent,
-    NavBarComponent
+    ArticleDetailComponent,
+    CreateArticleComponent,
+    NavBarComponent,
+    ProfileComponent,
+    ThemesComponent,
   ],
   imports: [
     BrowserModule,
