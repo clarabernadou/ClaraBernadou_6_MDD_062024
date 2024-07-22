@@ -21,4 +21,24 @@ export class UserService {
 
     return this.httpClient.get<User>(`${this.baseUrl}/${id}`, { headers });
   }
+
+  getMe(): Observable<User> {
+    const token = localStorage.getItem('token');
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    });
+
+    return this.httpClient.get<User>(`${this.baseUrl}/me`, { headers });
+  }
+
+  updateMe(user: User): Observable<User> {
+    const token = localStorage.getItem('token');
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    });
+
+    return this.httpClient.put<User>(`${this.baseUrl}/me`, user, { headers });
+  }
 }

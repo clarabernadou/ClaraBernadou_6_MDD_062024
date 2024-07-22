@@ -1,10 +1,6 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
-import { AuthToken } from '../interfaces/authSession.interface';
-import { Login, Register } from '../interfaces/login.interface';
 import { environment } from '../../environments/environment';
-import { Article } from '../interfaces/article.interface';
 import { Theme } from '../interfaces/theme.interface';
 
 @Injectable({
@@ -15,7 +11,7 @@ export class ThemeService {
 
   constructor(private httpClient: HttpClient) {}
 
-  getTheme(id: number) {
+  getThemeById(id: number) {
     const token = localStorage.getItem('token');
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
