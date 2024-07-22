@@ -1,9 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { forkJoin, map, mergeMap, Observable } from 'rxjs';
+import { map, mergeMap } from 'rxjs';
 import { Theme } from 'src/app/interfaces/theme.interface';
+import { User } from 'src/app/interfaces/user.interface';
 import { BreakpointService } from 'src/app/services/breakpoint.service';
 import { ThemeService } from 'src/app/services/theme.service';
+import { UserService } from 'src/app/services/user.service';
 
 @Component({
   selector: 'app-themes',
@@ -22,6 +24,7 @@ export class ThemesComponent implements OnInit {
     private breakpointService: BreakpointService,
     private router: Router,
     public themeService: ThemeService,
+    public userService: UserService,
   ) {}
 
   ngOnInit() {
@@ -41,66 +44,35 @@ export class ThemesComponent implements OnInit {
   public getAllThemes(): void {
     this.themeService.getAllThemes().pipe(
       mergeMap((themes: Theme[]) => {
-        const themeObservables = themes.map((theme: Theme) => {
-          return this.themeService.getTheme(theme.id!).pipe(
-            map((theme: Theme) => ({
-              ...theme,
-            }))
-          );
-        });
-        return forkJoin(themeObservables);
+        return this.userService.getMe().pipe(
+          map((user: User) => {
+            return themes.filter(theme => !user.subscriptions!.map(sub => sub.id).includes(theme.id));
+          })
+        );
       })
-    ).subscribe(
-      (themes: Theme[]) => {
-        this.themes = themes;
-        this.loading = false
+    ).subscribe({
+      next: (filteredThemes: Theme[]) => {
+        this.themes = filteredThemes;
+        this.loading = false;
       },
-      error => {
+      error: (error) => {
         this.loading = false;
         this.onError = true;
         this.errorMessage = error.error?.message || 'An error occurred. Please try again.';
       }
-    );
+    });
   }
 
   public subscribeToTheme(themeId: number): void {
-    this.themeService.subscribeToTheme(themeId).subscribe(
-      (res: any) => {
-        this.themes = this.themes.map((theme: Theme) => {
-          if (theme.id === themeId) {
-            return {
-              ...theme,
-              subscribed: true,
-            };
-          }
-          return theme;
-        });
+    this.themeService.subscribeToTheme(themeId).subscribe({
+      next: () => {
+        this.getAllThemes();
       },
-      error => {
+      error: (error) => {
         this.onError = true;
         this.errorMessage = error.error?.message || 'An error occurred. Please try again.';
       }
-    );
-  }
-
-  public unsubscribeToTheme(themeId: number): void {
-    this.themeService.unsubscribeToTheme(themeId).subscribe(
-      (res: any) => {
-        this.themes = this.themes.map((theme: Theme) => {
-          if (theme.id === themeId) {
-            return {
-              ...theme,
-              subscribed: false,
-            };
-          }
-          return theme;
-        });
-      },
-      error => {
-        this.onError = true;
-        this.errorMessage = error.error?.message || 'An error occurred. Please try again.';
-      }
-    );
+    });
   }
 }
 
