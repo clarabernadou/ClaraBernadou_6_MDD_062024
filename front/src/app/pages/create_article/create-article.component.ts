@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { catchError, forkJoin, map, merge, mergeMap, Observable, of } from 'rxjs';
+import { forkJoin, map, mergeMap, Observable } from 'rxjs';
 import { Article } from 'src/app/interfaces/article.interface';
 import { Theme } from 'src/app/interfaces/theme.interface';
 import { ArticleService } from 'src/app/services/article.service';
@@ -67,7 +67,7 @@ export class CreateArticleComponent implements OnInit {
     return this.themeService.getAllThemes().pipe(
       mergeMap((themes: Theme[]) => {
         const themeObservables = themes.map((theme: Theme) => {
-          return this.themeService.getTheme(theme.id!).pipe(
+          return this.themeService.getThemeById(theme.id!).pipe(
             map((theme: Theme) => ({
               ...theme,
             }))
