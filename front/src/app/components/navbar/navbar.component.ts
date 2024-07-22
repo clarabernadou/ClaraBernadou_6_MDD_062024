@@ -40,4 +40,8 @@ export class NavBarComponent implements OnInit {
     toggleNavbarModal() {
         this.openNavbarModal = !this.openNavbarModal;
     }
+
+    redirectToArticlePage() {
+        this.router.navigate(['/articles']);
+    }
 }
