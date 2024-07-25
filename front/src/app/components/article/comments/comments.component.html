@@ -1,8 +1,12 @@
-<div class="w-full flex flex-col gap-6">
-    <div *ngFor="let comment of comments" class="w-full flex flex-col-reverse md:flex-row items-end md:items-center justify-center gap-6">
-        <p>{{ comment.username }}</p>
-        <div class="w-full md:w-2/4 md:bg-[#EEEEEE] rounded-lg md:p-6">
-          <p>{{ comment.content }}</p>
-        </div>
+<section class="flex flex-col items-center gap-6">
+    <p *ngIf="!comments || comments.length === 0">Personne n'a commenté cet article.</p>
+    <div *ngIf="comments && comments.length > 0" class="w-full flex flex-col items-center gap-6 custom-scrollbar">
+      <div *ngFor="let comment of comments" class="w-full md:w-2/4 flex flex-col-reverse items-end justify-center gap-6 md:flex-row md:items-center">
+          <p class="w-auto">{{ comment.username }}</p>
+          <div class="w-full md:bg-[#EEEEEE] rounded-lg md:p-6">
+            <p>{{ comment.content }}</p>
+          </div>
+      </div>
     </div>
-</div>
+    <app-create-comment-form (updateComments)="getAllComments()"></app-create-comment-form>
+</section>
