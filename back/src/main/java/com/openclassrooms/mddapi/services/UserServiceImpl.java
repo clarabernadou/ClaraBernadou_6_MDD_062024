@@ -1,6 +1,5 @@
 package com.openclassrooms.mddapi.services;
 
-import java.security.Principal;
 import java.util.Optional;
 
 import org.modelmapper.ModelMapper;
@@ -29,7 +28,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Optional<UserDTO> getUser(Long id) {
+    public Optional<UserDTO> getUserById(Long id) {
         Optional<Auth> user = authenticationRepository.findById(id);
 
         if (user.isEmpty()) throw new NotFoundException("User not found");
@@ -38,17 +37,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public AuthResponse me(String usernameOrEmail, Principal principalUser, UserDTO userDTO) {
-        Optional<Auth> user = authenticationRepository.findByEmail(usernameOrEmail);
-        if(user.isEmpty()) user = authenticationRepository.findByUsername(usernameOrEmail);
-
-        if (user.isEmpty()) throw new NotFoundException("User not found !");
-
-        return modelMapper.map(user.get(), AuthResponse.class);
+    public Optional<AuthResponse> me(UserDTO userDTO) {
+        AuthResponse authResponse = modelMapper.map(userDTO, AuthResponse.class);
+        authResponse.setToken(jwtService.generateToken(userDTO.getEmail()));
+        return Optional.of(authResponse);
     }
 
     @Override
-    public AuthResponse updateMe(String usernameOrEmail, Principal principalUser, UserDTO userDTO) {
+    public Optional<AuthResponse> updateMe(String usernameOrEmail, UserDTO userDTO) {
         Optional<Auth> user = authenticationRepository.findByEmail(usernameOrEmail);
         if(user.isEmpty()) user = authenticationRepository.findByUsername(usernameOrEmail);
 
@@ -60,6 +56,17 @@ public class UserServiceImpl implements UserService {
         authenticationRepository.save(user.get());
         AuthResponse authResponse = modelMapper.map(user.get(), AuthResponse.class);
         authResponse.setToken(jwtService.generateToken(user.get().getEmail()));
-        return authResponse;
+        return Optional.of(authResponse);
+
+    }
+
+    @Override
+    public Optional<UserDTO> getUserByUsernameOrEmail(String usernameOrEmail) {
+        Optional<Auth> user = authenticationRepository.findByEmail(usernameOrEmail);
+        if(user.isEmpty()) user = authenticationRepository.findByUsername(usernameOrEmail);
+
+        if (user.isEmpty()) throw new NotFoundException("User not found !");
+
+        return Optional.of(modelMapper.map(user.get(), UserDTO.class));
     }
 }

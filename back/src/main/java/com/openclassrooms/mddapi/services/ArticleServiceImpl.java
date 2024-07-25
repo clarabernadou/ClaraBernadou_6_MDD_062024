@@ -9,6 +9,7 @@ import com.openclassrooms.mddapi.dto.ArticleDTO;
 
 import org.modelmapper.ModelMapper;
 import org.modelmapper.PropertyMap;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.security.Principal;
@@ -56,12 +57,12 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
-    public Optional<ArticleDTO> getArticle(Long id) {
+    public ResponseEntity<ArticleDTO> getArticle(Long id) {
         Optional<Article> article = articleRepository.findById(id);
 
         if (article.isEmpty()) throw new NotFoundException("Article not found");
 
-        return Optional.of(modelMapper.map(article.get(), ArticleDTO.class));
+        return ResponseEntity.ok(modelMapper.map(article.get(), ArticleDTO.class));
     }
 
     @Override

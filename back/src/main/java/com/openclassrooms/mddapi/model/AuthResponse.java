@@ -25,4 +25,9 @@ public class AuthResponse extends RegisterDTO {
     private String token;
 
     private List<Theme> subscriptions;
+
+    public AuthResponse orElseThrow(Object object) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'orElseThrow'");
+    }
 }

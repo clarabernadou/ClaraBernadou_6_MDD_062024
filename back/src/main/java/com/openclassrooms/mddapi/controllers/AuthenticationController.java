@@ -7,47 +7,35 @@ import com.openclassrooms.mddapi.dto.LoginDTO;
 import com.openclassrooms.mddapi.dto.RegisterDTO;
 import com.openclassrooms.mddapi.model.TokenResponse;
 import com.openclassrooms.mddapi.services.interfaces.AuthenticationService;
+import com.openclassrooms.mddapi.services.interfaces.ValidationService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Optional;
-import java.util.stream.Collectors;
-
 
 @RestController
 @RequestMapping("/api")
 public class AuthenticationController {
 
+    private final AuthenticationService authenticationService;
+    private final ValidationService validationService;
+
     @Autowired
-    private AuthenticationService authenticationService;
+    public AuthenticationController(AuthenticationService authenticationService, ValidationService validationService) {
+        this.authenticationService = authenticationService;
+        this.validationService = validationService;
+    }
 
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
-    public TokenResponse registerUser(@Valid @RequestBody RegisterDTO registerDTO, BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            String errors = bindingResult.getFieldErrors().stream()
-                    .map(error -> error.getField() + ": " + error.getDefaultMessage())
-                    .collect(Collectors.joining(", "));
-            throw new BadRequestException(errors);
-        }
-
-        Optional<String> token = authenticationService.registerUser(registerDTO);
-        return new TokenResponse(token.get());
+    public TokenResponse registerUser(@Valid @RequestBody RegisterDTO registerDTO) {
+        validationService.validateRegister(registerDTO);
+        return new TokenResponse(authenticationService.registerUser(registerDTO).orElseThrow(() -> new BadRequestException("Registration failed")));
     }
 
     @PostMapping("/login")
-    public TokenResponse loginUser(@Valid @RequestBody LoginDTO loginDTO, BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            String errors = bindingResult.getFieldErrors().stream()
-                    .map(error -> error.getField() + ": " + error.getDefaultMessage())
-                    .collect(Collectors.joining(", "));
-            throw new BadRequestException(errors);
-        }
-
-        Optional<String> token = authenticationService.loginUser(loginDTO);
-        return new TokenResponse(token.get());
+    public TokenResponse loginUser(@Valid @RequestBody LoginDTO loginDTO) {
+        validationService.validateLogin(loginDTO);
+        return new TokenResponse(authenticationService.loginUser(loginDTO).orElseThrow(() -> new BadRequestException("Login failed")));
     }
 }

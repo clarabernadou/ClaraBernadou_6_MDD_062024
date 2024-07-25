@@ -1,8 +1,6 @@
 package com.openclassrooms.mddapi.controllers;
 
 import java.security.Principal;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
@@ -16,17 +14,23 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.openclassrooms.mddapi.controllers.advice.exceptions.UnauthorizedException;
 import com.openclassrooms.mddapi.dto.CommentDTO;
 import com.openclassrooms.mddapi.model.MessageResponse;
 import com.openclassrooms.mddapi.services.interfaces.CommentService;
+import com.openclassrooms.mddapi.services.interfaces.ValidationService;
 
 @RestController
 @RequestMapping("/api/auth")
 public class CommentController {
 
+    private final CommentService commentService;
+    private final ValidationService validationService;
+
     @Autowired
-    private CommentService commentService;
+    public CommentController(CommentService commentService, ValidationService validationService) {
+        this.commentService = commentService;
+        this.validationService = validationService;
+    }
 
     @GetMapping("/article/{articleId}/comment")
     public ResponseEntity<?> getComments(@PathVariable Long articleId) {
@@ -34,14 +38,8 @@ public class CommentController {
     }
 
     @PostMapping("/article/{articleId}/comment")
-    public ResponseEntity<?> createComment(@Valid @RequestBody CommentDTO commentDTO, @PathVariable Long articleId, Principal principalUser, BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            String errors = bindingResult.getFieldErrors().stream()
-                    .map(error -> error.getField() + ": " + error.getDefaultMessage())
-                    .collect(Collectors.joining(", "));
-            throw new UnauthorizedException(errors);
-        }
-        Optional<String> response = commentService.createComment(commentDTO, articleId, principalUser);
-        return ResponseEntity.ok(new MessageResponse(response.get()));
+    public ResponseEntity<MessageResponse> createComment(@Valid @RequestBody CommentDTO commentDTO, @PathVariable Long articleId, Principal principalUser, BindingResult bindingResult) {
+        validationService.validateComment(commentDTO, bindingResult);
+        return ResponseEntity.ok(new MessageResponse(commentService.createComment(commentDTO, articleId, principalUser).get()));
     }
 }
