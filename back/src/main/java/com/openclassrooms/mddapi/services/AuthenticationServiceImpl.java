@@ -47,10 +47,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public Optional<String> loginUser(LoginDTO loginDTO) {
-        System.out.println(loginDTO.getEmailOrUsername());
         Optional<Auth> user = authenticationRepository.findByUsername(loginDTO.getEmailOrUsername());
         if (user.isEmpty()) user = authenticationRepository.findByEmail(loginDTO.getEmailOrUsername());
-        System.out.println(user);
 
         if (user.isEmpty() || !passwordEncoder.matches(loginDTO.getPassword(), user.get().getPassword())) throw new UnauthorizedException("Invalid credentials !");
 
