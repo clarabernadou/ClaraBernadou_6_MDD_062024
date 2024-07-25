@@ -20,6 +20,14 @@ import { ArticleDetailComponent } from './pages/article_detail/article-detail.co
 import { CreateArticleComponent } from './pages/create_article/create-article.component';
 import { ProfileComponent } from './pages/profile/profile.component';
 import { ThemesComponent } from './pages/themes/themes.component';
+import { CreateArticleFormComponent } from './components/form/create-article/create-article-form';
+import { CardComponent } from './components/card/card.component';
+import { ArticleComponent } from './components/article/article.component';
+import { CommentsComponent } from './components/article/comments/comments.component';
+import { CreateCommentComponent } from './components/form/create-comment/create-comment-form.component';
+import { LoginFormComponent } from './components/form/login/login-form.component';
+import { RegisterFormComponent } from './components/form/register/register-form.component';
+import { ProfileFormComponent } from './components/form/profile/profile-form.component';
 
 @NgModule({
   declarations: [
@@ -33,6 +41,14 @@ import { ThemesComponent } from './pages/themes/themes.component';
     NavBarComponent,
     ProfileComponent,
     ThemesComponent,
+    CreateArticleFormComponent,
+    CardComponent,
+    ArticleComponent,
+    CommentsComponent,
+    CreateCommentComponent,
+    LoginFormComponent,
+    RegisterFormComponent,
+    ProfileFormComponent,
   ],
   imports: [
     BrowserModule,

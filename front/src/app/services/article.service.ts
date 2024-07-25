@@ -12,7 +12,7 @@ export class ArticleService {
   constructor(private httpClient: HttpClient) {}
 
   getAllArticles() {
-    const token = localStorage.getItem('token');
+    const token = sessionStorage.getItem('token');
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`
@@ -21,7 +21,7 @@ export class ArticleService {
   }
 
   getArticleById(id: string) {
-    const token = localStorage.getItem('token');
+    const token = sessionStorage.getItem('token');
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`
@@ -30,7 +30,7 @@ export class ArticleService {
   }
 
   createArticle(article: Article) {
-    const token = localStorage.getItem('token');
+    const token = sessionStorage.getItem('token');
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`

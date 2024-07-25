@@ -13,7 +13,7 @@ export class UserService {
   constructor(private httpClient: HttpClient) {}
 
   getUserById(id: number): Observable<User> {
-    const token = localStorage.getItem('token');
+    const token = sessionStorage.getItem('token');
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`
@@ -23,7 +23,7 @@ export class UserService {
   }
 
   getMe(): Observable<User> {
-    const token = localStorage.getItem('token');
+    const token = sessionStorage.getItem('token');
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`
@@ -33,7 +33,7 @@ export class UserService {
   }
 
   updateMe(user: User): Observable<User> {
-    const token = localStorage.getItem('token');
+    const token = sessionStorage.getItem('token');
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`

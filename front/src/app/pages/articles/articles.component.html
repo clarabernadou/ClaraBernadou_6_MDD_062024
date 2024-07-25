@@ -1,27 +1,28 @@
 <div class="flex flex-col items-center justify-center" >
     <app-navbar></app-navbar>
-
     <div class="w-screen flex flex-col p-5 gap-5">
-        <div class="w-full flex items-center justify-between gap-5" [ngClass]="{'flex-col': isSmallScreen}">
+        <section class="w-full flex items-center justify-between gap-5" [ngClass]="{'flex-col': isSmallScreen}">
             <button type="button" class="primary-btn" routerLink="/articles/create" >Créer un article</button>
             <div class="flex items-center gap-2" (click)="sortArticles()" style="cursor: pointer;">
-                <p class="font-extrabold">Trier par</p>
+                <p class="font-extrabold" style="font-size: 16px; font-weight: 700;">Trier par</p>
                 <mat-icon *ngIf="!isAscendingOrder" aria-hidden="false" aria-label="Trier les articles par ordre dsc" fontIcon="south"></mat-icon>
                 <mat-icon *ngIf="isAscendingOrder" aria-hidden="false" aria-label="Trier les articles par ordre asc" fontIcon="north"></mat-icon>
             </div>
-        </div>
-        <div class="flex w-full">
-            <p *ngIf="!articles || articles.length === 0">Il n'y a aucun article disponible pour le moment</p>
+        </section>
+        <section class="flex w-full">
+            <p *ngIf="!articles || articles.length === 0">Aucun article disponible pour le moment</p>
             <div class="w-full flex flex-wrap justify-between" [ngClass]="{'flex-col': isSmallScreen}">
-                <mat-card *ngFor="let article of articles" [routerLink]="['/articles/detail/', article.id]" [ngStyle]="{'width': isLargeScreen ? 'calc(50% - 24px)' : '100%', 'margin-bottom': '24px'}" style="cursor: pointer;">
-                    <h3 class="font-bold">{{ article.title }}</h3>
-                    <div class="flex gap-12">
-                        <p>{{ article.author }}</p>
-                        <p>{{ article.created_at }}</p>
-                    </div>
-                    <p>Content: {{ article.content }}</p>
-                </mat-card>
+                <app-card 
+                    *ngFor="let article of articles"
+                    [link]="['/articles/detail', article.id!.toString()]"
+                    [title]="article.title" 
+                    [author]="article.author!" 
+                    [createdAt]="article.created_at!" 
+                    [content]="article.content"
+                    [ellipsis]=5
+                    [ngStyle]="{'width': isLargeScreen ? 'calc(50% - 24px)' : '100%', 'margin-bottom': '24px'}" style="cursor: pointer;">
+                </app-card>
             </div>
-        </div>
+        </section>
     </div>
 </div>

@@ -28,7 +28,7 @@ export class ThemesComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    if (!localStorage.getItem('token')) this.router.navigate(['/login']);
+    if (!sessionStorage.getItem('token')) this.router.navigate(['/login']);
 
     this.breakpointService.isSmallScreen().subscribe(isSmall => {
       this.isSmallScreen = isSmall;

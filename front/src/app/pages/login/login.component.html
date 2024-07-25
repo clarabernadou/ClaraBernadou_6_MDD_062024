@@ -1,40 +1,8 @@
-<div class="center" class="flex flex-col justify-center items-center tracking-wider" [ngClass]="{'p-12': isSmallScreen}">
-    <app-navbar></app-navbar>
-
-    <div class="w-full flex flex-col gap-5" [ngClass]="{'p-12': isLargeScreen}">
-      <mat-icon *ngIf="isLargeScreen"aria-hidden="false" aria-label="Retourner à la page home" routerLink="/" fontIcon="keyboard_backspace"style="transform: scale(2)">
-      <span 
-        aria-hidden="false" 
-        aria-label="Retourner à la page home" 
-        routerLink="/" 
-        class="material-symbols-rounded" 
-        style="transform: scale(2); cursor: pointer;"
-      >
-        keyboard_backspace
-      </span>
-      </mat-icon>
-      <h1 class="text-center">Se connecter</h1>
-      <form [formGroup]="form" (ngSubmit)="submit()" class="w-full flex flex-col gap-6 items-center">
-          <div class="flex flex-col w-64">
-            <label>E-mail ou nom d'utilisateur</label>
-            <input matInput formControlName="emailOrUsername" class="custom-input">
-            <mat-error *ngIf="submitted && form.get('emailOrUsername')?.hasError('required')" class="text-xs mt-1">
-              Ce champ est requis.
-            </mat-error>
-          </div>
-          <div class="flex flex-col w-64">
-            <mat-label>Mot de passe</mat-label>
-            <input matInput type="password" formControlName="password" class="custom-input">
-            <mat-error *ngIf="submitted && form.get('password')?.hasError('required')" class="text-xs mt-1">
-              Ce champ est requis.
-            </mat-error>
-          </div>
-        <mat-error *ngIf="onError">
-          {{ errorMessage }}
-        </mat-error>
-        <button type="submit" [disabled]="loading" class="primary-btn">
-          {{ loading ? 'Connexion en cours...' : 'Se connecter' }}
-        </button>
-      </form>
-    </div>
+<section class="center" class="flex flex-col justify-center items-center tracking-wider" [ngClass]="{'p-12': isSmallScreen}">
+  <app-navbar></app-navbar>
+  <div class="w-full flex flex-col gap-5" [ngClass]="{'p-12': isLargeScreen}">
+    <mat-icon *ngIf="isLargeScreen" aria-hidden="false" aria-label="Retourner à la page principale" routerLink="/" fontIcon="keyboard_backspace" class="text-5xl relative left-0 top-0" style="cursor: pointer;"></mat-icon>
+    <h1 class="text-center">Se connecter</h1>
+    <app-login-form></app-login-form>
   </div>
+</section>

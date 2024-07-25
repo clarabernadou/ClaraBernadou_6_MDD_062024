@@ -17,7 +17,10 @@ export class HomeComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    if (localStorage.getItem('token')) this.router.navigate(['/articles']);
+    if (sessionStorage.getItem('token')) {
+      this.router.navigate(['/articles']);
+      return;
+    };
 
     this.breakpointService.isSmallScreen().subscribe(isSmall => {
       this.isSmallScreen = isSmall;

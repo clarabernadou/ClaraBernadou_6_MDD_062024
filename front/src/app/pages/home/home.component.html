@@ -1,8 +1,8 @@
-<div class="h-screen flex flex-col items-center justify-center" [ngClass]="{'gap-6': isSmallScreen}" >
+<section class="h-screen flex flex-col items-center justify-center" [ngClass]="{'gap-6': isSmallScreen}" >
   <img src="/assets/logo_p6.png" alt="logo" [ngStyle]="{'width': isLargeScreen ? '600px' : '300px'}" />
   <div class="flex gap-12" [ngClass]="{'flex-col gap-6': isSmallScreen}">
     <button class="border border-black rounded-lg py-2 px-6 hover:bg-gray-100" routerLink="/login">Se connecter</button>
     <button href class="border border-black rounded-lg py-2 px-6 hover:bg-gray-100" routerLink="/register">S'inscrire</button>
   </div>
   <a href="https://github.com/clarabernadou" class="text-xs github-link">© 2024 | Created by Clara Bernadou</a>
-</div>
+</section>

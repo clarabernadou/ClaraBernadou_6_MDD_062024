@@ -30,7 +30,7 @@ export class ArticlesComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    if (!localStorage.getItem('token')) this.router.navigate(['/login']);
+    if (!sessionStorage.getItem('token')) this.router.navigate(['/login']);
 
     this.breakpointService.isSmallScreen().subscribe(isSmall => {
       this.isSmallScreen = isSmall;
@@ -56,18 +56,18 @@ export class ArticlesComponent implements OnInit {
         });
         return forkJoin(articleObservables);
       })
-    ).subscribe(
-      (articlesWithAuthors: Article[]) => {
+    ).subscribe({
+      next: (articlesWithAuthors: Article[]) => {
         this.articles = articlesWithAuthors;
         this.sortArticles();
         this.loading = false;
       },
-      error => {
+      error: (error) => {
         this.loading = false;
         this.onError = true;
         this.errorMessage = error.error?.message || 'An error occurred. Please try again.';
       }
-    );
+    });
   }
 
   sortArticles(): void {
