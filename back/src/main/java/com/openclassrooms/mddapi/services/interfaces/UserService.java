@@ -31,13 +31,5 @@ public interface UserService {
      * @param themeId
      * @return
      */
-    Optional<String> subscription(Principal principalUser, Long themeId);
-
-    /**
-     * 
-     * @param principalUser
-     * @param themeId
-     * @return
-     */
-    Optional<UserDTO> getUser(Long id); 
+    Optional<UserDTO> getUser(Long id);
 }
