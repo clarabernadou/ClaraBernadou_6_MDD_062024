@@ -2,7 +2,7 @@
     <app-navbar></app-navbar>
     <div class="w-full flex flex-wrap justify-between p-5 gap-5" [ngClass]="{'flex-col': isSmallScreen}">
         <p *ngIf="!themes || themes.length === 0">Aucun theme disponible pour le moment</p>
-        <div class="w-full flex flex-wrap justify-between" [ngClass]="{'flex-col': isSmallScreen}">
+        <div *ngIf="themes && themes.length > 0" class="w-full flex flex-wrap justify-between" [ngClass]="{'flex-col': isSmallScreen}">
             <app-card
                 *ngFor="let theme of themes"
                 [title]="theme.title"
