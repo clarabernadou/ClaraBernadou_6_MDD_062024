@@ -7,25 +7,30 @@ import com.openclassrooms.mddapi.entity.Theme;
 
 public interface ThemeService {
     /**
-     * @param theme
+     * 
+     * @return
+     */
+    List<Theme> getThemes();
+
+    /**
+     * 
+     * @param id
      * @return
      */
     Optional<Theme> getTheme(Long id);
 
     /**
+     * 
      * @param theme
-     * @return
-     */
-    List<Theme> getAllThemes();
-
-    /**
-     * @param theme
+     * @param principalUser
      * @return
      */
     Optional<String> subscribeTheme(Long id, Principal principalUser);
 
     /**
-     * @param theme
+     * 
+     * @param id
+     * @param principalUser
      * @return
      */
     Optional<String> unsubscribeTheme(Long id, Principal principalUser);

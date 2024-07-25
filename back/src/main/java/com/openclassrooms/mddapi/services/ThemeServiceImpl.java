@@ -1,11 +1,12 @@
 package com.openclassrooms.mddapi.services;
 
 import java.security.Principal;
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.openclassrooms.mddapi.controllers.advice.exceptions.NotFoundException;
@@ -22,38 +23,29 @@ public class ThemeServiceImpl implements ThemeService {
 
     private final AuthenticationRepository authenticationRepository;
 
-    private final ModelMapper modelMapper;
-
-    public ThemeServiceImpl(ThemeRepository themeRepository, AuthenticationRepository authenticationRepository, ModelMapper modelMapper) {
+    @Autowired
+    public ThemeServiceImpl(ThemeRepository themeRepository, AuthenticationRepository authenticationRepository) {
         this.themeRepository = themeRepository;
         this.authenticationRepository = authenticationRepository;
-        this.modelMapper = modelMapper;
+    }
+
+    @Override
+    public List<Theme> getThemes() {
+        Iterable<Theme> themesIterable = themeRepository.findAll();
+        return StreamSupport.stream(themesIterable.spliterator(), false)
+                            .collect(Collectors.toList());
     }
 
     @Override
     public Optional<Theme> getTheme(Long id) {
-        Optional<Theme> theme = themeRepository.findById(id);
-
-        if (theme.isEmpty()) throw new NotFoundException("Theme not found");
-
-        return Optional.of(modelMapper.map(theme.get(), Theme.class));
-    }
-
-    @Override
-    public List<Theme> getAllThemes() {
-        Iterable<Theme> themesIterable = themeRepository.findAll();
-        List<Theme> themes = StreamSupport.stream(themesIterable.spliterator(), false)
-                                        .collect(Collectors.toList());
-
-        if (themes.isEmpty()) throw new NotFoundException("No themes found");
-
-        return themes;
+        return themeRepository.findById(id);
     }
 
     @Override
     public Optional<String> subscribeTheme(Long id, Principal principalUser) {
         Optional<Theme> theme = themeRepository.findById(id);
         Optional<Auth> user = authenticationRepository.findByEmail(principalUser.getName());
+        if(user.isEmpty()) user = authenticationRepository.findByUsername(principalUser.getName());
 
         if (theme.isEmpty()) throw new NotFoundException("Theme not found");
         if (user.isEmpty()) throw new NotFoundException("User not found");
@@ -67,6 +59,7 @@ public class ThemeServiceImpl implements ThemeService {
     public Optional<String> unsubscribeTheme(Long id, Principal principalUser) {
         Optional<Theme> theme = themeRepository.findById(id);
         Optional<Auth> user = authenticationRepository.findByEmail(principalUser.getName());
+        if(user.isEmpty()) user = authenticationRepository.findByUsername(principalUser.getName());
 
         if (theme.isEmpty()) throw new NotFoundException("Theme not found");
         if (user.isEmpty()) throw new NotFoundException("User not found");
