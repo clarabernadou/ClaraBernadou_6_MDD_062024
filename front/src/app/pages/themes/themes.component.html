@@ -1,15 +1,15 @@
 <div class="flex flex-col items-center justify-center">
     <app-navbar></app-navbar>
     <div class="w-full flex flex-wrap justify-between p-5 gap-5" [ngClass]="{'flex-col': isSmallScreen}">
-        <p *ngIf="!themes || themes.length === 0">Il n'y a aucun theme disponible pour le moment</p>
+        <p *ngIf="!themes || themes.length === 0">Aucun theme disponible pour le moment</p>
         <div class="w-full flex flex-wrap justify-between" [ngClass]="{'flex-col': isSmallScreen}">
-            <mat-card *ngFor="let theme of themes" [ngStyle]="{'width': isLargeScreen ? 'calc(50% - 24px)' : '100%', 'margin-bottom': '24px'}">
-                <h3 class="font-bold">{{ theme.title }}</h3>
-                <div class="flex flex-col items-center gap-4">
-                    <p class="ellipsis">Description: {{ theme.description }}</p>
-                    <button type="button" class="primary-btn" (click)="subscribeToTheme(theme.id!)">S'abonner</button>
-                </div>
-            </mat-card>
+            <app-card
+                *ngFor="let theme of themes"
+                [title]="theme.title"
+                [content]="theme.description"
+                [buttonText]="'S\'abonner'"
+                (buttonClick)="subscribeToTheme(theme.id!)">
+            </app-card>
         </div>
     </div>
 </div>

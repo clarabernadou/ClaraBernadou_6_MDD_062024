@@ -12,7 +12,7 @@ export class ThemeService {
   constructor(private httpClient: HttpClient) {}
 
   getThemeById(id: number) {
-    const token = localStorage.getItem('token');
+    const token = sessionStorage.getItem('token');
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`
@@ -21,7 +21,7 @@ export class ThemeService {
   }
 
   getAllThemes() {
-    const token = localStorage.getItem('token');
+    const token = sessionStorage.getItem('token');
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`
@@ -30,7 +30,7 @@ export class ThemeService {
   }
 
   subscribeToTheme(id: number) {
-    const token = localStorage.getItem('token');
+    const token = sessionStorage.getItem('token');
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`
@@ -39,7 +39,7 @@ export class ThemeService {
   }
 
   unsubscribeToTheme(id: number) {
-    const token = localStorage.getItem('token');
+    const token = sessionStorage.getItem('token');
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`

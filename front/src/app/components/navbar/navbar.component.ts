@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { BreakpointService } from 'src/app/services/breakpoint.service';
 
@@ -17,16 +17,16 @@ export class NavBarComponent implements OnInit {
 
     constructor(
         private breakpointService: BreakpointService, 
-        private router: Router
+        private router: Router,
     ) {}
 
     ngOnInit() {
         this.breakpointService.isSmallScreen().subscribe(isSmall => {
-        this.isSmallScreen = isSmall;
+            this.isSmallScreen = isSmall;
         });
 
         this.breakpointService.isLargeScreen().subscribe(isLarge => {
-        this.isLargeScreen = isLarge;
+            this.isLargeScreen = isLarge;
         });
 
         this.checkCurrentRoute();
@@ -41,7 +41,7 @@ export class NavBarComponent implements OnInit {
         this.openNavbarModal = !this.openNavbarModal;
     }
 
-    redirectToArticlePage() {
-        this.router.navigate(['/articles']);
+    navigate(path: string): void {
+        this.router.navigate([path]);
     }
 }
