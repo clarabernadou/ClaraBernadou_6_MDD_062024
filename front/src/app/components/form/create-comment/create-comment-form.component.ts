@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { CommentService } from 'src/app/services/comment.service';
@@ -10,14 +10,16 @@ import { BreakpointService } from 'src/app/services/breakpoint.service';
     templateUrl: './create-comment-form.component.html',
     styleUrls: ['../../../app.component.scss'],
 })
-export class CreateCommentComponent implements OnInit {
-  public loading = true;
+export class CreateCommentFormComponent implements OnInit {
+  public loading = false;
   public onError = false;
   public errorMessage = '';
   public submitted = false;
   public comments: Comment[] = [];
   public isSmallScreen = false;
   public isLargeScreen = false;
+
+  @Output() updateComments = new EventEmitter<void>();
 
   public form = this.fb.group({
     content: [
@@ -46,13 +48,33 @@ export class CreateCommentComponent implements OnInit {
   }
 
   public submitComment(): void {
-    const articleId = Number(this.activatedRouter.snapshot.paramMap.get('id')!);
+    if (this.form.invalid) {
+      this.submitted = true;
+      this.form.markAllAsTouched();
+      return;
+    }
 
+    this.loading = true;
+    this.onError = false;
+    this.errorMessage = '';
+
+    const articleId = Number(this.activatedRouter.snapshot.paramMap.get('id')!);
     const comment: Comment = {
       content: this.form.get('content')!.value!,
-    };
+    }
 
-    this.commentService.createComment(articleId, comment).subscribe();
+    this.commentService.createComment(articleId, comment).subscribe({
+      next: () => {
+        this.loading = false;
+        this.form.reset();
+        this.updateComments.emit();
+      },
+      error: (error) => {
+        this.loading = false;
+        this.onError = true;
+        this.errorMessage = error.error.message;
+      }
+    });
   }
 }
 
