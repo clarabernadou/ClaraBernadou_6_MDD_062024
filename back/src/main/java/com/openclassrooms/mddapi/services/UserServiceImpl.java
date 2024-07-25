@@ -4,17 +4,13 @@ import java.security.Principal;
 import java.util.Optional;
 
 import org.modelmapper.ModelMapper;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.openclassrooms.mddapi.controllers.advice.exceptions.ConflictException;
 import com.openclassrooms.mddapi.controllers.advice.exceptions.NotFoundException;
 import com.openclassrooms.mddapi.dto.UserDTO;
 import com.openclassrooms.mddapi.entity.Auth;
-import com.openclassrooms.mddapi.entity.Theme;
 import com.openclassrooms.mddapi.model.AuthResponse;
 import com.openclassrooms.mddapi.repository.AuthenticationRepository;
-import com.openclassrooms.mddapi.repository.ThemeRepository;
 import com.openclassrooms.mddapi.services.interfaces.UserService;
 
 @Service
@@ -24,15 +20,12 @@ public class UserServiceImpl implements UserService {
 
     private final ModelMapper modelMapper;
 
-    private final BCryptPasswordEncoder passwordEncoder;
+    private final JWTService jwtService;
 
-    private final ThemeRepository themeRepository;
-
-    public UserServiceImpl(AuthenticationRepository authenticationRepository, ModelMapper modelMapper, JWTService jwtService,BCryptPasswordEncoder passwordEncoder, ThemeRepository themeRepository) {
+    public UserServiceImpl(AuthenticationRepository authenticationRepository, ModelMapper modelMapper, JWTService jwtService) {
         this.authenticationRepository = authenticationRepository;
         this.modelMapper = modelMapper;
-        this.passwordEncoder = passwordEncoder;
-        this.themeRepository = themeRepository;
+        this.jwtService = jwtService;
     }
 
     @Override
@@ -63,23 +56,10 @@ public class UserServiceImpl implements UserService {
 
         user.get().setEmail(userDTO.getEmail());
         user.get().setUsername(userDTO.getUsername());
-        user.get().setPassword(passwordEncoder.encode(userDTO.getPassword()));
+
         authenticationRepository.save(user.get());
-        return modelMapper.map(user.get(), AuthResponse.class);
-    }
-
-    @Override
-    public Optional<String> subscription(Principal principalUser, Long themeId) {
-        Optional<Theme> theme = themeRepository.findById(themeId);
-        Optional<Auth> user = authenticationRepository.findByEmail(principalUser.getName());
-        if(user.isEmpty()) user = authenticationRepository.findByUsername(principalUser.getName());
-
-        if (user.isEmpty()) throw new NotFoundException("User not found !");
-        if (theme.isEmpty()) throw new NotFoundException("Theme not found !");
-        if (user.get().getSubscriptions().contains(theme.get())) throw new ConflictException("Subscription already exists !");
-
-        user.get().getSubscriptions().add(theme.get());
-        authenticationRepository.save(user.get());
-        return Optional.of("Subscription added !");
+        AuthResponse authResponse = modelMapper.map(user.get(), AuthResponse.class);
+        authResponse.setToken(jwtService.generateToken(user.get().getEmail()));
+        return authResponse;
     }
 }
