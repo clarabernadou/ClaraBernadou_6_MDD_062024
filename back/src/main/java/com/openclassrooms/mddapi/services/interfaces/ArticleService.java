@@ -3,6 +3,8 @@ package com.openclassrooms.mddapi.services.interfaces;
 import java.security.Principal;
 import java.util.*;
 
+import org.springframework.http.ResponseEntity;
+
 import com.openclassrooms.mddapi.dto.ArticleDTO;
 
 public interface ArticleService {
@@ -19,7 +21,7 @@ public interface ArticleService {
      * @return
      * @throws Exception
     */
-    Optional<ArticleDTO> getArticle(Long id);
+    ResponseEntity<ArticleDTO> getArticle(Long id);
 
     /**
      * @return
