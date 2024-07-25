@@ -1,8 +1,10 @@
 package com.openclassrooms.mddapi.services.interfaces;
 
+import java.security.Principal;
 import java.util.Optional;
 
 import com.openclassrooms.mddapi.dto.UserDTO;
+import com.openclassrooms.mddapi.entity.Auth;
 import com.openclassrooms.mddapi.model.AuthResponse;
 
 public interface UserService {
@@ -34,4 +36,17 @@ public interface UserService {
      * @return
      */
     Optional<UserDTO> getUserByUsernameOrEmail(String username);
+
+    /**
+     * 
+     * @param principalUser
+     * @return
+     */
+    Optional<Auth> findUserByPrincipal(Principal principalUser);
+
+    /**
+     * 
+     * @param user
+     */
+    void saveUser(Auth user);
 }

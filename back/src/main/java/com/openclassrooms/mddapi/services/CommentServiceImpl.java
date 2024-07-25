@@ -22,11 +22,8 @@ import com.openclassrooms.mddapi.services.interfaces.CommentService;
 public class CommentServiceImpl implements CommentService {
 
     private final CommentRepository commentRepository;
-
     private final AuthenticationRepository authenticationRepository;
-
     private final ArticleRepository articleRepository;
-
     private final ModelMapper modelMapper;
 
     public CommentServiceImpl(CommentRepository commentRepository, AuthenticationRepository authenticationRepository, ArticleRepository articleRepository, ModelMapper modelMapper) {
@@ -47,14 +44,13 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public List<CommentDTO> getComments() {
-        Iterable<Comment> commentsIterable = commentRepository.findAll();
-        List<Comment> comments = StreamSupport.stream(commentsIterable.spliterator(), false)
+        List<Comment> comments = StreamSupport.stream(commentRepository.findAll().spliterator(), false)
                                         .collect(Collectors.toList());
 
         if (comments.isEmpty()) throw new NotFoundException("No comments found");
 
         return comments.stream()
-                    .map(article -> modelMapper.map(article, CommentDTO.class))
+                    .map(comment -> modelMapper.map(comment, CommentDTO.class))
                     .collect(Collectors.toList());
     }
 
@@ -69,7 +65,8 @@ public class CommentServiceImpl implements CommentService {
         }
 
         articleRepository.findById(articleId).ifPresent(comment::setArticleId);
+
         commentRepository.save(comment);
-        return Optional.of("Comment created !");
+        return Optional.of("Comment created!");
     }
 }
