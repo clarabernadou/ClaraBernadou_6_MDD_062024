@@ -12,21 +12,20 @@ import org.springframework.stereotype.Service;
 import com.openclassrooms.mddapi.controllers.advice.exceptions.NotFoundException;
 import com.openclassrooms.mddapi.entity.Auth;
 import com.openclassrooms.mddapi.entity.Theme;
-import com.openclassrooms.mddapi.repository.AuthenticationRepository;
 import com.openclassrooms.mddapi.repository.ThemeRepository;
 import com.openclassrooms.mddapi.services.interfaces.ThemeService;
+import com.openclassrooms.mddapi.services.interfaces.UserService;
 
 @Service
 public class ThemeServiceImpl implements ThemeService {
 
     private final ThemeRepository themeRepository;
-
-    private final AuthenticationRepository authenticationRepository;
+    private final UserService userService;
 
     @Autowired
-    public ThemeServiceImpl(ThemeRepository themeRepository, AuthenticationRepository authenticationRepository) {
+    public ThemeServiceImpl(ThemeRepository themeRepository, UserService userService) {
         this.themeRepository = themeRepository;
-        this.authenticationRepository = authenticationRepository;
+        this.userService = userService;
     }
 
     @Override
@@ -43,29 +42,21 @@ public class ThemeServiceImpl implements ThemeService {
 
     @Override
     public Optional<String> subscribeTheme(Long id, Principal principalUser) {
-        Optional<Theme> theme = themeRepository.findById(id);
-        Optional<Auth> user = authenticationRepository.findByEmail(principalUser.getName());
-        if(user.isEmpty()) user = authenticationRepository.findByUsername(principalUser.getName());
+        Theme theme = themeRepository.findById(id).orElseThrow(() -> new NotFoundException("Theme not found"));
+        Auth user = userService.findUserByPrincipal(principalUser).orElseThrow(() -> new NotFoundException("User not found"));
 
-        if (theme.isEmpty()) throw new NotFoundException("Theme not found");
-        if (user.isEmpty()) throw new NotFoundException("User not found");
-
-        user.get().getSubscriptions().add(theme.get());
-        authenticationRepository.save(user.get());
-        return Optional.of("Subscribed to theme !");
+        user.getSubscriptions().add(theme);
+        userService.saveUser(user);
+        return Optional.of("Subscribed to theme!");
     }
 
     @Override
     public Optional<String> unsubscribeTheme(Long id, Principal principalUser) {
-        Optional<Theme> theme = themeRepository.findById(id);
-        Optional<Auth> user = authenticationRepository.findByEmail(principalUser.getName());
-        if(user.isEmpty()) user = authenticationRepository.findByUsername(principalUser.getName());
+        Theme theme = themeRepository.findById(id).orElseThrow(() -> new NotFoundException("Theme not found"));
+        Auth user = userService.findUserByPrincipal(principalUser).orElseThrow(() -> new NotFoundException("User not found"));
 
-        if (theme.isEmpty()) throw new NotFoundException("Theme not found");
-        if (user.isEmpty()) throw new NotFoundException("User not found");
-
-        user.get().getSubscriptions().remove(theme.get());
-        authenticationRepository.save(user.get());
-        return Optional.of("Unsubscribed from theme !");
+        user.getSubscriptions().remove(theme);
+        userService.saveUser(user);
+        return Optional.of("Unsubscribed from theme!");
     }
 }

@@ -10,8 +10,10 @@ import com.openclassrooms.mddapi.dto.RegisterDTO;
 import com.openclassrooms.mddapi.entity.Theme;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @Data
+@EqualsAndHashCode(callSuper=false)
 public class AuthResponse extends RegisterDTO {
 
     @JsonProperty("created_at")
@@ -25,9 +27,4 @@ public class AuthResponse extends RegisterDTO {
     private String token;
 
     private List<Theme> subscriptions;
-
-    public AuthResponse orElseThrow(Object object) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'orElseThrow'");
-    }
 }

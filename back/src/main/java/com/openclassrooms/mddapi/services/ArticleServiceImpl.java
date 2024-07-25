@@ -22,9 +22,7 @@ import java.util.stream.StreamSupport;
 public class ArticleServiceImpl implements ArticleService {
 
     private final AuthenticationRepository authenticationRepository;
-
     private final ArticleRepository articleRepository;
-
     private final ModelMapper modelMapper;
 
     public ArticleServiceImpl(AuthenticationRepository authenticationRepository, ArticleRepository articleRepository, ModelMapper modelMapper) {
@@ -53,28 +51,26 @@ public class ArticleServiceImpl implements ArticleService {
         }
 
         articleRepository.save(article);
-        return Optional.of("Article created !");
+        return Optional.of("Article created!");
     }
 
     @Override
     public ResponseEntity<ArticleDTO> getArticle(Long id) {
-        Optional<Article> article = articleRepository.findById(id);
+        Article article = articleRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Article not found"));
 
-        if (article.isEmpty()) throw new NotFoundException("Article not found");
-
-        return ResponseEntity.ok(modelMapper.map(article.get(), ArticleDTO.class));
-    }
+                return ResponseEntity.ok(modelMapper.map(article, ArticleDTO.class));
+            }
 
     @Override
     public List<ArticleDTO> getArticles() {
-        Iterable<Article> articlesIterable = articleRepository.findAll();
-        List<Article> articles = StreamSupport.stream(articlesIterable.spliterator(), false)
-                                        .collect(Collectors.toList());
+        List<Article> articles = StreamSupport.stream(articleRepository.findAll().spliterator(), false)
+                .collect(Collectors.toList());
 
         if (articles.isEmpty()) throw new NotFoundException("No articles found");
 
         return articles.stream()
-                    .map(article -> modelMapper.map(article, ArticleDTO.class))
-                    .collect(Collectors.toList());
+                .map(article -> modelMapper.map(article, ArticleDTO.class))
+                .collect(Collectors.toList());
     }
 }

@@ -1,5 +1,6 @@
 package com.openclassrooms.mddapi.services;
 
+import java.security.Principal;
 import java.util.Optional;
 
 import org.modelmapper.ModelMapper;
@@ -9,31 +10,27 @@ import com.openclassrooms.mddapi.controllers.advice.exceptions.NotFoundException
 import com.openclassrooms.mddapi.dto.UserDTO;
 import com.openclassrooms.mddapi.entity.Auth;
 import com.openclassrooms.mddapi.model.AuthResponse;
-import com.openclassrooms.mddapi.repository.AuthenticationRepository;
+import com.openclassrooms.mddapi.repository.UserRepository;
 import com.openclassrooms.mddapi.services.interfaces.UserService;
 
 @Service
 public class UserServiceImpl implements UserService {
 
-    private final AuthenticationRepository authenticationRepository;
-
+    private final UserRepository userRepository;
     private final ModelMapper modelMapper;
-
     private final JWTService jwtService;
 
-    public UserServiceImpl(AuthenticationRepository authenticationRepository, ModelMapper modelMapper, JWTService jwtService) {
-        this.authenticationRepository = authenticationRepository;
+    public UserServiceImpl(UserRepository userRepository, ModelMapper modelMapper, JWTService jwtService) {
+        this.userRepository = userRepository;
         this.modelMapper = modelMapper;
         this.jwtService = jwtService;
     }
 
     @Override
     public Optional<UserDTO> getUserById(Long id) {
-        Optional<Auth> user = authenticationRepository.findById(id);
-
-        if (user.isEmpty()) throw new NotFoundException("User not found");
-
-        return Optional.of(modelMapper.map(user.get(), UserDTO.class));
+        Auth user = userRepository.findById(id)
+            .orElseThrow(() -> new NotFoundException("User not found"));
+        return Optional.of(modelMapper.map(user, UserDTO.class));
     }
 
     @Override
@@ -45,28 +42,34 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Optional<AuthResponse> updateMe(String usernameOrEmail, UserDTO userDTO) {
-        Optional<Auth> user = authenticationRepository.findByEmail(usernameOrEmail);
-        if(user.isEmpty()) user = authenticationRepository.findByUsername(usernameOrEmail);
+        Auth user = userRepository.findByUsername(usernameOrEmail)
+            .or(() -> userRepository.findByEmail(usernameOrEmail))
+            .orElseThrow(() -> new NotFoundException("User not found"));
+        user.setEmail(userDTO.getEmail());
+        user.setUsername(userDTO.getUsername());
 
-        if (user.isEmpty()) throw new NotFoundException("User not found !");
-
-        user.get().setEmail(userDTO.getEmail());
-        user.get().setUsername(userDTO.getUsername());
-
-        authenticationRepository.save(user.get());
-        AuthResponse authResponse = modelMapper.map(user.get(), AuthResponse.class);
-        authResponse.setToken(jwtService.generateToken(user.get().getEmail()));
+        userRepository.save(user);
+        AuthResponse authResponse = modelMapper.map(user, AuthResponse.class);
+        authResponse.setToken(jwtService.generateToken(user.getEmail()));
         return Optional.of(authResponse);
-
     }
 
     @Override
     public Optional<UserDTO> getUserByUsernameOrEmail(String usernameOrEmail) {
-        Optional<Auth> user = authenticationRepository.findByEmail(usernameOrEmail);
-        if(user.isEmpty()) user = authenticationRepository.findByUsername(usernameOrEmail);
+        Auth user = userRepository.findByUsername(usernameOrEmail)
+            .or(() -> userRepository.findByEmail(usernameOrEmail))
+            .orElseThrow(() -> new NotFoundException("User not found"));
+        return Optional.of(modelMapper.map(user, UserDTO.class));
+    }
 
-        if (user.isEmpty()) throw new NotFoundException("User not found !");
+    @Override
+    public Optional<Auth> findUserByPrincipal(Principal principalUser) {
+        return userRepository.findByUsername(principalUser.getName())
+            .or(() -> userRepository.findByEmail(principalUser.getName()));
+    }
 
-        return Optional.of(modelMapper.map(user.get(), UserDTO.class));
+    @Override
+    public void saveUser(Auth user) {
+        userRepository.save(user);
     }
 }
