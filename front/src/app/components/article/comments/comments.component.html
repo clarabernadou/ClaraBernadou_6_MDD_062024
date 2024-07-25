@@ -1,0 +1,8 @@
+<div class="w-full flex flex-col gap-6">
+    <div *ngFor="let comment of comments" class="w-full flex flex-col-reverse md:flex-row items-end md:items-center justify-center gap-6">
+        <p>{{ comment.username }}</p>
+        <div class="w-full md:w-2/4 md:bg-[#EEEEEE] rounded-lg md:p-6">
+          <p>{{ comment.content }}</p>
+        </div>
+    </div>
+</div>
