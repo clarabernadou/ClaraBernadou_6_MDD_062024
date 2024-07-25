@@ -1,11 +1,11 @@
 <section class="flex flex-col items-center justify-center">
     <app-navbar></app-navbar>
-    <div class="w-screen flex flex-col p-5 gap-5 text-center">
+    <div class="w-screen flex flex-col items-center p-5 gap-5 text-center">
         <h2 class="font-bold">Profil utilisateur</h2>
         <app-profile-form></app-profile-form>
         <p class="text-red-800 custom-disconnect-text" style="cursor: pointer;" (click)="logout()">Se déconnecter</p>
 
-        <hr class="border-black opacity-100 mx-12">
+        <hr class="w-full border-black opacity-100 mx-12">
 
         <h2 class="font-bold">Abonnements</h2>
         <div class="w-full flex flex-wrap justify-between" [ngClass]="{'flex-col': isSmallScreen}">
