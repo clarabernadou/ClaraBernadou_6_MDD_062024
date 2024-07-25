@@ -1,8 +1,10 @@
 package com.openclassrooms.mddapi.controllers;
 
 import java.security.Principal;
+import java.util.List;
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,36 +13,37 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.openclassrooms.mddapi.controllers.advice.exceptions.NotFoundException;
+import com.openclassrooms.mddapi.entity.Theme;
 import com.openclassrooms.mddapi.services.interfaces.ThemeService;
 
 @RestController
 @RequestMapping("/api/auth/theme")
 public class ThemeController {
 
-    private ThemeService themeService;
+    private final ThemeService themeService;
+
+    @Autowired
+    public ThemeController(ThemeService themeService) {
+        this.themeService = themeService;
+    }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getTheme(@PathVariable Long id) {
+    public ResponseEntity<Optional<Theme>> getTheme(@PathVariable Long id) {
         return ResponseEntity.ok(themeService.getTheme(id));
     }
 
     @GetMapping("/")
-    public ResponseEntity<?> getAllThemes() {
-        return ResponseEntity.ok(themeService.getAllThemes());
+    public ResponseEntity<List<Theme>> getThemes() {
+        return ResponseEntity.ok(themeService.getThemes());
     }
 
-    @PostMapping("/{id}/subscribe")
-    public ResponseEntity<?> subscribeTheme(@PathVariable Long id, Principal principalUser) {
-        Optional<String> response = themeService.subscribeTheme(id, principalUser);
-        if (response.isEmpty()) throw new NotFoundException("Theme not found");
-        return ResponseEntity.ok(response);
+    @PostMapping("/subscribe/{id}")
+    public ResponseEntity<Optional<String>> subscribeTheme(@PathVariable Long id, Principal principalUser) {
+        return ResponseEntity.ok(themeService.subscribeTheme(id, principalUser));
     }
 
-    @DeleteMapping("/{id}/unsubscribe")
-    public ResponseEntity<?> unsubscribeTheme(@PathVariable Long id, Principal principalUser) {
-        Optional<String> response = themeService.unsubscribeTheme(id, principalUser);
-        if (response.isEmpty()) throw new NotFoundException("Theme not found");
-        return ResponseEntity.ok(response);
+    @DeleteMapping("/unsubscribe/{id}")
+    public ResponseEntity<Optional<String>> unsubscribeTheme(@PathVariable Long id, Principal principalUser) {
+        return ResponseEntity.ok(themeService.unsubscribeTheme(id, principalUser));
     }
 }
