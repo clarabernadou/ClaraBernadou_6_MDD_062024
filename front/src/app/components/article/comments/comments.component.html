@@ -1,5 +1,5 @@
 <section class="flex flex-col items-center gap-6">
-    <p *ngIf="!comments || comments.length === 0">Personne n'a commenté cet article.</p>
+    <p *ngIf="!comments || comments.length === 0">No one has commented on this article.</p>
     <div *ngIf="comments && comments.length > 0" class="w-full flex flex-col items-center gap-6 custom-scrollbar">
       <div *ngFor="let comment of comments" class="w-full md:w-2/4 flex flex-col-reverse items-end justify-center gap-6 md:flex-row md:items-center">
           <p class="w-auto">{{ comment.username }}</p>
