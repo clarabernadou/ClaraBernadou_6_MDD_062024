@@ -5,7 +5,7 @@ import { AuthService } from 'src/app/services/auth.service';
 import { SessionService } from 'src/app/services/session.service';
 import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { Subject, Subscription, takeUntil } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-login-form',
@@ -17,12 +17,10 @@ export class LoginFormComponent implements OnDestroy {
   public errorMessage: string = '';
   public loading: boolean = false;
   public submitted: boolean = false;
-  public isSmallScreen: boolean = false;
-  public isLargeScreen: boolean = false;
   private destroy$: Subject<void> = new Subject<void>();
 
   public form = this.fb.group({
-    emailOrUsername: [ '', [ Validators.required, Validators.email ] ],
+    emailOrUsername: [ '', [ Validators.required ] ],
     password: [ '', [ Validators.required, Validators.minLength(3) ] ]
   });
 
@@ -30,19 +28,16 @@ export class LoginFormComponent implements OnDestroy {
     private authService: AuthService,
     private sessionService: SessionService,
     private fb: FormBuilder,
-    private router: Router) {}
+    private router: Router
+  ) {}
 
   public submit(): void {
+    this.submitted = true; 
+    if (this.form.invalid) return;
+
     this.loading = true;
 
-    if (this.form.invalid) {
-      this.submitted = true;
-      this.form.markAllAsTouched();
-      return;
-    }
-
     const loginRequest = this.form.value as Login;
-
     this.authService.login(loginRequest).pipe(
       takeUntil(this.destroy$)
     ).subscribe({
@@ -52,7 +47,7 @@ export class LoginFormComponent implements OnDestroy {
         sessionStorage.setItem('token', response.token);
         this.router.navigate(['/articles']);
       },
-      error: error => {
+      error: (error) => {
         this.loading = false;
         this.onError = true;
         this.errorMessage = error.error?.message || 'An error occurred. Please try again.';
