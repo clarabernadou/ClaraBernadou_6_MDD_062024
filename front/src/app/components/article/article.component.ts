@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { forkJoin, map, mergeMap, Subscription } from 'rxjs';
 import { Article } from 'src/app/interfaces/article.interface';
 import { ArticleService } from 'src/app/services/article.service';
@@ -23,6 +23,7 @@ export class ArticleComponent implements OnInit {
         private themeService: ThemeService,
         private userService: UserService,
         private activatedRouter: ActivatedRoute,
+        private router: Router,
     ) {}
 
     ngOnInit(): void {
@@ -31,7 +32,7 @@ export class ArticleComponent implements OnInit {
 
     getArticleById(): void {
         this.loading = true;
-        
+
         const id = this.activatedRouter.snapshot.paramMap.get('id')!;
         const article$ = this.articleService.getArticleById(id).pipe(
             mergeMap((article: Article) => {
@@ -58,6 +59,7 @@ export class ArticleComponent implements OnInit {
                     this.onError = true;
                     this.errorMessage = error.message;
                     this.loading = false;
+                    this.router.navigate(['/page-not-found']);
                 }
             })
         );
