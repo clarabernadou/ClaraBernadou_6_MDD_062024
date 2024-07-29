@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { forkJoin, map, mergeMap, Observable } from 'rxjs';
+import { forkJoin, map, mergeMap, Observable, Subscription } from 'rxjs';
 import { Article } from 'src/app/interfaces/article.interface';
 import { Theme } from 'src/app/interfaces/theme.interface';
 import { ArticleService } from 'src/app/services/article.service';
@@ -14,33 +14,19 @@ import { ThemeService } from 'src/app/services/theme.service';
   styleUrls: ['../../../app.component.scss'],
 })
 export class CreateArticleFormComponent implements OnInit {
-  public isSmallScreen = false;
-  public isLargeScreen = false;
-  public loading = false;
-  public onError = false;
-  public errorMessage = '';
-  public submitted = false;
-  public themes: Observable<Theme[]> = this.getAllThemes();
+  public isSmallScreen: boolean = false;
+  public isLargeScreen:boolean = false;
+  public loading: boolean = false;
+  public onError: boolean = false;
+  public errorMessage: string = '';
+  public submitted: boolean = false;
+  public themes: Observable<Theme[]> | undefined;
+  private subscription: Subscription = new Subscription(); 
 
   public form = this.fb.group({
-    theme_id: [
-      '',
-      [
-        Validators.required,
-      ]
-    ],
-    title: [
-      '',
-      [
-        Validators.required
-      ]
-    ],
-    content: [
-      '',
-      [
-        Validators.required
-      ]
-    ]
+    theme_id: [ '', [ Validators.required ] ],
+    title: [ '', [ Validators.required ]],
+    content: [ '', [ Validators.required ]]
   });
 
   constructor(
@@ -52,40 +38,25 @@ export class CreateArticleFormComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.breakpointService.isSmallScreen().subscribe(isSmall => {
-      this.isSmallScreen = isSmall;
-    });
+    this.themes = this.themeService.getAllThemes();
 
-    this.breakpointService.isLargeScreen().subscribe(isLarge => {
-      this.isLargeScreen = isLarge;
-    });
-  }
+    this.subscription.add(
+      this.breakpointService.isSmallScreen().subscribe(isSmall => this.isSmallScreen = isSmall)
+    );
 
-  public getAllThemes(): Observable<Theme[]> {
-    return this.themeService.getAllThemes().pipe(
-      mergeMap((themes: Theme[]) => {
-        const themeObservables = themes.map((theme: Theme) => {
-          return this.themeService.getThemeById(theme.id!).pipe(
-            map((theme: Theme) => ({
-              ...theme,
-            }))
-          );
-        });
-        return forkJoin(themeObservables);
-      })
+    this.subscription.add(
+      this.breakpointService.isLargeScreen().subscribe(isLarge => this.isLargeScreen = isLarge)
     );
   }
 
   public submit(): void {
+    this.loading = true;
+
     if (this.form.invalid) {
       this.submitted = true;
       this.form.markAllAsTouched();
       return;
     }
-
-    this.loading = true;
-    this.onError = false;
-    this.errorMessage = '';
 
     const article: Article = {
       theme_id: Number(this.form.get('theme_id')!.value!),
@@ -104,6 +75,10 @@ export class CreateArticleFormComponent implements OnInit {
         this.errorMessage = error.error.message;
       }
     });
+  }
+
+  ngOnDestroy() {
+    this.subscription.unsubscribe();
   }
 }
 

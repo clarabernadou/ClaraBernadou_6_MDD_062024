@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { forkJoin, map, mergeMap } from 'rxjs';
+import { forkJoin, map, mergeMap, Subscription } from 'rxjs';
 import { Article } from 'src/app/interfaces/article.interface';
 import { ArticleService } from 'src/app/services/article.service';
 import { ThemeService } from 'src/app/services/theme.service';
@@ -12,14 +12,11 @@ import { UserService } from 'src/app/services/user.service';
   styleUrls: ['./article.component.scss', '../../app.component.scss'],
 })
 export class ArticleComponent implements OnInit {
-    public loading = true;
-    public onError = false;
-    public errorMessage = '';
+    public loading: boolean = true;
+    public onError: boolean = false;
+    public errorMessage: string = '';
     public article: Article | undefined;
-
-    ngOnInit(): void {
-        this.getArticleById();
-    }
+    private subscription: Subscription = new Subscription();
 
     constructor(
         private articleService: ArticleService,
@@ -28,31 +25,45 @@ export class ArticleComponent implements OnInit {
         private activatedRouter: ActivatedRoute,
     ) {}
 
+    ngOnInit(): void {
+        this.getArticleById();
+    }
+
     getArticleById(): void {
+        this.loading = true;
+        
         const id = this.activatedRouter.snapshot.paramMap.get('id')!;
-        this.articleService.getArticleById(id).pipe(
-        mergeMap((article: Article) => {
-            return forkJoin({
-            user: this.userService.getUserById(article.owner_id!),
-            theme: this.themeService.getThemeById(article.theme_id!)
-            }).pipe(
-                map(results => ({
-                    ...article,
-                    author: results.user.username,
-                    theme: results.theme.title,
-                }))
-            );
-        })
-        ).subscribe({
-            next: (article: Article) => {
-                this.article = article;
-                this.loading = false;
-            },
-            error: (error: any) => {
-                this.onError = true;
-                this.errorMessage = error.message;
-                this.loading = false;
-            }
-        });
+        const article$ = this.articleService.getArticleById(id).pipe(
+            mergeMap((article: Article) => {
+                return forkJoin({
+                    user: this.userService.getUserById(article.owner_id!),
+                    theme: this.themeService.getThemeById(article.theme_id!)
+                }).pipe(
+                    map(results => ({
+                        ...article,
+                        author: results.user.username,
+                        theme: results.theme.title,
+                    }))
+                );
+            })
+        );
+
+        this.subscription.add(
+            article$.subscribe({
+                next: (article: Article) => {
+                    this.article = article;
+                    this.loading = false;
+                },
+                error: (error: any) => {
+                    this.onError = true;
+                    this.errorMessage = error.message;
+                    this.loading = false;
+                }
+            })
+        );
+    }
+
+    ngOnDestroy(): void {
+        this.subscription.unsubscribe();
     }
 }

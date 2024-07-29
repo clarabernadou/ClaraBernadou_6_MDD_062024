@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 import { BreakpointService } from 'src/app/services/breakpoint.service';
 
 @Component({
@@ -8,8 +9,9 @@ import { BreakpointService } from 'src/app/services/breakpoint.service';
   styleUrls: ['../../app.component.scss'],
 })
 export class RegisterComponent implements OnInit {
-  public isSmallScreen = false;
-  public isLargeScreen = false;
+  public isSmallScreen: boolean = false;
+  public isLargeScreen: boolean = false;
+  private subscriptions: Subscription = new Subscription();
 
   constructor(
     private breakpointService: BreakpointService,
@@ -17,17 +19,18 @@ export class RegisterComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    if (sessionStorage.getItem('token')) {
-      this.router.navigate(['/articles']);
-      return;
-    };
+    if (sessionStorage.getItem('token')) this.router.navigate(['/articles']);
 
-    this.breakpointService.isSmallScreen().subscribe(isSmall => {
-      this.isSmallScreen = isSmall;
-    });
+    this.subscriptions.add(
+      this.breakpointService.isSmallScreen().subscribe(isSmall => this.isSmallScreen = isSmall)
+    );
 
-    this.breakpointService.isLargeScreen().subscribe(isLarge => {
-      this.isLargeScreen = isLarge;
-    });
+    this.subscriptions.add(
+      this.breakpointService.isLargeScreen().subscribe(isLarge => this.isLargeScreen = isLarge)
+    );
+  }
+
+  ngOnDestroy() {
+    this.subscriptions.unsubscribe();
   }
 }

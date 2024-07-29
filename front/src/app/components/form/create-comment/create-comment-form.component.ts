@@ -4,6 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { CommentService } from 'src/app/services/comment.service';
 import { Comment } from 'src/app/interfaces/comment.interface';
 import { BreakpointService } from 'src/app/services/breakpoint.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-create-comment-form',
@@ -11,23 +12,19 @@ import { BreakpointService } from 'src/app/services/breakpoint.service';
     styleUrls: ['../../../app.component.scss'],
 })
 export class CreateCommentFormComponent implements OnInit {
-  public loading = false;
-  public onError = false;
-  public errorMessage = '';
-  public submitted = false;
+  public loading: boolean = false;
+  public onError: boolean = false;
+  public errorMessage: string = '';
+  public submitted: boolean = false;
   public comments: Comment[] = [];
-  public isSmallScreen = false;
-  public isLargeScreen = false;
+  public isSmallScreen: boolean = false;
+  public isLargeScreen: boolean = false;
+  private subscriptions: Subscription = new Subscription();
 
-  @Output() updateComments = new EventEmitter<void>();
+  @Output() updateComments: EventEmitter<void> = new EventEmitter<void>();
 
   public form = this.fb.group({
-    content: [
-      '',
-      [
-        Validators.required,
-      ]
-    ],
+    content: ['', [ Validators.required ]]
   })
 
   constructor(
@@ -37,31 +34,28 @@ export class CreateCommentFormComponent implements OnInit {
     private breakpointService: BreakpointService,
   ) {}
 
-  ngOnInit() {
-    this.breakpointService.isSmallScreen().subscribe(isSmall => {
-      this.isSmallScreen = isSmall;
-    });
-
-    this.breakpointService.isLargeScreen().subscribe(isLarge => {
-      this.isLargeScreen = isLarge;
-    });
+  ngOnInit(): void {
+    this.subscriptions.add(
+      this.breakpointService.isSmallScreen().subscribe(isSmall => this.isSmallScreen = isSmall)
+    );
+    this.subscriptions.add(
+      this.breakpointService.isLargeScreen().subscribe(isLarge => this.isLargeScreen = isLarge)
+    );
   }
 
   public submitComment(): void {
+    this.loading = true;
+    
     if (this.form.invalid) {
       this.submitted = true;
       this.form.markAllAsTouched();
       return;
     }
 
-    this.loading = true;
-    this.onError = false;
-    this.errorMessage = '';
-
     const articleId = Number(this.activatedRouter.snapshot.paramMap.get('id')!);
     const comment: Comment = {
       content: this.form.get('content')!.value!,
-    }
+    };
 
     this.commentService.createComment(articleId, comment).subscribe({
       next: () => {
@@ -72,9 +66,13 @@ export class CreateCommentFormComponent implements OnInit {
       error: (error) => {
         this.loading = false;
         this.onError = true;
-        this.errorMessage = error.error.message;
+        this.errorMessage = error.error?.message || 'Une erreur est survenue';
       }
     });
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.unsubscribe();
   }
 }
 
