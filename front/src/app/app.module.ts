@@ -16,8 +16,8 @@ import { HttpClientModule } from '@angular/common/http';
 import { ArticlesComponent } from './pages/articles/articles.component';
 import { NavBarComponent } from './components/navbar/navbar.component';
 import { MatDialogModule } from '@angular/material/dialog';
-import { ArticleDetailComponent } from './pages/article_detail/article-detail.component';
-import { CreateArticleComponent } from './pages/create_article/create-article.component';
+import { ArticleDetailComponent } from './pages/articleDetail/article-detail.component';
+import { CreateArticleComponent } from './pages/createArticle/create-article.component';
 import { ProfileComponent } from './pages/profile/profile.component';
 import { ThemesComponent } from './pages/themes/themes.component';
 import { CreateArticleFormComponent } from './components/form/create-article/create-article-form.component';
@@ -28,6 +28,7 @@ import { CreateCommentFormComponent } from './components/form/create-comment/cre
 import { LoginFormComponent } from './components/form/login/login-form.component';
 import { RegisterFormComponent } from './components/form/register/register-form.component';
 import { ProfileFormComponent } from './components/form/profile/profile-form.component';
+import { ThemeListComponent } from './components/themeList/theme-list.component';
 
 @NgModule({
   declarations: [
@@ -49,6 +50,7 @@ import { ProfileFormComponent } from './components/form/profile/profile-form.com
     LoginFormComponent,
     RegisterFormComponent,
     ProfileFormComponent,
+    ThemeListComponent,
   ],
   imports: [
     BrowserModule,

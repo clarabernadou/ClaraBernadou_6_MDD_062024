@@ -4,8 +4,8 @@ import { HomeComponent } from './pages/home/home.component';
 import { RegisterComponent } from './pages/register/register.component';
 import { LoginComponent } from './pages/login/login.component';
 import { ArticlesComponent } from './pages/articles/articles.component';
-import { ArticleDetailComponent } from './pages/article_detail/article-detail.component';
-import { CreateArticleComponent } from './pages/create_article/create-article.component';
+import { ArticleDetailComponent } from './pages/articleDetail/article-detail.component';
+import { CreateArticleComponent } from './pages/createArticle/create-article.component';
 import { ProfileComponent } from './pages/profile/profile.component';
 import { ThemesComponent } from './pages/themes/themes.component';
 
