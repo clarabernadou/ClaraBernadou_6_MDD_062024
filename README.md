@@ -1,25 +1,54 @@
-# P6-Full-Stack-reseau-dev
+# MDD App
 
-## Front
+## Start the Project
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 14.1.3.
+Clone the repository:
+```bash
+git clone https://github.com/clarabernadou/ClaraBernadou_6_MDD_062024.git
+```
 
-Don't forget to install your node_modules before starting (`npm install`).
+### Frontend
 
-### Development server
+Navigate to the frontend directory:
+```bash
+cd front/
+```
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+Install dependencies:
+```bash
+npm install
+```
 
-### Build
+Launch the frontend:
+```bash
+npm run start
+```
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+### Backend
 
-### Where to start
+Navigate to the backend directory:
+```bash
+cd back/
+```
 
-As you may have seen if you already started the app, a simple home page containing a logo, a title and a button is available. If you take a look at its code (in the `home.component.html`) you will see that an external UI library is already configured in the project.
+Install dependencies:
+```bash
+mvn clean install
+```
 
-This library is `@angular/material`, it's one of the most famous in the angular ecosystem. As you can see on their docs (https://material.angular.io/), it contains a lot of highly customizable components that will help you design your interfaces quickly.
+Create Maven configuration:
+![Backend configuration](backend-config.png)
 
-Note: I recommend to use material however it's not mandatory, if you prefer you can get ride of it.
+### Database
 
-Good luck!
+Create the MYSQL database in the terminal:
+```sql
+CREATE DATABASE <NAME>;
+USE <NAME>;
+```
+And run backend to add tables using entities
+
+Edit the `application.properties` file located at `back/src/main/resources/application.properties`:
+- Replace `${DB_URL}` with your database URL.
+- Replace `${DB_NAME}` with your database username.
+- Replace `${DB_PASSWORD}` with your database password.
