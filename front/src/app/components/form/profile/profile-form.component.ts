@@ -58,13 +58,11 @@ export class ProfileFormComponent implements OnInit {
     }
 
     public submit(): void {
+        this.submitted = true; 
+        if (this.form.invalid) return;
+
         this.loading = true;
-        if (this.form.invalid) {
-            this.submitted = true;
-            this.form.markAllAsTouched();
-            return;
-        }
-        
+
         this.subscriptions.add(
             this.userService.updateMe(this.form.value as User).subscribe({
                 next: (user: User) => {

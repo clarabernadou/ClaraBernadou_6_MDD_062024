@@ -50,13 +50,10 @@ export class CreateArticleFormComponent implements OnInit {
   }
 
   public submit(): void {
-    this.loading = true;
+    this.submitted = true; 
+    if (this.form.invalid) return;
 
-    if (this.form.invalid) {
-      this.submitted = true;
-      this.form.markAllAsTouched();
-      return;
-    }
+    this.loading = true;
 
     const article: Article = {
       theme_id: Number(this.form.get('theme_id')!.value!),

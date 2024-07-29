@@ -33,12 +33,10 @@ export class RegisterFormComponent implements OnDestroy {
   ) {}
 
   public submit(): void {
-    this.loading = true;
+    this.submitted = true; 
+    if (this.form.invalid) return;
 
-    if (this.form.invalid) {
-      this.form.markAllAsTouched();
-      return;
-    }
+    this.loading = true;
 
     const registerRequest = this.form.value as Register;
     this.authService.register(registerRequest).pipe(
@@ -50,10 +48,10 @@ export class RegisterFormComponent implements OnDestroy {
         sessionStorage.setItem('token', response.token);
         this.router.navigate(['/articles']);
       },
-      error: error => {
+      error: (error) => {
         this.loading = false;
         this.onError = true;
-        this.errorMessage = error.error?.message || 'An error occurred. Please try again.';
+        this.errorMessage = error.error?.message || "Une erreur s'est produite. Veuillez réessayer.";
       },
     });
   }

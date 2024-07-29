@@ -44,13 +44,10 @@ export class CreateCommentFormComponent implements OnInit {
   }
 
   public submitComment(): void {
+    this.submitted = true; 
+    if (this.form.invalid) return;
+
     this.loading = true;
-    
-    if (this.form.invalid) {
-      this.submitted = true;
-      this.form.markAllAsTouched();
-      return;
-    }
 
     const articleId = Number(this.activatedRouter.snapshot.paramMap.get('id')!);
     const comment: Comment = {
