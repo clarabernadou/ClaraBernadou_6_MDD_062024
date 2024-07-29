@@ -8,14 +8,6 @@
         <hr class="w-full border-black opacity-100 mx-12">
 
         <h2 class="font-bold">Abonnements</h2>
-        <div class="w-full flex flex-wrap justify-between" [ngClass]="{'flex-col': isSmallScreen}">
-          <app-card
-            *ngFor="let theme of themes"
-            [title]="theme.title"
-            [content]="theme.description"
-            [buttonText]="'Se désabonner'"
-            (buttonClick)="unsubscribeToTheme(theme.id!)">
-          </app-card>
-        </div>
+        <app-theme-list></app-theme-list>
     </div>
 </section>
