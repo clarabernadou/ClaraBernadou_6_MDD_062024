@@ -1,38 +1,29 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { AuthToken } from 'src/app/interfaces/authSession.interface';
 import { Login } from 'src/app/interfaces/login.interface';
 import { AuthService } from 'src/app/services/auth.service';
 import { SessionService } from 'src/app/services/session.service';
 import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { Subject, Subscription, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-login-form',
   templateUrl: './login-form.component.html',
   styleUrls: ['../../../app.component.scss'],
 })
-export class LoginFormComponent {
-  public onError = false;
-  public errorMessage = '';
-  public loading = false;
-  public submitted = false;
-  public isSmallScreen = false;
-  public isLargeScreen = false;
+export class LoginFormComponent implements OnDestroy {
+  public onError: boolean = false;
+  public errorMessage: string = '';
+  public loading: boolean = false;
+  public submitted: boolean = false;
+  public isSmallScreen: boolean = false;
+  public isLargeScreen: boolean = false;
+  private destroy$: Subject<void> = new Subject<void>();
 
   public form = this.fb.group({
-    emailOrUsername: [
-      '',
-      [
-        Validators.required,
-      ]
-    ],
-    password: [
-      '',
-      [
-        Validators.required,
-        Validators.minLength(3)
-      ]
-    ]
+    emailOrUsername: [ '', [ Validators.required, Validators.email ] ],
+    password: [ '', [ Validators.required, Validators.minLength(3) ] ]
   });
 
   constructor(
@@ -42,19 +33,19 @@ export class LoginFormComponent {
     private router: Router) {}
 
   public submit(): void {
+    this.loading = true;
+
     if (this.form.invalid) {
       this.submitted = true;
       this.form.markAllAsTouched();
       return;
     }
 
-    this.loading = true;
-    this.onError = false;
-    this.errorMessage = '';
-
     const loginRequest = this.form.value as Login;
 
-    this.authService.login(loginRequest).subscribe({
+    this.authService.login(loginRequest).pipe(
+      takeUntil(this.destroy$)
+    ).subscribe({
       next: (response: AuthToken) => {
         this.sessionService.logIn(response);
         this.loading = false;
@@ -67,5 +58,10 @@ export class LoginFormComponent {
         this.errorMessage = error.error?.message || 'An error occurred. Please try again.';
       },
     });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }

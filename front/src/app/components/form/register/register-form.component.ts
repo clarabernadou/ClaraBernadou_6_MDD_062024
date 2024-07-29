@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { Subject, Subscription, takeUntil } from 'rxjs';
 import { AuthToken } from 'src/app/interfaces/authSession.interface';
 import { Register } from 'src/app/interfaces/login.interface';
 import { AuthService } from 'src/app/services/auth.service';
@@ -11,34 +12,17 @@ import { SessionService } from 'src/app/services/session.service';
   templateUrl: './register-form.component.html',
   styleUrls: ['../../../app.component.scss'],
 })
-export class RegisterFormComponent {
-  public onError = false;
-  public errorMessage = '';
-  public loading = false;
-  public submitted = false;
-  public isSmallScreen = false;
-  public isLargeScreen = false;
+export class RegisterFormComponent implements OnDestroy {
+  public onError: boolean = false;
+  public errorMessage: string = '';
+  public loading: boolean = false;
+  public submitted: boolean = false;
+  private destroy$: Subject<void> = new Subject<void>();
 
   public form = this.fb.group({
-    email: [
-      '',
-      [
-        Validators.required,
-      ]
-    ],
-    username: [
-      '',
-      [
-        Validators.required,
-      ]
-    ],
-    password: [
-      '',
-      [
-        Validators.required,
-        Validators.minLength(3)
-      ]
-    ]
+    email: [ '', [ Validators.required, Validators.email ] ],
+    username: ['', [ Validators.required, ] ],
+    password: [ '', [   Validators.required, Validators.minLength(3) ] ]
   });
 
   constructor(
@@ -49,18 +33,17 @@ export class RegisterFormComponent {
   ) {}
 
   public submit(): void {
+    this.loading = true;
+
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       return;
     }
 
-    this.loading = true;
-    this.onError = false;
-    this.errorMessage = '';
-
     const registerRequest = this.form.value as Register;
-
-    this.authService.register(registerRequest).subscribe({
+    this.authService.register(registerRequest).pipe(
+      takeUntil(this.destroy$)
+    ).subscribe({
       next: (response: AuthToken) => {
         this.sessionService.logIn(response);
         this.loading = false;
@@ -73,5 +56,10 @@ export class RegisterFormComponent {
         this.errorMessage = error.error?.message || 'An error occurred. Please try again.';
       },
     });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }

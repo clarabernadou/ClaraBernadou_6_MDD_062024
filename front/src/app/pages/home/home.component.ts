@@ -8,8 +8,8 @@ import { BreakpointService } from 'src/app/services/breakpoint.service';
   styleUrls: ['./home.component.scss'],
 })
 export class HomeComponent implements OnInit {
-  public isSmallScreen = false;
-  public isLargeScreen = false;
+  public isSmallScreen: boolean = false;
+  public isLargeScreen: boolean = false;
 
   constructor(
     private breakpointService: BreakpointService, 
