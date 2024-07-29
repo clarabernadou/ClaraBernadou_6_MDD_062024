@@ -36,8 +36,10 @@ Install dependencies:
 mvn clean install
 ```
 
-Create Maven configuration:
-![Backend configuration](backend-config.png)
+Run backend
+```bash
+mvn spring-boot:run
+```
 
 ### Database
 
