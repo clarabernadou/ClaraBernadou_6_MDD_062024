@@ -3,15 +3,14 @@ package com.openclassrooms.mddapi.services;
 import com.openclassrooms.mddapi.entity.Article;
 import com.openclassrooms.mddapi.repository.ArticleRepository;
 import com.openclassrooms.mddapi.repository.AuthenticationRepository;
-import com.openclassrooms.mddapi.services.interfaces.ArticleService;
 import com.openclassrooms.mddapi.controllers.advice.exceptions.NotFoundException;
 import com.openclassrooms.mddapi.dto.ArticleDTO;
 
 import org.modelmapper.ModelMapper;
 import org.modelmapper.PropertyMap;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
@@ -22,7 +21,9 @@ import java.util.stream.StreamSupport;
 public class ArticleServiceImpl implements ArticleService {
 
     private final AuthenticationRepository authenticationRepository;
+
     private final ArticleRepository articleRepository;
+
     private final ModelMapper modelMapper;
 
     public ArticleServiceImpl(AuthenticationRepository authenticationRepository, ArticleRepository articleRepository, ModelMapper modelMapper) {
@@ -41,7 +42,7 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
-    public Optional<String> createArticle(ArticleDTO articleDTO, Principal principalUser) {
+    public Optional<String> createArticle(ArticleDTO articleDTO, Principal principalUser) throws IOException {
         Article article = modelMapper.map(articleDTO, Article.class);
 
         if (principalUser.getName().contains("@")) {
@@ -51,26 +52,28 @@ public class ArticleServiceImpl implements ArticleService {
         }
 
         articleRepository.save(article);
-        return Optional.of("Article created!");
+        return Optional.of("Article created !");
     }
 
     @Override
-    public ResponseEntity<ArticleDTO> getArticle(Long id) {
-        Article article = articleRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Article not found"));
+    public Optional<ArticleDTO> getArticle(Long id) {
+        Optional<Article> article = articleRepository.findById(id);
 
-                return ResponseEntity.ok(modelMapper.map(article, ArticleDTO.class));
-            }
+        if (article.isEmpty()) throw new NotFoundException("Article not found");
+
+        return Optional.of(modelMapper.map(article.get(), ArticleDTO.class));
+    }
 
     @Override
     public List<ArticleDTO> getArticles() {
-        List<Article> articles = StreamSupport.stream(articleRepository.findAll().spliterator(), false)
-                .collect(Collectors.toList());
+        Iterable<Article> articlesIterable = articleRepository.findAll();
+        List<Article> articles = StreamSupport.stream(articlesIterable.spliterator(), false)
+                                        .collect(Collectors.toList());
 
         if (articles.isEmpty()) throw new NotFoundException("No articles found");
 
         return articles.stream()
-                .map(article -> modelMapper.map(article, ArticleDTO.class))
-                .collect(Collectors.toList());
+                    .map(article -> modelMapper.map(article, ArticleDTO.class))
+                    .collect(Collectors.toList());
     }
 }

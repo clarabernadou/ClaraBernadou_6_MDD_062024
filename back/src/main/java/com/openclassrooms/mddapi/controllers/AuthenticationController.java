@@ -3,39 +3,78 @@ package com.openclassrooms.mddapi.controllers;
 import javax.validation.Valid;
 
 import com.openclassrooms.mddapi.controllers.advice.exceptions.BadRequestException;
+import com.openclassrooms.mddapi.controllers.advice.exceptions.NotFoundException;
+import com.openclassrooms.mddapi.controllers.advice.exceptions.UnauthorizedException;
+import com.openclassrooms.mddapi.dto.AuthDTO;
 import com.openclassrooms.mddapi.dto.LoginDTO;
-import com.openclassrooms.mddapi.dto.RegisterDTO;
+import com.openclassrooms.mddapi.model.AuthResponse;
 import com.openclassrooms.mddapi.model.TokenResponse;
-import com.openclassrooms.mddapi.services.interfaces.AuthenticationService;
-import com.openclassrooms.mddapi.services.interfaces.ValidationService;
-
+import com.openclassrooms.mddapi.services.AuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/auth")
 public class AuthenticationController {
 
-    private final AuthenticationService authenticationService;
-    private final ValidationService validationService;
-
     @Autowired
-    public AuthenticationController(AuthenticationService authenticationService, ValidationService validationService) {
-        this.authenticationService = authenticationService;
-        this.validationService = validationService;
-    }
+    private AuthenticationService authenticationService;
+
 
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
-    public TokenResponse registerUser(@Valid @RequestBody RegisterDTO registerDTO) {
-        validationService.validateRegister(registerDTO);
-        return new TokenResponse(authenticationService.registerUser(registerDTO).orElseThrow(() -> new BadRequestException("Registration failed")));
+    public TokenResponse registerUser(@Valid @RequestBody AuthDTO authDTO, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            String errors = bindingResult.getFieldErrors().stream()
+                    .map(error -> error.getField() + ": " + error.getDefaultMessage())
+                    .collect(Collectors.joining(", "));
+            throw new BadRequestException(errors);
+        }
+
+        Optional<String> token = authenticationService.registerUser(authDTO);
+        return new TokenResponse(token.get());
     }
 
     @PostMapping("/login")
-    public TokenResponse loginUser(@Valid @RequestBody LoginDTO loginDTO) {
-        validationService.validateLogin(loginDTO);
-        return new TokenResponse(authenticationService.loginUser(loginDTO).orElseThrow(() -> new BadRequestException("Login failed")));
+    public TokenResponse loginUser(@Valid @RequestBody LoginDTO loginDTO, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            String errors = bindingResult.getFieldErrors().stream()
+                    .map(error -> error.getField() + ": " + error.getDefaultMessage())
+                    .collect(Collectors.joining(", "));
+            throw new BadRequestException(errors);
+        }
+
+        Optional<String> token = authenticationService.loginUser(loginDTO);
+        return new TokenResponse(token.get());
     }
+
+    @GetMapping("/me")
+    public ResponseEntity<AuthResponse> me(Principal principalUser, AuthDTO authDTO){
+        if(principalUser == null) return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+
+        return ResponseEntity.ok(authenticationService.me(principalUser.getName(), principalUser, authDTO));
+    }
+
+    @PutMapping("/me")
+    public ResponseEntity<AuthResponse> updateMe(Principal principalUser, @Valid @RequestBody AuthDTO authDTO){
+        if(principalUser == null) throw new NotFoundException("User is not found");
+
+        return ResponseEntity.ok(authenticationService.updateMe(principalUser.getName(), principalUser, authDTO));
+    }
+
+    @PostMapping("/subscribe/{id}")
+    public ResponseEntity<Optional<String>> subscription (Principal principalUser, @PathVariable Long id){
+        if(principalUser == null) throw new NotFoundException("User is not found");
+
+        return ResponseEntity.ok(authenticationService.subscription(principalUser, id));
+    }
+
 }
