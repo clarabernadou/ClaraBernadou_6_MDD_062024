@@ -23,17 +23,17 @@
 
 <section *ngIf="isSmallScreen && isOtherPage" class="w-screen">
     <div class="flex items-center justify-between p-3">
-        <img src="/assets/logo_p6.png" (click)="navigate('/articles')" style="cursor: pointer;" width="150px" alt="logo" />
+        <img src="/assets/logo_p6.png" href='/articles' style="cursor: pointer;" width="150px" alt="logo" />
         <mat-icon aria-hidden="false" aria-label="Open navigation menu" fontIcon="menu" (click)="toggleNavbarModal()" class="text-4xl" style="cursor: pointer;"></mat-icon>
     </div>
     <hr class="border-black opacity-100">
     <div *ngIf="openNavbarModal" (click)="toggleNavbarModal()" class="fixed top-0 left-0 w-screen h-screen bg-gray-500 bg-opacity-50 flex items-center justify-center z-10">
         <mat-dialog-content class="fixed top-0 right-0 h-screen w-2/3 bg-white px-5 py-12 border border-black flex flex-col justify-between items-end">
             <div class="flex flex-col gap-5">
-                <a (click)="navigate('/articles')">Articles</a>
-                <a (click)="navigate('/themes')">Themes</a>
+                <a href='/articles'>Articles</a>
+                <a href='/themes'>Themes</a>
             </div>
-            <a (click)="navigate('/profile')" class="flex items-center w-max bg-[#D9D9D9] rounded-full p-3 text-[#00000080]">
+            <a href='/profile' class="flex items-center w-max bg-[#D9D9D9] rounded-full p-3 text-[#00000080]">
             <mat-icon aria-hidden="false" aria-label="Go to profile page" fontIcon="person_outline" class="text-4xl"></mat-icon>
             </a>
         </mat-dialog-content>
