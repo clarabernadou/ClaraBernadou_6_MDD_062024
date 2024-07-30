@@ -1,0 +1,32 @@
+<form [formGroup]="form" (ngSubmit)="submit()" class="w-full flex flex-col gap-6 items-center">
+    <div class="flex flex-col w-64">
+        <label>Email</label>
+        <input matInput formControlName="email" class="custom-input">
+        <mat-error *ngIf="submitted && form.get('email')?.hasError('required')" class="text-xs mt-1">
+            Email is required.
+        </mat-error>
+        <mat-error *ngIf="submitted && form.get('email')?.hasError('email')" class="text-xs mt-1">
+            The email is invalid, please enter a valid email.
+        </mat-error>
+    </div>
+    <div class="flex flex-col w-64">
+        <label>Username</label>
+        <input matInput formControlName="username" class="custom-input">
+        <mat-error *ngIf="submitted && form.get('username')?.hasError('required')" class="text-xs mt-1">
+            Username is required.
+        </mat-error>
+    </div>
+    <div class="flex flex-col w-64">
+        <mat-label>Password</mat-label>
+        <input matInput type="password" formControlName="password" class="custom-input">
+        <mat-error *ngIf="submitted && form.get('password')?.hasError('required')" class="text-xs mt-1">
+            Password is required.
+        </mat-error>
+    </div>
+    <mat-error *ngIf="onError">
+        {{ errorMessage }}
+    </mat-error>
+    <button type="submit" [disabled]="loading" class="primary-btn">
+        {{ loading ? 'Registration in progress...' : "Sign up" }}
+    </button>
+</form>

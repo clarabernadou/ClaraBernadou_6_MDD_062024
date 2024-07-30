@@ -1,0 +1,20 @@
+<form [formGroup]="form" (ngSubmit)="submit()" class="w-full flex flex-col gap-6 items-center">
+    <div class="flex flex-col w-64">
+      <input matInput formControlName="username" class="custom-form-input">
+      <mat-error *ngIf="submitted && form.get('username')?.hasError('required')" class="text-xs mt-1">
+        Username is required.
+      </mat-error>
+    </div>
+    <div class="flex flex-col w-64">
+      <input matInput formControlName="email" class="custom-form-input">
+      <mat-error *ngIf="submitted && form.get('email')?.hasError('required')" class="text-xs mt-1">
+        Email is required.
+      </mat-error>
+    </div>
+  <mat-error *ngIf="onError">
+    {{ errorMessage }}
+  </mat-error>
+  <button type="submit" [disabled]="loading" class="primary-btn">
+    {{ loading ? 'Saving in progress...' : 'Save' }}
+  </button>
+</form>
