@@ -1,12 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { forkJoin, map, mergeMap, Observable, Subscription } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { Article } from 'src/app/interfaces/article.interface';
 import { Theme } from 'src/app/interfaces/theme.interface';
 import { ArticleService } from 'src/app/services/article.service';
 import { BreakpointService } from 'src/app/services/breakpoint.service';
 import { ThemeService } from 'src/app/services/theme.service';
+import { extractErrorMessage } from 'src/app/utils/error.util';
 
 @Component({
   selector: 'app-create-article-form',
@@ -64,12 +65,14 @@ export class CreateArticleFormComponent implements OnInit {
     this.articleService.createArticle(article).subscribe({
       next: () => {
         this.loading = false;
+        this.submitted = false;
         this.router.navigate(['/articles']);
       },
-      error: (error) => {
+      error: error => {
         this.loading = false;
+        this.submitted = false;
         this.onError = true;
-        this.errorMessage = error.error.message;
+        this.errorMessage = extractErrorMessage(error);
       }
     });
   }

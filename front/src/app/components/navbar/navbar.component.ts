@@ -15,7 +15,7 @@ export class NavBarComponent implements OnInit {
     public isOtherPage: boolean = false;
     public openNavbarModal:boolean = false;
     public currentUrl: string = this.router.url;
-    private subscriptions: Subscription = new Subscription();
+    private subscription: Subscription = new Subscription();
 
     constructor(
         private breakpointService: BreakpointService, 
@@ -24,21 +24,21 @@ export class NavBarComponent implements OnInit {
     ) {}
 
     ngOnInit(): void {
-        this.subscriptions.add(
+        this.subscription.add(
             this.breakpointService.isSmallScreen().subscribe(isSmall => {
                 this.isSmallScreen = isSmall;
                 this.cdr.detectChanges();
             })
         );
 
-        this.subscriptions.add(
+        this.subscription.add(
             this.breakpointService.isLargeScreen().subscribe(isLarge => {
                 this.isLargeScreen = isLarge;
                 this.cdr.detectChanges();
             })
         );
 
-        this.subscriptions.add(
+        this.subscription.add(
             this.router.events.pipe(
                 filter(event => event instanceof NavigationEnd)
             ).subscribe(() => {
@@ -65,6 +65,6 @@ export class NavBarComponent implements OnInit {
     }
 
     ngOnDestroy(): void {
-        this.subscriptions.unsubscribe();
+        this.subscription.unsubscribe();
     }
 }

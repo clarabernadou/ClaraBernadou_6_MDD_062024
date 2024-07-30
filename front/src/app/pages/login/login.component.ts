@@ -11,7 +11,7 @@ import { Subscription } from 'rxjs';
 export class LoginComponent implements OnInit {
   public isSmallScreen: boolean = false;
   public isLargeScreen: boolean = false;
-  private subscriptions: Subscription = new Subscription();
+  private subscription: Subscription = new Subscription();
 
   constructor(
     private breakpointService: BreakpointService,
@@ -20,16 +20,16 @@ export class LoginComponent implements OnInit {
   ngOnInit() {
     if (sessionStorage.getItem('token')) this.router.navigate(['/articles']);
 
-    this.subscriptions.add(
+    this.subscription.add(
       this.breakpointService.isSmallScreen().subscribe(isSmall => this.isSmallScreen = isSmall)
     );
 
-    this.subscriptions.add(
+    this.subscription.add(
       this.breakpointService.isLargeScreen().subscribe(isLarge => this.isLargeScreen = isLarge)
     );
   }
 
   ngOnDestroy() {
-    this.subscriptions.unsubscribe();
+    this.subscription.unsubscribe();
   }
 }

@@ -4,6 +4,7 @@ import { UserService } from 'src/app/services/user.service';
 import { User } from 'src/app/interfaces/user.interface';
 import { Theme } from 'src/app/interfaces/theme.interface';
 import { Subscription } from 'rxjs';
+import { extractErrorMessage } from 'src/app/utils/error.util';
 
 @Component({
   selector: 'app-profile-form',
@@ -20,6 +21,7 @@ export class ProfileFormComponent implements OnInit {
     public themes: Theme[] = [];
     public user: User = {} as User;
     private subscriptions: Subscription = new Subscription();
+    private subscription: Subscription = new Subscription();
 
     public form = this.fb.group({
         username: [ '', [ Validators.required ] ],
@@ -37,7 +39,7 @@ export class ProfileFormComponent implements OnInit {
 
     private getMe(): void {
         this.loading = true;
-        this.subscriptions.add(
+        this.subscription.add(
             this.userService.getMe().subscribe({
                 next: (user: User) => {
                     this.user = user;
@@ -47,11 +49,13 @@ export class ProfileFormComponent implements OnInit {
                         email: user.email
                     });
                     this.loading = false;
+                    this.submitted = false;
                 },
-                error: (error) => {
+                error: error => {
                     this.loading = false;
+                    this.submitted = false;
                     this.onError = true;
-                    this.errorMessage = error.error?.message || 'An error occurred. Please try again.';
+                    this.errorMessage = extractErrorMessage(error);
                 }
             })
         );
@@ -63,23 +67,23 @@ export class ProfileFormComponent implements OnInit {
 
         this.loading = true;
 
-        this.subscriptions.add(
+        this.subscription.add(
             this.userService.updateMe(this.form.value as User).subscribe({
                 next: (user: User) => {
                     this.user = user;
                     this.loading = false;
                     sessionStorage.setItem('token', user.token!);
                 },
-                error: (error) => {
+                error: error => {
                     this.loading = false;
                     this.onError = true;
-                    this.errorMessage = error.error?.message || 'An error occurred. Please try again.';
+                    this.errorMessage = extractErrorMessage(error);
                 }
             })
         );
     }
 
     ngOnDestroy(): void {
-        this.subscriptions.unsubscribe();
+        this.subscription.unsubscribe();
     }
 }

@@ -6,6 +6,7 @@ import { UserService } from 'src/app/services/user.service';
 import { forkJoin, Subscription } from 'rxjs';
 import { map, mergeMap } from 'rxjs/operators';
 import { Router } from '@angular/router';
+import { extractErrorMessage } from 'src/app/utils/error.util';
 
 @Component({
   selector: 'app-articles',
@@ -20,7 +21,7 @@ export class ArticlesComponent implements OnInit {
   public errorMessage: string = '';
   public articles: Article[] = [];
   public isAscendingOrder: boolean = true;
-  private subscriptions: Subscription = new Subscription();
+  private subscription: Subscription = new Subscription();
 
   constructor(
     private breakpointService: BreakpointService, 
@@ -32,11 +33,11 @@ export class ArticlesComponent implements OnInit {
   ngOnInit() {
     if (!sessionStorage.getItem('token')) this.router.navigate(['/login']);
 
-    this.subscriptions.add(
+    this.subscription.add(
       this.breakpointService.isSmallScreen().subscribe(isSmall => this.isSmallScreen = isSmall)
     );
 
-    this.subscriptions.add(
+    this.subscription.add(
       this.breakpointService.isLargeScreen().subscribe(isLarge => this.isLargeScreen = isLarge)
     );
 
@@ -65,7 +66,7 @@ export class ArticlesComponent implements OnInit {
       error: error => {
         this.loading = false;
         this.onError = true;
-        this.errorMessage = error.error?.message || 'An error occurred. Please try again.';
+        this.errorMessage = extractErrorMessage(error);
       }
     });
   }
@@ -80,6 +81,6 @@ export class ArticlesComponent implements OnInit {
   }
 
   ngOnDestroy() {
-    this.subscriptions.unsubscribe();
+    this.subscription.unsubscribe();
   }
 }

@@ -6,6 +6,7 @@ import { AuthToken } from 'src/app/interfaces/authSession.interface';
 import { Register } from 'src/app/interfaces/login.interface';
 import { AuthService } from 'src/app/services/auth.service';
 import { SessionService } from 'src/app/services/session.service';
+import { extractErrorMessage } from 'src/app/utils/error.util';
 
 @Component({
   selector: 'app-register-form',
@@ -45,13 +46,15 @@ export class RegisterFormComponent implements OnDestroy {
       next: (response: AuthToken) => {
         this.sessionService.logIn(response);
         this.loading = false;
+        this.submitted = false;
         sessionStorage.setItem('token', response.token);
         this.router.navigate(['/articles']);
       },
-      error: (error) => {
+      error: error => {
         this.loading = false;
+        this.submitted = false;
         this.onError = true;
-        this.errorMessage = error.error?.message || "Une erreur s'est produite. Veuillez réessayer.";
+        this.errorMessage = extractErrorMessage(error);
       },
     });
   }
