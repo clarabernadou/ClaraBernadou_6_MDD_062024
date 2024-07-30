@@ -5,6 +5,7 @@ import { CommentService } from 'src/app/services/comment.service';
 import { Comment } from 'src/app/interfaces/comment.interface';
 import { BreakpointService } from 'src/app/services/breakpoint.service';
 import { Subscription } from 'rxjs';
+import { extractErrorMessage } from 'src/app/utils/error.util';
 
 @Component({
   selector: 'app-create-comment-form',
@@ -19,7 +20,7 @@ export class CreateCommentFormComponent implements OnInit {
   public comments: Comment[] = [];
   public isSmallScreen: boolean = false;
   public isLargeScreen: boolean = false;
-  private subscriptions: Subscription = new Subscription();
+  private subscription: Subscription = new Subscription();
 
   @Output() updateComments: EventEmitter<void> = new EventEmitter<void>();
 
@@ -35,10 +36,10 @@ export class CreateCommentFormComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.subscriptions.add(
+    this.subscription.add(
       this.breakpointService.isSmallScreen().subscribe(isSmall => this.isSmallScreen = isSmall)
     );
-    this.subscriptions.add(
+    this.subscription.add(
       this.breakpointService.isLargeScreen().subscribe(isLarge => this.isLargeScreen = isLarge)
     );
   }
@@ -57,19 +58,21 @@ export class CreateCommentFormComponent implements OnInit {
     this.commentService.createComment(articleId, comment).subscribe({
       next: () => {
         this.loading = false;
+        this.submitted = false;
         this.form.reset();
         this.updateComments.emit();
       },
-      error: (error) => {
+      error: error => {
         this.loading = false;
+        this.submitted = false;
         this.onError = true;
-        this.errorMessage = error.error?.message || 'Une erreur est survenue';
+        this.errorMessage = extractErrorMessage(error);
       }
     });
   }
 
   ngOnDestroy(): void {
-    this.subscriptions.unsubscribe();
+    this.subscription.unsubscribe();
   }
 }
 

@@ -6,6 +6,7 @@ import { SessionService } from 'src/app/services/session.service';
 import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
+import { extractErrorMessage } from 'src/app/utils/error.util';
 
 @Component({
   selector: 'app-login-form',
@@ -44,13 +45,15 @@ export class LoginFormComponent implements OnDestroy {
       next: (response: AuthToken) => {
         this.sessionService.logIn(response);
         this.loading = false;
+        this.submitted = false;
         sessionStorage.setItem('token', response.token);
         this.router.navigate(['/articles']);
       },
-      error: (error) => {
+      error: error => {
         this.loading = false;
+        this.submitted = false;
         this.onError = true;
-        this.errorMessage = error.error?.message || 'An error occurred. Please try again.';
+        this.errorMessage = extractErrorMessage(error);
       },
     });
   }
