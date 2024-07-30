@@ -6,6 +6,7 @@ import { User } from 'src/app/interfaces/user.interface';
 import { BreakpointService } from 'src/app/services/breakpoint.service';
 import { ThemeService } from 'src/app/services/theme.service';
 import { UserService } from 'src/app/services/user.service';
+import { extractErrorMessage } from 'src/app/utils/error.util';
 
 @Component({
   selector: 'app-theme-list',
@@ -39,41 +40,28 @@ export class ThemeListComponent implements OnInit {
       this.breakpointService.isLargeScreen().subscribe(isLarge => this.isLargeScreen = isLarge)
     );
 
-    if(this.currentUrl === "/themes") this.getAllNoSubscribeThemes();
-    if(this.currentUrl === "/profile") this.getSubscribeThemes();
+    this.getThemes();
   }
 
-  public getAllNoSubscribeThemes(): void {
-    this.loading = true;
+  public getThemes(): void {
     this.themeService.getAllThemes().pipe(
-      mergeMap(themes => 
-        this.userService.getMe().pipe(
-          map(user => themes.filter(theme => 
-            !user.subscriptions!.map(sub => sub.id).includes(theme.id)
-          ))
-        )
-      )
+      mergeMap((themes: Theme[]) => {
+        return this.userService.getMe().pipe(
+          map((user: User) => {
+            if(this.currentUrl === "/themes") return themes.filter(theme => !user.subscriptions?.map(sub => sub.id).includes(theme.id));
+            return themes.filter(theme => user.subscriptions?.map(sub => sub.id).includes(theme.id)) 
+          })
+        );
+      })
     ).subscribe({
-      next: filteredThemes => {
+      next: (filteredThemes: Theme[]) => {
         this.themes = filteredThemes;
         this.loading = false;
       },
-      error: error => {
+      error: (error) => {
         this.loading = false;
         this.onError = true;
-        this.errorMessage = error.error?.message || 'An error occurred. Please try again.';
-      }
-    });
-  }
-
-  public getSubscribeThemes(): void {
-    this.userService.getMe().subscribe({
-      next: user => {
-        this.themes = user.subscriptions as Theme[];
-      },
-      error: error => {
-        this.onError = true;
-        this.errorMessage = error.error?.message || 'An error occurred. Please try again.';
+        this.errorMessage = extractErrorMessage(error);
       }
     });
   }
@@ -81,11 +69,11 @@ export class ThemeListComponent implements OnInit {
   public subscribeToTheme(themeId: number): void {
     this.themeService.subscribeToTheme(themeId).subscribe({
       next: () => {
-        this.getAllNoSubscribeThemes();
+        this.getThemes();
       },
       error: error => {
         this.onError = true;
-        this.errorMessage = error.error?.message || 'An error occurred. Please try again.';
+        this.errorMessage = extractErrorMessage(error);
       }
     });
   }
@@ -93,13 +81,17 @@ export class ThemeListComponent implements OnInit {
   public unsubscribeToTheme(themeId: number): void {
     this.themeService.unsubscribeToTheme(themeId).subscribe({
       next: () => {
-        this.getSubscribeThemes();
+        this.getThemes();
       },
       error: error => {
         this.onError = true;
-        this.errorMessage = error.error?.message || 'An error occurred. Please try again.';
+        this.errorMessage = extractErrorMessage(error);
       }
     });
+  }
+
+  ngOnDestroy(): void {
+    this.subscription.unsubscribe();
   }
 }
 
