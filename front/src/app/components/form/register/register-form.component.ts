@@ -51,7 +51,7 @@ export class RegisterFormComponent implements OnDestroy {
       error: (error) => {
         this.loading = false;
         this.onError = true;
-        this.errorMessage = error.error?.message || "Une erreur s'est produite. Veuillez réessayer.";
+        this.errorMessage = error.error?.message || "An error occurred. Please try again.";
       },
     });
   }

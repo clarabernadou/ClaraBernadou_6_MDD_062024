@@ -63,7 +63,7 @@ export class CreateCommentFormComponent implements OnInit {
       error: (error) => {
         this.loading = false;
         this.onError = true;
-        this.errorMessage = error.error?.message || 'Une erreur est survenue';
+        this.errorMessage = error.error?.message || 'An error occurred. Please try again.';
       }
     });
   }
