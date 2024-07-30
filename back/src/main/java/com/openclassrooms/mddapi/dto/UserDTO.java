@@ -1,7 +1,12 @@
 package com.openclassrooms.mddapi.dto;
 
+import java.util.List;
+
+import javax.persistence.Column;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+
+import com.openclassrooms.mddapi.entity.Theme;
 
 import lombok.Data;
 
@@ -14,5 +19,8 @@ public class UserDTO {
     private String email;
 
     @NotBlank(message = "Username is mandatory")
+    @Column(unique = true)
     private String username;
+
+    private List<Theme> subscriptions;
 }
