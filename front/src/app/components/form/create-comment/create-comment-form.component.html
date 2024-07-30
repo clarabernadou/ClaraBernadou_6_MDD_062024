@@ -1,0 +1,34 @@
+<form *ngIf="isLargeScreen" [formGroup]="form" (ngSubmit)="submitComment()" class="w-screen p-5 flex items-center justify-center gap-5">
+  <div class="w-2/4 flex flex-col">
+    <textarea matInput formControlName="content" class="w-full custom-input h-20" placeholder="Write your comment here"></textarea>
+    <mat-error *ngIf="submitted && form.get('content')?.hasError('required')" class="text-xs mt-1">
+      Content is required.
+    </mat-error>
+  </div>
+  <div class="flex items-center">
+    <mat-error *ngIf="onError">
+      {{ errorMessage }}
+    </mat-error>
+    <button type="submit" [disabled]="loading" class="ml-auto">
+      <mat-icon aria-hidden="false" aria-label="Envoyer le commentaire" fontIcon="send" class="text-[#7763C5] text-4xl"></mat-icon>
+    </button>
+  </div>
+</form>
+
+
+<form *ngIf="isSmallScreen" [formGroup]="form" (ngSubmit)="submitComment()" class="w-screen custom-input bg-white fixed bottom-0 left-0 right-0">
+  <div class="flex">
+    <div class="w-full flex flex-col">
+      <textarea matInput formControlName="content" class="h-20" placeholder="Write your comment here"></textarea>
+      <mat-error *ngIf="submitted && form.get('content')?.hasError('required')" class="text-xs mt-1">
+        Content is required.
+      </mat-error>
+    </div>
+    <button type="submit" [disabled]="loading">
+      <mat-icon aria-hidden="false" aria-label="Envoyer le commentaire" fontIcon="send" class="text-[#7763C5] text-4xl"></mat-icon>
+    </button>
+  </div>
+  <mat-error *ngIf="onError">
+    {{ errorMessage }}
+  </mat-error>
+</form>
