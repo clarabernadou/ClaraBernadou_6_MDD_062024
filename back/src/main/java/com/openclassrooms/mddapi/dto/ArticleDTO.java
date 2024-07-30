@@ -11,8 +11,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Data
 public class ArticleDTO {
-    private Long id;
-
     @JsonProperty("theme_id")
     private Long themeId;
 

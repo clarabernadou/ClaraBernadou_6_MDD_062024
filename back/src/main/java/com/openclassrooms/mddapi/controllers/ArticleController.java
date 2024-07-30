@@ -2,44 +2,39 @@ package com.openclassrooms.mddapi.controllers;
 
 import javax.validation.Valid;
 
+import com.openclassrooms.mddapi.controllers.advice.exceptions.UnauthorizedException;
 import com.openclassrooms.mddapi.dto.ArticleDTO;
 import com.openclassrooms.mddapi.model.MessageResponse;
-import com.openclassrooms.mddapi.services.interfaces.ArticleService;
-import com.openclassrooms.mddapi.services.interfaces.ValidationService;
+import com.openclassrooms.mddapi.services.ArticleService;
 
+import org.springframework.validation.Errors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.security.Principal;
-import java.util.List;
 
 @RestController
-@RequestMapping("/api/auth/article")
+@RequestMapping("/api/auth")
 public class ArticleController {
 
-    private final ArticleService articleService;
-    private final ValidationService validationService;
-
     @Autowired
-    public ArticleController(ArticleService articleService, ValidationService validationService) {
-        this.articleService = articleService;
-        this.validationService = validationService;
-    }
+    private ArticleService articleService;
 
-    @PostMapping("/")
-    public ResponseEntity<MessageResponse> createArticle(@Valid @RequestBody ArticleDTO articleDTO, Principal principalUser) {
-        validationService.validateArticle(articleDTO);
+    @PostMapping("/articles")
+    public ResponseEntity<?> createArticle(@Valid @RequestBody ArticleDTO articleDTO, Principal principalUser, Errors errors) throws IOException {
+        if(errors.hasErrors()) throw new UnauthorizedException("Invalid article data");
         return ResponseEntity.ok(new MessageResponse(articleService.createArticle(articleDTO, principalUser).get()));
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<ArticleDTO> getArticle(@PathVariable Long id) {
-        return articleService.getArticle(id);
+    @GetMapping("/articles/{id}")
+    public ResponseEntity<?> getArticle(@PathVariable Long id) {
+        return ResponseEntity.ok(articleService.getArticle(id));
     }
 
-    @GetMapping("/")
-    public ResponseEntity<List<ArticleDTO>> getArticles() {
+    @GetMapping("/articles")
+    public ResponseEntity<?> getArticles() {
         return ResponseEntity.ok(articleService.getArticles());
     }
 }
