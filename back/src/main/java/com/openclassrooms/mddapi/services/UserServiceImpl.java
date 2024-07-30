@@ -7,6 +7,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import com.openclassrooms.mddapi.controllers.advice.exceptions.NotFoundException;
+import com.openclassrooms.mddapi.controllers.advice.exceptions.UnauthorizedException;
 import com.openclassrooms.mddapi.dto.UserDTO;
 import com.openclassrooms.mddapi.entity.Auth;
 import com.openclassrooms.mddapi.model.AuthResponse;
@@ -47,6 +48,11 @@ public class UserServiceImpl implements UserService {
             .orElseThrow(() -> new NotFoundException("User not found"));
         user.setEmail(userDTO.getEmail());
         user.setUsername(userDTO.getUsername());
+
+        if (userRepository.findByEmail(userDTO.getEmail()).isPresent() ||
+            userRepository.findByUsername(userDTO.getUsername()).isPresent()) {
+            throw new UnauthorizedException("User already exists!");
+        }
 
         userRepository.save(user);
         AuthResponse authResponse = modelMapper.map(user, AuthResponse.class);
