@@ -1,5 +1,7 @@
-.github-link {
-  position: absolute;
-  bottom: 0;
-  margin-bottom: 1em;
+.center {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
 }
