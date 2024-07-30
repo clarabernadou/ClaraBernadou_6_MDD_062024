@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { BreakpointService } from 'src/app/services/breakpoint.service';
 
 @Component({
   selector: 'app-home',
@@ -6,11 +8,26 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./home.component.scss'],
 })
 export class HomeComponent implements OnInit {
-  constructor() {}
+  public isSmallScreen: boolean = false;
+  public isLargeScreen: boolean = false;
 
-  ngOnInit(): void {}
+  constructor(
+    private breakpointService: BreakpointService, 
+    private router: Router
+  ) {}
 
-  start() {
-    alert('Commencez par lire le README et à vous de jouer !');
+  ngOnInit() {
+    if (sessionStorage.getItem('token')) {
+      this.router.navigate(['/articles']);
+      return;
+    };
+
+    this.breakpointService.isSmallScreen().subscribe(isSmall => {
+      this.isSmallScreen = isSmall;
+    });
+
+    this.breakpointService.isLargeScreen().subscribe(isLarge => {
+      this.isLargeScreen = isLarge;
+    });
   }
 }
