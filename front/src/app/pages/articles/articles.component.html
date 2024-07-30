@@ -1,0 +1,28 @@
+<div class="flex flex-col items-center justify-center" >
+    <app-navbar></app-navbar>
+    <div class="w-screen flex flex-col p-5 gap-5">
+        <section class="w-full flex items-center justify-between gap-5" [ngClass]="{'flex-col': isSmallScreen}">
+            <button type="button" class="primary-btn" routerLink="/articles/create" >Create article</button>
+            <div class="flex items-center gap-2" (click)="sortArticles()" style="cursor: pointer;">
+                <p class="font-extrabold" style="font-size: 16px; font-weight: 700;">Sort by</p>
+                <mat-icon *ngIf="!isAscendingOrder" aria-hidden="false" aria-label="Sort items by dsc order" fontIcon="south"></mat-icon>
+                <mat-icon *ngIf="isAscendingOrder" aria-hidden="false" aria-label="Sort items by asc order" fontIcon="north"></mat-icon>
+            </div>
+        </section>
+        <section class="flex w-full">
+            <p *ngIf="!articles || articles.length === 0">No items available at the moment</p>
+            <div *ngIf="articles && articles.length > 0" class="w-full flex flex-wrap justify-between" [ngClass]="{'flex-col': isSmallScreen}">
+                <app-card 
+                    *ngFor="let article of articles"
+                    [link]="['/articles/detail', article.id!.toString()]"
+                    [title]="article.title" 
+                    [author]="article.author!" 
+                    [createdAt]="article.created_at!" 
+                    [content]="article.content"
+                    [ellipsis]=5
+                    [ngStyle]="{'width': isLargeScreen ? 'calc(50% - 24px)' : '100%', 'margin-bottom': '24px'}" style="cursor: pointer;">
+                </app-card>
+            </div>
+        </section>
+    </div>
+</div>
