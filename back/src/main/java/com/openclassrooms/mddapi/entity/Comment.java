@@ -18,7 +18,7 @@ public class Comment {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    private Auth user;
+    private Auth userId;
 
     @ManyToOne
     @JoinColumn(name = "article_id")
