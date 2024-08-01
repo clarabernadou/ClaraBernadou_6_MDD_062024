@@ -48,7 +48,7 @@ export class ThemeListComponent implements OnInit {
       mergeMap((themes: Theme[]) => {
         return this.userService.getMe().pipe(
           map((user: User) => {
-            if(this.currentUrl === "/themes") return themes.filter(theme => !user.subscriptions?.map(sub => sub.id).includes(theme.id));
+            if(this.currentUrl === "/themes") return themes;
             return themes.filter(theme => user.subscriptions?.map(sub => sub.id).includes(theme.id)) 
           })
         );
