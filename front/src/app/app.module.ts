@@ -8,49 +8,53 @@ import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { HomeComponent } from './pages/home/home.component';
-import { RegisterComponent } from './pages/register/register.component';
-import { LoginComponent } from './pages/login/login.component';
+import { HomePage } from './pages/Home/homePage.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
-import { ArticlesComponent } from './pages/articles/articles.component';
-import { NavBarComponent } from './components/navbar/navbar.component';
 import { MatDialogModule } from '@angular/material/dialog';
-import { ArticleDetailComponent } from './pages/articleDetail/article-detail.component';
-import { CreateArticleComponent } from './pages/createArticle/create-article.component';
-import { ProfileComponent } from './pages/profile/profile.component';
-import { ThemesComponent } from './pages/themes/themes.component';
-import { CreateArticleFormComponent } from './components/form/create-article/create-article-form.component';
-import { CardComponent } from './components/card/card.component';
-import { ArticleComponent } from './components/article/article.component';
-import { CommentsComponent } from './components/article/comments/comments.component';
-import { CreateCommentFormComponent } from './components/form/create-comment/create-comment-form.component';
-import { LoginFormComponent } from './components/form/login/login-form.component';
-import { RegisterFormComponent } from './components/form/register/register-form.component';
-import { ProfileFormComponent } from './components/form/profile/profile-form.component';
-import { ThemeListComponent } from './components/themeList/theme-list.component';
+import { CreateArticlePage } from './pages/CreateArticlePage/createArticlePage.component';
+import { ProfilePage } from './pages/Profile/profilePage.component';
+import { ThemesPage } from './pages/ThemesPage/themesPage.component';
+import { CreateArticleFormComponent } from './components/Articles/CreateArticleForm/createArticleFormComponent.component';
+import { CreateCommentFormComponent } from './components/Comments/create-comment/create-comment-form.component';
+import { LoginFormComponent } from './components/Login/LoginForm/loginFormComponent.component';
+import { ProfileFormComponent } from './components/Profile/profile/profile-form.component';
+import { ArticleFeedComponent } from './components/Articles/ArticleFeed/articleFeedComponent.component';
+import { ArticleDetailPage } from './pages/ArticleDetailPage/articleDetailPage.component';
+import { ArticlesPage } from './pages/ArticlesPage/articlesPage.component';
+import { ThemeFeedComponent } from './components/Themes/Feed/themeFeedComponent.component';
+import { createCommentFormComponent } from './components/Comments/CreateComment/createCommentFormComponent.component';
+import { CommentFeedComponent } from './components/Comments/CommentFeed/commentFeedComponent.component';
+import { BaseCardComponent } from './components/Base/BaseCard/baseCardComponent.component';
+import { BaseNavBarComponent } from './components/Base/BaseNavbar/baseNavbarComponent.component';
+import { RegisterFormComponent } from './components/Register/RegisterForm/registerFormComponent.component';
+import { LoginPage } from './pages/Login/loginPage.component';
+import { RegisterPage } from './pages/Register/registerPage.component';
+import { ArticleDetailComponent } from './components/Articles/ArticleDetail/articleDetailComponent.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    HomeComponent,
-    RegisterComponent,
-    LoginComponent,
-    ArticlesComponent,
-    ArticleDetailComponent,
-    CreateArticleComponent,
-    NavBarComponent,
-    ProfileComponent,
-    ThemesComponent,
+    HomePage,
+    RegisterPage,
+    LoginPage,
+    CreateArticlePage,
+    ProfilePage,
+    ThemesPage,
     CreateArticleFormComponent,
-    CardComponent,
-    ArticleComponent,
-    CommentsComponent,
     CreateCommentFormComponent,
+    ProfileFormComponent,
+    ThemeFeedComponent,
+    ArticleFeedComponent,
+    ArticleDetailPage,
+    ArticlesPage,
+    BaseCardComponent,
+    createCommentFormComponent,
+    CommentFeedComponent,
+    BaseNavBarComponent,
     LoginFormComponent,
     RegisterFormComponent,
-    ProfileFormComponent,
-    ThemeListComponent,
+    ArticleDetailComponent,
   ],
   imports: [
     BrowserModule,
