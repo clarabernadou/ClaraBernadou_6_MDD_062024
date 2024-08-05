@@ -1,0 +1,29 @@
+<form [formGroup]="form" (ngSubmit)="submit()" class="w-full flex flex-col gap-6 items-center">
+    <div class="flex flex-col w-64">
+      <select matInput formControlName="theme_id" class="custom-form-input no-arrow" placeholder="Select a theme">
+        <option value="" disabled selected class="text-gray-500">Select a theme</option>
+        <option *ngFor="let theme of themes$ | async" [value]="theme.id">{{ theme.title }}</option>
+      </select>
+      <mat-error *ngIf="submitted && form.get('theme_id')?.hasError('required')" class="text-xs mt-1">
+        Theme is required.
+      </mat-error>
+    </div>
+    <div class="flex flex-col w-64">
+      <input matInput formControlName="title" class="custom-form-input" placeholder="Article title">
+      <mat-error *ngIf="submitted && form.get('title')?.hasError('required')" class="text-xs mt-1">
+        Title is required.
+      </mat-error>
+    </div>
+    <div class="flex flex-col w-64">
+      <textarea matInput formControlName="content" class="custom-form-input h-36" placeholder="Article content"></textarea>
+      <mat-error *ngIf="submitted && form.get('content')?.hasError('required')" class="text-xs mt-1">
+        Content is required.
+      </mat-error>
+    </div>
+  <mat-error *ngIf="onError">
+    {{ errorMessage }}
+  </mat-error>
+  <button type="submit" [disabled]="loading" class="primary-btn">
+    {{ loading ? 'Creation in progress...' : 'Create' }}
+  </button>
+</form>

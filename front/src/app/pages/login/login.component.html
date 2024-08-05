@@ -1,8 +1,0 @@
-<section class="center" class="flex flex-col justify-center items-center tracking-wider" [ngClass]="{'p-12': isSmallScreen}">
-  <app-navbar></app-navbar>
-  <div class="w-full flex flex-col gap-5" [ngClass]="{'p-12': isLargeScreen}">
-    <mat-icon *ngIf="isLargeScreen" aria-hidden="false" aria-label="Retourner à la page principale" routerLink="/" fontIcon="keyboard_backspace" class="text-5xl relative left-0 top-0" style="cursor: pointer;"></mat-icon>
-    <h1 class="text-center">Log in</h1>
-    <app-login-form></app-login-form>
-  </div>
-</section>
