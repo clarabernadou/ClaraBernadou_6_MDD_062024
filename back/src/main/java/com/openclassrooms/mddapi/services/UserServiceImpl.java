@@ -46,13 +46,19 @@ public class UserServiceImpl implements UserService {
         Auth user = userRepository.findByUsername(usernameOrEmail)
             .or(() -> userRepository.findByEmail(usernameOrEmail))
             .orElseThrow(() -> new NotFoundException("User not found"));
+
+        boolean emailExists = userRepository.findByEmail(userDTO.getEmail())
+            .filter(existingUser -> !existingUser.getEmail().equals(user.getEmail()))
+            .isPresent();
+
+        boolean usernameExists = userRepository.findByUsername(userDTO.getUsername())
+            .filter(existingUser -> !existingUser.getUsername().equals(user.getUsername()))
+            .isPresent();
+
+        if (emailExists || usernameExists) throw new UnauthorizedException("User already exists!");
+
         user.setEmail(userDTO.getEmail());
         user.setUsername(userDTO.getUsername());
-
-        if (userRepository.findByEmail(userDTO.getEmail()).isPresent() ||
-            userRepository.findByUsername(userDTO.getUsername()).isPresent()) {
-            throw new UnauthorizedException("User already exists!");
-        }
 
         userRepository.save(user);
         AuthResponse authResponse = modelMapper.map(user, AuthResponse.class);

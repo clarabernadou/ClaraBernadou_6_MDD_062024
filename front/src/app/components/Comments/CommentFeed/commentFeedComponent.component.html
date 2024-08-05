@@ -1,0 +1,12 @@
+<section class="w-screen px-5 flex flex-col gap-5">
+    <h3 class="w-full">Comments</h3>
+    <p *ngIf="!comments || comments.length === 0">No one has commented on this article.</p>
+    <div *ngIf="comments && comments.length > 0" class="w-full flex flex-col items-center gap-6 custom-scrollbar">
+      <div *ngFor="let comment of comments" class="w-full md:w-2/4 flex flex-col-reverse items-end justify-center gap-6 md:flex-row md:items-center">
+          <p class="w-auto">{{ comment.username }}</p>
+          <div class="w-full md:bg-[#EEEEEE] rounded-lg md:p-6">
+            <p>{{ comment.content }}</p>
+          </div>
+      </div>
+    </div>
+</section>

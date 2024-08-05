@@ -1,0 +1,14 @@
+<section class="w-screen p-5 flex flex-col gap-5">
+    <div class="w-full flex gap-6 items-start">
+        <mat-icon aria-hidden="false" aria-label="Retourner à la page des articles" routerLink="/articles" fontIcon="keyboard_backspace" class="text-4xl" style="cursor: pointer;"></mat-icon>
+        <h2>{{ article?.title }}</h2>
+    </div>
+    <div class="flex flex-wrap gap-x-12 gap-y-3">
+        <p>{{ article?.created_at }}</p>
+        <p>{{ article?.author }}</p>
+        <p>{{ article?.theme }}</p>
+    </div>
+    <p>{{ article?.content }}</p>
+
+    <hr class="border-black" />
+</section>
