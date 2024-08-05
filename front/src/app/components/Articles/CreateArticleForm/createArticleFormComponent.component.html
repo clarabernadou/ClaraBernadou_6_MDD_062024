@@ -2,7 +2,7 @@
     <div class="flex flex-col w-64">
       <select matInput formControlName="theme_id" class="custom-form-input no-arrow" placeholder="Select a theme">
         <option value="" disabled selected class="text-gray-500">Select a theme</option>
-        <option *ngFor="let theme of themes | async" [value]="theme.id">{{ theme.title }}</option>
+        <option *ngFor="let theme of themes$ | async" [value]="theme.id">{{ theme.title }}</option>
       </select>
       <mat-error *ngIf="submitted && form.get('theme_id')?.hasError('required')" class="text-xs mt-1">
         Theme is required.

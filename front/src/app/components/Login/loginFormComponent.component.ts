@@ -11,7 +11,7 @@ import { extractErrorMessage } from 'src/app/utils/error.util';
 @Component({
   selector: 'app-login-form-component',
   templateUrl: './loginFormComponent.component.html',
-  styleUrls: ['../../../app.component.scss'],
+  styleUrls: ['../../app.component.scss'],
 })
 export class LoginFormComponent implements OnDestroy {
   public onError: boolean = false;
@@ -21,8 +21,8 @@ export class LoginFormComponent implements OnDestroy {
   private destroy$: Subject<void> = new Subject<void>();
 
   public form = this.fb.group({
-    emailOrUsername: [ '', [ Validators.required ] ],
-    password: [ '', [ Validators.required, Validators.minLength(3) ] ]
+    emailOrUsername: ['', [Validators.required]],
+    password: ['', [Validators.required, Validators.minLength(3)]],
   });
 
   constructor(
@@ -33,7 +33,7 @@ export class LoginFormComponent implements OnDestroy {
   ) {}
 
   public submit(): void {
-    this.submitted = true; 
+    this.submitted = true;
     if (this.form.invalid) return;
 
     this.loading = true;
@@ -43,19 +43,27 @@ export class LoginFormComponent implements OnDestroy {
       takeUntil(this.destroy$)
     ).subscribe({
       next: (response: AuthToken) => {
-        this.sessionService.logIn(response);
-        this.loading = false;
-        this.submitted = false;
-        sessionStorage.setItem('token', response.token);
-        this.router.navigate(['/articles']);
+        this.handleLoginSuccess(response);
       },
-      error: error => {
-        this.loading = false;
-        this.submitted = false;
-        this.onError = true;
-        this.errorMessage = extractErrorMessage(error);
+      error: (error) => {
+        this.handleLoginError(error);
       },
     });
+  }
+
+  private handleLoginSuccess(response: AuthToken): void {
+    this.sessionService.logIn(response);
+    sessionStorage.setItem('token', response.token);
+    this.loading = false;
+    this.submitted = false;
+    this.router.navigate(['/articles']);
+  }
+
+  private handleLoginError(error: any): void {
+    this.loading = false;
+    this.submitted = false;
+    this.onError = true;
+    this.errorMessage = extractErrorMessage(error);
   }
 
   ngOnDestroy(): void {

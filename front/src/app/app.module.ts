@@ -16,21 +16,20 @@ import { CreateArticlePage } from './pages/CreateArticlePage/createArticlePage.c
 import { ProfilePage } from './pages/Profile/profilePage.component';
 import { ThemesPage } from './pages/ThemesPage/themesPage.component';
 import { CreateArticleFormComponent } from './components/Articles/CreateArticleForm/createArticleFormComponent.component';
-import { CreateCommentFormComponent } from './components/Comments/create-comment/create-comment-form.component';
-import { LoginFormComponent } from './components/Login/LoginForm/loginFormComponent.component';
-import { ProfileFormComponent } from './components/Profile/profile/profile-form.component';
+import { LoginFormComponent } from './components/Login/loginFormComponent.component';
 import { ArticleFeedComponent } from './components/Articles/ArticleFeed/articleFeedComponent.component';
 import { ArticleDetailPage } from './pages/ArticleDetailPage/articleDetailPage.component';
 import { ArticlesPage } from './pages/ArticlesPage/articlesPage.component';
 import { ThemeFeedComponent } from './components/Themes/Feed/themeFeedComponent.component';
-import { createCommentFormComponent } from './components/Comments/CreateComment/createCommentFormComponent.component';
 import { CommentFeedComponent } from './components/Comments/CommentFeed/commentFeedComponent.component';
 import { BaseCardComponent } from './components/Base/BaseCard/baseCardComponent.component';
 import { BaseNavBarComponent } from './components/Base/BaseNavbar/baseNavbarComponent.component';
-import { RegisterFormComponent } from './components/Register/RegisterForm/registerFormComponent.component';
+import { RegisterFormComponent } from './components/Register/registerFormComponent.component';
 import { LoginPage } from './pages/Login/loginPage.component';
 import { RegisterPage } from './pages/Register/registerPage.component';
 import { ArticleDetailComponent } from './components/Articles/ArticleDetail/articleDetailComponent.component';
+import { CreateCommentFormComponent } from './components/Comments/CreateComment/createCommentFormComponent.component';
+import { ProfileFormComponent } from './components/Profile/profileFormComponent.component';
 
 @NgModule({
   declarations: [
@@ -43,18 +42,18 @@ import { ArticleDetailComponent } from './components/Articles/ArticleDetail/arti
     ThemesPage,
     CreateArticleFormComponent,
     CreateCommentFormComponent,
-    ProfileFormComponent,
     ThemeFeedComponent,
     ArticleFeedComponent,
     ArticleDetailPage,
     ArticlesPage,
     BaseCardComponent,
-    createCommentFormComponent,
     CommentFeedComponent,
     BaseNavBarComponent,
     LoginFormComponent,
     RegisterFormComponent,
     ArticleDetailComponent,
+    CreateCommentFormComponent,
+    ProfileFormComponent,
   ],
   imports: [
     BrowserModule,

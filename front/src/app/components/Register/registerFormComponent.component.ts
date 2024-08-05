@@ -1,7 +1,7 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { Subject, Subscription, takeUntil } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
 import { AuthToken } from 'src/app/interfaces/authSession.interface';
 import { Register } from 'src/app/interfaces/login.interface';
 import { AuthService } from 'src/app/services/auth.service';
@@ -11,7 +11,7 @@ import { extractErrorMessage } from 'src/app/utils/error.util';
 @Component({
   selector: 'app-register-form-component',
   templateUrl: './registerFormComponent.component.html',
-  styleUrls: ['../../../app.component.scss'],
+  styleUrls: ['../../app.component.scss'],
 })
 export class RegisterFormComponent implements OnDestroy {
   public onError: boolean = false;
@@ -21,9 +21,9 @@ export class RegisterFormComponent implements OnDestroy {
   private destroy$: Subject<void> = new Subject<void>();
 
   public form = this.fb.group({
-    email: [ '', [ Validators.required, Validators.email ] ],
-    username: ['', [ Validators.required, ] ],
-    password: [ '', [   Validators.required, Validators.minLength(3) ] ]
+    email: ['', [Validators.required, Validators.email]],
+    username: ['', [Validators.required]],
+    password: ['', [Validators.required, Validators.minLength(3)]]
   });
 
   constructor(
@@ -34,7 +34,7 @@ export class RegisterFormComponent implements OnDestroy {
   ) {}
 
   public submit(): void {
-    this.submitted = true; 
+    this.submitted = true;
     if (this.form.invalid) return;
 
     this.loading = true;
@@ -43,20 +43,24 @@ export class RegisterFormComponent implements OnDestroy {
     this.authService.register(registerRequest).pipe(
       takeUntil(this.destroy$)
     ).subscribe({
-      next: (response: AuthToken) => {
-        this.sessionService.logIn(response);
-        this.loading = false;
-        this.submitted = false;
-        sessionStorage.setItem('token', response.token);
-        this.router.navigate(['/articles']);
-      },
-      error: error => {
-        this.loading = false;
-        this.submitted = false;
-        this.onError = true;
-        this.errorMessage = extractErrorMessage(error);
-      },
+      next: (response: AuthToken) => this.handleSuccess(response),
+      error: (error) => this.handleError(error)
     });
+  }
+
+  private handleSuccess(response: AuthToken): void {
+    this.sessionService.logIn(response);
+    this.loading = false;
+    this.submitted = false;
+    sessionStorage.setItem('token', response.token);
+    this.router.navigate(['/articles']);
+  }
+
+  private handleError(error: any): void {
+    this.loading = false;
+    this.submitted = false;
+    this.onError = true;
+    this.errorMessage = extractErrorMessage(error);
   }
 
   ngOnDestroy(): void {
