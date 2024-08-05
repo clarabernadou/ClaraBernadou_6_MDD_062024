@@ -60,7 +60,7 @@ export class createCommentFormComponent implements OnInit {
         this.loading = false;
         this.submitted = false;
         this.form.reset();
-        this.updateComments.emit();
+        this.commentService.notifyCommentUpdate();
       },
       error: error => {
         this.loading = false;

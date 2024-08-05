@@ -26,6 +26,10 @@ export class CommentFeedComponent implements OnInit {
 
     ngOnInit(): void {
         this.getAllComments();
+
+        this.subscription.add(
+            this.commentService.commentUpdated$.subscribe(() => this.getAllComments())
+        );
     }
 
     public getAllComments(): void {
