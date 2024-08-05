@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { User } from '../interfaces/user.interface';
-import { AuthService } from './auth.service';
+import { TokenService } from './token.service';
 
 @Injectable({
   providedIn: 'root'
@@ -13,21 +13,21 @@ export class UserService {
 
   constructor(
     private httpClient: HttpClient,
-    private authService: AuthService
+    private tokenService: TokenService,
   ) {}
 
-  getUserById(id: number): Observable<User> {
-    const headers = this.authService.getAuthHeaders();
+  public getUserById(id: number): Observable<User> {
+    const headers = this.tokenService.getAuthHeaders();
     return this.httpClient.get<User>(`${this.baseUrl}/${id}`, { headers });
   }
 
-  getMe(): Observable<User> {
-    const headers = this.authService.getAuthHeaders();
+  public getMe(): Observable<User> {
+    const headers = this.tokenService.getAuthHeaders();
     return this.httpClient.get<User>(`${this.baseUrl}/me`, { headers });
   }
 
-  updateMe(user: User): Observable<User> {
-    const headers = this.authService.getAuthHeaders();
+  public updateMe(user: User): Observable<User> {
+    const headers = this.tokenService.getAuthHeaders();
     return this.httpClient.put<User>(`${this.baseUrl}/me`, user, { headers });
   }
 }
