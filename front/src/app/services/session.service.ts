@@ -1,34 +1,40 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { AuthToken } from '../interfaces/authSession.interface';
+import { AuthToken, Session } from '../interfaces/authSession.interface';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SessionService {
 
-  public isLogged = false;
-  public sessionInformation: AuthToken | undefined;
+  private session: Session = {
+    isLogged: false,
+    sessionInformation: undefined
+  };
 
-  private isLoggedSubject = new BehaviorSubject<boolean>(this.isLogged);
+  private sessionSubject = new BehaviorSubject<Session>(this.session);
 
-  public $isLogged(): Observable<boolean> {
-    return this.isLoggedSubject.asObservable();
+  public getSession(): Observable<Session> {
+    return this.sessionSubject.asObservable();
   }
 
   public logIn(token: AuthToken): void {
-    this.sessionInformation = token;
-    this.isLogged = true;
-    this.next();
+    this.session = {
+      isLogged: true,
+      sessionInformation: token
+    };
+    this.emitSession();
   }
 
   public logOut(): void {
-    this.sessionInformation = undefined;
-    this.isLogged = false;
-    this.next();
+    this.session = {
+      isLogged: false,
+      sessionInformation: undefined
+    };
+    this.emitSession();
   }
 
-  private next(): void {
-    this.isLoggedSubject.next(this.isLogged);
+  private emitSession(): void {
+    this.sessionSubject.next(this.session);
   }
 }
