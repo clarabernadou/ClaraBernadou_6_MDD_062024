@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { BreakpointService } from 'src/app/services/breakpoint.service';
 import { Subscription } from 'rxjs';
 import { Article } from 'src/app/interfaces/article.interface';
@@ -8,24 +8,29 @@ import { Article } from 'src/app/interfaces/article.interface';
   templateUrl: './articleFeedComponent.component.html',
   styleUrls: ['../../../app.component.scss'],
 })
-export class ArticleFeedComponent implements OnInit {
+export class ArticleFeedComponent implements OnInit, OnDestroy {
   public isSmallScreen: boolean = false;
   public isLargeScreen: boolean = false;
-  private subscription: Subscription = new Subscription();
+  private subscriptions: Subscription = new Subscription();
 
   @Input() articles: Article[] = [];
 
-  constructor(
-    private breakpointService: BreakpointService,
-  ) {}
+  constructor(private breakpointService: BreakpointService) {}
 
-  ngOnInit() {
-    this.subscription.add(
+  ngOnInit(): void {
+    this.subscribeToBreakpoints();
+  }
+
+  private subscribeToBreakpoints(): void {
+    this.subscriptions.add(
       this.breakpointService.isSmallScreen().subscribe(isSmall => this.isSmallScreen = isSmall)
     );
-
-    this.subscription.add(
+    this.subscriptions.add(
       this.breakpointService.isLargeScreen().subscribe(isLarge => this.isLargeScreen = isLarge)
     );
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.unsubscribe();
   }
 }

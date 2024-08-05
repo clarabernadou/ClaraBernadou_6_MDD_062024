@@ -1,10 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Article } from 'src/app/interfaces/article.interface';
 import { ArticleService } from 'src/app/services/article.service';
 import { BreakpointService } from 'src/app/services/breakpoint.service';
 import { UserService } from 'src/app/services/user.service';
-import { forkJoin, Subscription } from 'rxjs';
-import { map, mergeMap } from 'rxjs/operators';
+import { forkJoin, Subject } from 'rxjs';
+import { map, mergeMap, takeUntil } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { extractErrorMessage } from 'src/app/utils/error.util';
 
@@ -13,7 +13,7 @@ import { extractErrorMessage } from 'src/app/utils/error.util';
   templateUrl: './articlesPage.component.html',
   styleUrls: ['../../app.component.scss'],
 })
-export class ArticlesPage implements OnInit {
+export class ArticlesPage implements OnInit, OnDestroy {
   public isSmallScreen: boolean = false;
   public isLargeScreen: boolean = false;
   public loading: boolean = true;
@@ -21,7 +21,7 @@ export class ArticlesPage implements OnInit {
   public errorMessage: string = '';
   public articles: Article[] = [];
   public isAscendingOrder: boolean = true;
-  private subscription: Subscription = new Subscription();
+  private destroy$ = new Subject<void>();
 
   constructor(
     private breakpointService: BreakpointService, 
@@ -33,30 +33,23 @@ export class ArticlesPage implements OnInit {
   ngOnInit() {
     if (!sessionStorage.getItem('token')) this.router.navigate(['/login']);
 
-    this.subscription.add(
-      this.breakpointService.isSmallScreen().subscribe(isSmall => this.isSmallScreen = isSmall)
-    );
-
-    this.subscription.add(
-      this.breakpointService.isLargeScreen().subscribe(isLarge => this.isLargeScreen = isLarge)
-    );
-
+    this.subscribeToBreakpoints();
     this.getArticles();
   }
 
-  getArticles(): void {
+  private subscribeToBreakpoints(): void {
+    this.breakpointService.isSmallScreen().pipe(
+      takeUntil(this.destroy$)
+    ).subscribe(isSmall => this.isSmallScreen = isSmall);
+
+    this.breakpointService.isLargeScreen().pipe(
+      takeUntil(this.destroy$)
+    ).subscribe(isLarge => this.isLargeScreen = isLarge);
+  }
+
+  private getArticles(): void {
     this.articleService.getAllArticles().pipe(
-      mergeMap(articles => {
-        const articleObservables = articles.map(article =>
-          this.userService.getUserById(article.owner_id!).pipe(
-            map(user => ({
-              ...article,
-              author: user.username
-            }))
-          )
-        );
-        return forkJoin(articleObservables);
-      })
+      mergeMap(articles => this.getArticlesWithAuthors(articles))
     ).subscribe({
       next: articlesWithAuthors => {
         this.articles = articlesWithAuthors;
@@ -71,7 +64,19 @@ export class ArticlesPage implements OnInit {
     });
   }
 
-  sortArticles(): void {
+  private getArticlesWithAuthors(articles: Article[]) {
+    const articleObservables = articles.map(article =>
+      this.userService.getUserById(article.owner_id!).pipe(
+        map(user => ({
+          ...article,
+          author: user.username
+        }))
+      )
+    );
+    return forkJoin(articleObservables);
+  }
+
+  public sortArticles(): void {
     this.articles.sort((a, b) =>
       this.isAscendingOrder
         ? new Date(a.created_at!).getTime() - new Date(b.created_at!).getTime()
@@ -81,6 +86,7 @@ export class ArticlesPage implements OnInit {
   }
 
   ngOnDestroy() {
-    this.subscription.unsubscribe();
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }

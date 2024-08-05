@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
-import { map, mergeMap, Subscription } from 'rxjs';
+import { Subject } from 'rxjs';
+import { map, mergeMap, takeUntil } from 'rxjs/operators';
 import { Theme } from 'src/app/interfaces/theme.interface';
 import { User } from 'src/app/interfaces/user.interface';
 import { BreakpointService } from 'src/app/services/breakpoint.service';
@@ -13,49 +14,44 @@ import { extractErrorMessage } from 'src/app/utils/error.util';
   templateUrl: './themeFeedComponent.component.html',
   styleUrls: ['../../../app.component.scss'],
 })
-export class ThemeFeedComponent implements OnInit {
+export class ThemeFeedComponent implements OnInit, OnDestroy {
   public isSmallScreen = false;
   public isLargeScreen = false;
   public loading = true;
   public onError = false;
   public errorMessage = '';
   public themes: Theme[] = [];
-  public currentUrl: string = this.router.url;
-  private subscription: Subscription = new Subscription();
+  private destroy$ = new Subject<void>();
 
   constructor(
     private breakpointService: BreakpointService,
     private router: Router,
-    public themeService: ThemeService,
-    public userService: UserService,
+    private themeService: ThemeService,
+    private userService: UserService,
   ) {}
 
   ngOnInit() {
-    if (!sessionStorage.getItem('token')) this.router.navigate(['/login']);
+    if (!sessionStorage.getItem('token')) {
+      this.router.navigate(['/login']);
+    }
 
-    this.subscription.add(
-      this.breakpointService.isSmallScreen().subscribe(isSmall => this.isSmallScreen = isSmall)
-    );
-    this.subscription.add(
-      this.breakpointService.isLargeScreen().subscribe(isLarge => this.isLargeScreen = isLarge)
-    );
-
+    this.subscribeToBreakpoints();
     this.getThemes();
   }
 
-  public getThemes(): void {
+  private subscribeToBreakpoints(): void {
+    this.breakpointService.isSmallScreen().pipe(takeUntil(this.destroy$)).subscribe(isSmall => this.isSmallScreen = isSmall);
+    this.breakpointService.isLargeScreen().pipe(takeUntil(this.destroy$)).subscribe(isLarge => this.isLargeScreen = isLarge);
+  }
+
+  private getThemes(): void {
     this.themeService.getAllThemes().pipe(
-      mergeMap((themes: Theme[]) => {
-        return this.userService.getMe().pipe(
-          map((user: User) => {
-            themes.forEach(theme => {
-              theme.subscribed = user.subscriptions?.some(sub => sub.id === theme.id) || false;
-            });
-            if(this.currentUrl === "/themes") return themes;
-            return themes.filter(theme => user.subscriptions?.map(sub => sub.id).includes(theme.id)) 
-          })
-        );
-      })
+      mergeMap((themes: Theme[]) =>
+        this.userService.getMe().pipe(
+          map((user: User) => this.filterThemesForUser(themes, user))
+        )
+      ),
+      takeUntil(this.destroy$)
     ).subscribe({
       next: (filteredThemes: Theme[]) => {
         this.themes = filteredThemes;
@@ -69,32 +65,35 @@ export class ThemeFeedComponent implements OnInit {
     });
   }
 
+  private filterThemesForUser(themes: Theme[], user: User): Theme[] {
+    themes.forEach(theme => {
+      theme.subscribed = user.subscriptions?.some(sub => sub.id === theme.id) || false;
+    });
+    if (this.router.url === "/themes") return themes;
+    return themes.filter(theme => user.subscriptions?.some(sub => sub.id === theme.id));
+  }
+
   public subscribeToTheme(themeId: number): void {
-    this.themeService.subscribeToTheme(themeId).subscribe({
-      next: () => {
-        this.getThemes();
-      },
-      error: error => {
-        this.onError = true;
-        this.errorMessage = extractErrorMessage(error);
-      }
+    this.themeService.subscribeToTheme(themeId).pipe(takeUntil(this.destroy$)).subscribe({
+      next: () => this.getThemes(),
+      error: error => this.handleError(error)
     });
   }
 
   public unsubscribeToTheme(themeId: number): void {
-    this.themeService.unsubscribeToTheme(themeId).subscribe({
-      next: () => {
-        this.getThemes();
-      },
-      error: error => {
-        this.onError = true;
-        this.errorMessage = extractErrorMessage(error);
-      }
+    this.themeService.unsubscribeToTheme(themeId).pipe(takeUntil(this.destroy$)).subscribe({
+      next: () => this.getThemes(),
+      error: error => this.handleError(error)
     });
   }
 
+  private handleError(error: any): void {
+    this.onError = true;
+    this.errorMessage = extractErrorMessage(error);
+  }
+
   ngOnDestroy(): void {
-    this.subscription.unsubscribe();
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }
-

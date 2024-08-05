@@ -18,7 +18,7 @@ export class BaseCardComponent {
 
   @Output() buttonClick = new EventEmitter<void>();
 
-  onButtonClick() {
+  onButtonClick(): void {
     this.buttonClick.emit();
   }
 }

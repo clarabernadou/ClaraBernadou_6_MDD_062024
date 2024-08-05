@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { Subject, takeUntil } from 'rxjs';
 import { BreakpointService } from 'src/app/services/breakpoint.service';
 
 @Component({
@@ -7,9 +8,10 @@ import { BreakpointService } from 'src/app/services/breakpoint.service';
   templateUrl: './homePage.component.html',
   styleUrls: ['./homePage.component.scss'],
 })
-export class HomePage implements OnInit {
+export class HomePage implements OnInit, OnDestroy {
   public isSmallScreen: boolean = false;
   public isLargeScreen: boolean = false;
+  private destroy$ = new Subject<void>();
 
   constructor(
     private breakpointService: BreakpointService, 
@@ -17,17 +19,23 @@ export class HomePage implements OnInit {
   ) {}
 
   ngOnInit() {
-    if (sessionStorage.getItem('token')) {
-      this.router.navigate(['/articles']);
-      return;
-    };
+    if (sessionStorage.getItem('token')) this.router.navigate(['/articles']);
 
-    this.breakpointService.isSmallScreen().subscribe(isSmall => {
-      this.isSmallScreen = isSmall;
-    });
+    this.subscribeToBreakpoints();
+  }
 
-    this.breakpointService.isLargeScreen().subscribe(isLarge => {
-      this.isLargeScreen = isLarge;
-    });
+  private subscribeToBreakpoints(): void {
+    this.breakpointService.isSmallScreen().pipe(
+      takeUntil(this.destroy$)
+    ).subscribe(isSmall => this.isSmallScreen = isSmall);
+
+    this.breakpointService.isLargeScreen().pipe(
+      takeUntil(this.destroy$)
+    ).subscribe(isLarge => this.isLargeScreen = isLarge);
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }

@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, OnInit, OnDestroy, Output } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { CommentService } from 'src/app/services/comment.service';
@@ -9,15 +9,14 @@ import { extractErrorMessage } from 'src/app/utils/error.util';
 
 @Component({
   selector: 'app-create-comment-form-component',
-    templateUrl: './createCommentFormComponent.component.html',
-    styleUrls: ['../../../app.component.scss'],
+  templateUrl: './createCommentFormComponent.component.html',
+  styleUrls: ['../../../app.component.scss'],
 })
-export class createCommentFormComponent implements OnInit {
+export class CreateCommentFormComponent implements OnInit, OnDestroy {
   public loading: boolean = false;
   public onError: boolean = false;
   public errorMessage: string = '';
   public submitted: boolean = false;
-  public comments: Comment[] = [];
   public isSmallScreen: boolean = false;
   public isLargeScreen: boolean = false;
   private subscription: Subscription = new Subscription();
@@ -25,8 +24,8 @@ export class createCommentFormComponent implements OnInit {
   @Output() updateComments: EventEmitter<void> = new EventEmitter<void>();
 
   public form = this.fb.group({
-    content: ['', [ Validators.required ]]
-  })
+    content: ['', [Validators.required]]
+  });
 
   constructor(
     private commentService: CommentService,
@@ -36,6 +35,10 @@ export class createCommentFormComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.subscribeToBreakpoints();
+  }
+
+  private subscribeToBreakpoints(): void {
     this.subscription.add(
       this.breakpointService.isSmallScreen().subscribe(isSmall => this.isSmallScreen = isSmall)
     );
@@ -45,34 +48,43 @@ export class createCommentFormComponent implements OnInit {
   }
 
   public submitComment(): void {
-    this.submitted = true; 
+    this.submitted = true;
     if (this.form.invalid) return;
 
     this.loading = true;
 
-    const articleId = Number(this.activatedRouter.snapshot.paramMap.get('id')!);
-    const comment: Comment = {
-      content: this.form.get('content')!.value!,
-    };
+    const articleId = this.getArticleId();
+    const comment: Comment = this.createCommentObject();
 
     this.commentService.createComment(articleId, comment).subscribe({
-      next: () => {
-        this.loading = false;
-        this.submitted = false;
-        this.form.reset();
-        this.commentService.notifyCommentUpdate();
-      },
-      error: error => {
-        this.loading = false;
-        this.submitted = false;
-        this.onError = true;
-        this.errorMessage = extractErrorMessage(error);
-      }
+      next: () => this.onCommentSuccess(),
+      error: (error) => this.handleError(error)
     });
+  }
+
+  private getArticleId(): number {
+    return Number(this.activatedRouter.snapshot.paramMap.get('id')!);
+  }
+
+  private createCommentObject(): Comment {
+    return { content: this.form.get('content')!.value! };
+  }
+
+  private onCommentSuccess(): void {
+    this.loading = false;
+    this.submitted = false;
+    this.form.reset();
+    this.updateComments.emit();
+  }
+
+  private handleError(error: any): void {
+    this.loading = false;
+    this.submitted = false;
+    this.onError = true;
+    this.errorMessage = extractErrorMessage(error);
   }
 
   ngOnDestroy(): void {
     this.subscription.unsubscribe();
   }
 }
-

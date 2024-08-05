@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
 @Component({
@@ -6,7 +6,7 @@ import { Router } from '@angular/router';
   templateUrl: './profilePage.component.html',
   styleUrls: ['../../app.component.scss'],
 })
-export class ProfilePage {
+export class ProfilePage implements OnInit {
 
   constructor(private router: Router) {}
 
