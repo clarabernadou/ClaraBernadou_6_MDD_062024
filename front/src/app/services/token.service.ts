@@ -7,7 +7,7 @@ import { HttpHeaders } from '@angular/common/http';
 export class TokenService {
   constructor() {}
 
-  getAuthHeaders(): HttpHeaders {
+  public getAuthHeaders(): HttpHeaders {
     const token = sessionStorage.getItem('token');
     return new HttpHeaders({
       'Content-Type': 'application/json',

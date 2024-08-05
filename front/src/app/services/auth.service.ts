@@ -14,11 +14,8 @@ export class AuthService {
 
   constructor(private httpClient: HttpClient, private tokenService: TokenService) {}
 
-  getAuthHeaders(): HttpHeaders {
-    return this.tokenService.getAuthHeaders();
-  }
 
-  login(loginRequest: Login): Observable<AuthToken> {
+  public login(loginRequest: Login): Observable<AuthToken> {
     const headers = new HttpHeaders({
       'Content-Type': 'application/json'
     });
@@ -29,7 +26,7 @@ export class AuthService {
     return this.httpClient.post<AuthToken>(`${this.baseUrl}/login`, body, { headers });
   }
 
-  register(registerRequest: Register): Observable<AuthToken> {
+  public register(registerRequest: Register): Observable<AuthToken> {
     const headers = new HttpHeaders({
       'Content-Type': 'application/json'
     });

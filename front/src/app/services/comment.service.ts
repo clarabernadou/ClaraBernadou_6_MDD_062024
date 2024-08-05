@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { environment } from '../../environments/environment';
 import { Comment } from '../interfaces/comment.interface';
 import { TokenService } from './token.service';
-import { Subject } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -11,22 +11,22 @@ import { Subject } from 'rxjs';
 export class CommentService {
   private baseUrl = `${environment.baseUrl}/auth`;
 
-  private commentUpdatedSource = new Subject<void>();
-  public commentUpdated$ = this.commentUpdatedSource.asObservable();
+  private commentUpdatedSource: Subject<void> = new Subject<void>();
+  public commentUpdated$: Observable<void> = this.commentUpdatedSource.asObservable();
 
   constructor(private httpClient: HttpClient, private tokenService: TokenService) {}
 
-  createComment(articleId: number, comment: Comment) {
+  public createComment(articleId: number, comment: Comment) {
     const headers = this.tokenService.getAuthHeaders();
-    return this.httpClient.post(`${this.baseUrl}/article/${articleId}/comment`, comment, { headers });
+    return this.httpClient.post<Comment>(`${this.baseUrl}/article/${articleId}/comment`, comment, { headers });
   }
 
-  getComments(articleId: number) {
+  public getComments(articleId: number) {
     const headers = this.tokenService.getAuthHeaders();
     return this.httpClient.get<Comment[]>(`${this.baseUrl}/article/${articleId}/comment`, { headers });
   }
 
-  notifyCommentUpdate(): void {
+  public notifyCommentUpdate(): void {
     this.commentUpdatedSource.next();
   }
 }

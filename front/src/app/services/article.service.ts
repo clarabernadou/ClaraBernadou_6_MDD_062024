@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { environment } from '../../environments/environment';
 import { Article } from '../interfaces/article.interface';
 import { AuthService } from './auth.service';
+import { TokenService } from './token.service';
 
 @Injectable({
   providedIn: 'root'
@@ -12,21 +13,21 @@ export class ArticleService {
 
   constructor(
     private httpClient: HttpClient,
-    private authService: AuthService
+    private tokenService: TokenService,
   ) {}
 
-  getAllArticles() {
-    const headers = this.authService.getAuthHeaders();
+  public getAllArticles() {
+    const headers = this.tokenService.getAuthHeaders();
     return this.httpClient.get<Article[]>(`${this.baseUrl}/`, { headers });
   }
 
-  getArticleById(id: string) {
-    const headers = this.authService.getAuthHeaders();
+  public getArticleById(id: string) {
+    const headers = this.tokenService.getAuthHeaders();
     return this.httpClient.get<Article>(`${this.baseUrl}/${id}`, { headers });
   }
 
-  createArticle(article: Article) {
-    const headers = this.authService.getAuthHeaders();
+  public createArticle(article: Article) {
+    const headers = this.tokenService.getAuthHeaders();
     return this.httpClient.post<Article>(`${this.baseUrl}/`, article, { headers });
   }
 }
