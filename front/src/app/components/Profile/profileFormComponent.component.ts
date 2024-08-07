@@ -37,7 +37,6 @@ export class ProfileFormComponent implements OnInit, OnDestroy {
   }
 
   private getMe(): void {
-    this.loading = true;
     this.subscription.add(
       this.userService.getMe().subscribe({
         next: (user: User) => {
@@ -77,9 +76,11 @@ export class ProfileFormComponent implements OnInit, OnDestroy {
     this.subscription.add(
       this.userService.updateMe(this.form.value as User).subscribe({
         next: (user: User) => {
+          this.loading = false;
           this.handleUserUpdateSuccess(user);
         },
         error: (error) => {
+          this.loading = false;
           this.handleError(error);
         }
       })
