@@ -1,37 +1,36 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { environment } from '../../environments/environment';
 import { Theme } from '../interfaces/theme.interface';
-import { TokenService } from './token.service';
+import { HttpOptionsService } from './httpOptions.service';
+import { ApiService } from './api.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ThemeService {
-  private baseUrl = `${environment.baseUrl}/auth/theme`;
+  private baseAuthUrl: string;
 
   constructor(
     private httpClient: HttpClient,
-    private tokenService: TokenService,
-  ) {}
+    private httpOptionsService: HttpOptionsService,
+    private apiService: ApiService,
+  ) {
+    this.baseAuthUrl = this.apiService.getAuthUrl('/theme');
+  }
 
   public getThemeById(id: number) {
-    const headers = this.tokenService.getAuthHeaders();
-    return this.httpClient.get<Theme>(`${this.baseUrl}/${id}`, { headers });
+    return this.httpClient.get<Theme>(`${this.baseAuthUrl}/${id}`, this.httpOptionsService.getHttpOptions());
   }
 
   public getAllThemes() {
-    const headers = this.tokenService.getAuthHeaders();
-    return this.httpClient.get<Theme[]>(`${this.baseUrl}/`, { headers });
+    return this.httpClient.get<Theme[]>(`${this.baseAuthUrl}/`, this.httpOptionsService.getHttpOptions());
   }
 
   public subscribeToTheme(id: number) {
-    const headers = this.tokenService.getAuthHeaders();
-    return this.httpClient.post(`${this.baseUrl}/subscribe/${id}`, {}, { headers });
+    return this.httpClient.post(`${this.baseAuthUrl}/subscribe/${id}`, {}, this.httpOptionsService.getHttpOptions());
   }
 
   public unsubscribeToTheme(id: number) {
-    const headers = this.tokenService.getAuthHeaders();
-    return this.httpClient.delete(`${this.baseUrl}/unsubscribe/${id}`, { headers });
+    return this.httpClient.delete(`${this.baseAuthUrl}/unsubscribe/${id}`, this.httpOptionsService.getHttpOptions());
   }
 }
