@@ -13,6 +13,11 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+/**
+ * Service implementation for authentication-related operations.
+ * This class implements {@link AuthenticationService} interface and provides
+ * functionality for user registration and login.
+ */
 @Service
 public class AuthenticationServiceImpl implements AuthenticationService {
 
@@ -22,6 +27,15 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     private final BCryptPasswordEncoder passwordEncoder;
     private final ValidationService validationService;
 
+    /**
+     * Constructs new AuthenticationServiceImpl with specified dependencies.
+     *
+     * @param authenticationRepository repository for handling authentication-related operations
+     * @param modelMapper model mapper for converting between DTOs and entities
+     * @param jwtService service for generating JWT tokens
+     * @param passwordEncoder encoder for hashing passwords
+     * @param validationService service for validating user data
+     */
     public AuthenticationServiceImpl(AuthenticationRepository authenticationRepository, ModelMapper modelMapper, JWTService jwtService, BCryptPasswordEncoder passwordEncoder, ValidationService validationService) {
         this.authenticationRepository = authenticationRepository;
         this.modelMapper = modelMapper;
@@ -30,6 +44,13 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         this.validationService = validationService;
     }
 
+    /**
+     * Registers new user based on provided RegisterDTO.
+     *
+     * @param registerDTO DTO containing user's registration data
+     * @return Optional containing JWT token if registration is successful
+     * @throws UnauthorizedException if user with same email or username already exists
+     */
     @Override
     public Optional<String> registerUser(RegisterDTO registerDTO) {
         validationService.validateRegister(registerDTO);
@@ -46,6 +67,13 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         return Optional.of(jwtService.generateToken(registerDTO.getEmail()));
     }
 
+    /**
+     * Logs in user based on provided LoginDTO.
+     *
+     * @param loginDTO DTO containing user's login credentials
+     * @return Optional containing JWT token if login is successful
+     * @throws UnauthorizedException if credentials are invalid
+     */
     @Override
     public Optional<String> loginUser(LoginDTO loginDTO) {
         Optional<Auth> user = authenticationRepository.findByUsername(loginDTO.getEmailOrUsername());

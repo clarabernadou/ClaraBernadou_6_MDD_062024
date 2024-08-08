@@ -18,6 +18,11 @@ import com.openclassrooms.mddapi.repository.AuthenticationRepository;
 import com.openclassrooms.mddapi.repository.CommentRepository;
 import com.openclassrooms.mddapi.services.interfaces.CommentService;
 
+/**
+ * Service implementation for managing comments
+ * This class implements {@link CommentService} interface and provides
+ * functionality for creating and retrieving comments associated with articles
+ */
 @Service
 public class CommentServiceImpl implements CommentService {
 
@@ -26,12 +31,21 @@ public class CommentServiceImpl implements CommentService {
     private final ArticleRepository articleRepository;
     private final ModelMapper modelMapper;
 
+    /**
+     * Constructs new CommentServiceImpl with specified dependencies
+     *
+     * @param commentRepository repository for handling comment-related operations
+     * @param authenticationRepository repository for handling authentication-related operations
+     * @param articleRepository repository for handling article-related operations
+     * @param modelMapper model mapper for converting between DTOs and entities
+     */
     public CommentServiceImpl(CommentRepository commentRepository, AuthenticationRepository authenticationRepository, ArticleRepository articleRepository, ModelMapper modelMapper) {
         this.commentRepository = commentRepository;
         this.authenticationRepository = authenticationRepository;
         this.articleRepository = articleRepository;
         this.modelMapper = modelMapper;
 
+        // Configures mapping between CommentDTO and Comment entities
         PropertyMap<CommentDTO, Comment> commentMap = new PropertyMap<CommentDTO, Comment>() {
             @Override
             protected void configure() {
@@ -42,6 +56,12 @@ public class CommentServiceImpl implements CommentService {
         this.modelMapper.addMappings(commentMap);
     }
 
+    /**
+     * Retrieves all comments
+     *
+     * @return list of CommentDTOs representing all comments
+     * @throws NotFoundException if no comments are found
+     */
     @Override
     public List<CommentDTO> getComments() {
         List<Comment> comments = StreamSupport.stream(commentRepository.findAll().spliterator(), false)
@@ -54,6 +74,14 @@ public class CommentServiceImpl implements CommentService {
                     .collect(Collectors.toList());
     }
 
+    /**
+     * Creates new comment associated with specified article
+     *
+     * @param commentDTO DTO containing comment data
+     * @param articleId ID of article to which comment is associated
+     * @param principalUser currently authenticated user
+     * @return Optional containing success message if comment is created
+     */
     @Override
     public Optional<String> createComment(CommentDTO commentDTO, Long articleId, Principal principalUser) {
         Comment comment = modelMapper.map(commentDTO, Comment.class);
