@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { Article } from 'src/app/interfaces/article.interface';
-import { ArticleDetailService } from 'src/app/services/ArticleDetailService.service';
+import { ArticleDetailService } from 'src/app/services/articleDetail.service';
 
 @Component({
   selector: 'app-article-detail-component',

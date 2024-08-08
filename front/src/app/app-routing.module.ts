@@ -9,7 +9,7 @@ import { CreateArticlePage } from './pages/CreateArticlePage/createArticlePage.c
 import { ProfilePage } from './pages/Profile/profilePage.component';
 import { ThemesPage } from './pages/ThemesPage/themesPage.component';
 import { NotFoundPage } from './pages/pageNotFound/notFoundPage.component';
-import { AuthGuard } from './guards/auth.guard';
+import { AuthGuard } from './utils/guards/auth.guard';
 
 // consider a guard combined with canLoad / canActivate route option
 // to manage unauthenticated user to access private routes

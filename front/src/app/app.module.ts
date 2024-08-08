@@ -30,7 +30,7 @@ import { RegisterPage } from './pages/Register/registerPage.component';
 import { ArticleDetailComponent } from './components/Articles/ArticleDetail/articleDetailComponent.component';
 import { CreateCommentFormComponent } from './components/Comments/CreateComment/createCommentFormComponent.component';
 import { ProfileFormComponent } from './components/Profile/profileFormComponent.component';
-import { AuthInterceptor } from './interceptors/auth.interceptor';
+import { AuthInterceptor } from './utils/interceptors/auth.interceptor';
 
 @NgModule({
   declarations: [
