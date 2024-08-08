@@ -10,7 +10,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { HomePage } from './pages/Home/homePage.component';
 import { ReactiveFormsModule } from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { MatDialogModule } from '@angular/material/dialog';
 import { CreateArticlePage } from './pages/CreateArticlePage/createArticlePage.component';
 import { ProfilePage } from './pages/Profile/profilePage.component';
@@ -30,6 +30,7 @@ import { RegisterPage } from './pages/Register/registerPage.component';
 import { ArticleDetailComponent } from './components/Articles/ArticleDetail/articleDetailComponent.component';
 import { CreateCommentFormComponent } from './components/Comments/CreateComment/createCommentFormComponent.component';
 import { ProfileFormComponent } from './components/Profile/profileFormComponent.component';
+import { AuthInterceptor } from './interceptors/auth.interceptor';
 
 @NgModule({
   declarations: [
@@ -69,7 +70,9 @@ import { ProfileFormComponent } from './components/Profile/profileFormComponent.
     MatDialogModule,
     HttpClientModule, 
   ],
-  providers: [],
+  providers: [
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }
+  ],
   bootstrap: [AppComponent],
 })
 export class AppModule {}
