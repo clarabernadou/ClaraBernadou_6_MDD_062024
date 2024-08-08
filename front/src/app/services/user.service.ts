@@ -1,33 +1,33 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { environment } from 'src/environments/environment';
 import { User } from '../interfaces/user.interface';
-import { TokenService } from './token.service';
+import { ApiService } from './api.service';
+import { HttpOptionsService } from './httpOptions.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserService {
-  private baseUrl = `${environment.baseUrl}/auth/user`;
+  private baseAuthUrl: string;
 
   constructor(
     private httpClient: HttpClient,
-    private tokenService: TokenService,
-  ) {}
+    private httpOptionsService: HttpOptionsService,
+    private apiService: ApiService, 
+  ) {
+    this.baseAuthUrl = this.apiService.getAuthUrl('/user');
+  }
 
   public getUserById(id: number): Observable<User> {
-    const headers = this.tokenService.getAuthHeaders();
-    return this.httpClient.get<User>(`${this.baseUrl}/${id}`, { headers });
+    return this.httpClient.get<User>(`${this.baseAuthUrl}/${id}`, this.httpOptionsService.getHttpOptions());
   }
 
   public getMe(): Observable<User> {
-    const headers = this.tokenService.getAuthHeaders();
-    return this.httpClient.get<User>(`${this.baseUrl}/me`, { headers });
+    return this.httpClient.get<User>(`${this.baseAuthUrl}/me`, this.httpOptionsService.getHttpOptions());
   }
 
   public updateMe(user: User): Observable<User> {
-    const headers = this.tokenService.getAuthHeaders();
-    return this.httpClient.put<User>(`${this.baseUrl}/me`, user, { headers });
+    return this.httpClient.put<User>(`${this.baseAuthUrl}/me`, user, this.httpOptionsService.getHttpOptions());
   }
 }
