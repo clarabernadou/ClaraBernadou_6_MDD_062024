@@ -5,7 +5,6 @@ import { BreakpointService } from 'src/app/services/breakpoint.service';
 import { UserService } from 'src/app/services/user.service';
 import { forkJoin, Subject } from 'rxjs';
 import { map, mergeMap, takeUntil } from 'rxjs/operators';
-import { Router } from '@angular/router';
 import { extractErrorMessage } from 'src/app/utils/error.util';
 
 @Component({
@@ -27,12 +26,9 @@ export class ArticlesPage implements OnInit, OnDestroy {
     private breakpointService: BreakpointService, 
     private articleService: ArticleService,
     private userService: UserService,
-    private router: Router,
   ) {}
 
   ngOnInit() {
-    if (!sessionStorage.getItem('token')) this.router.navigate(['/login']);
-
     this.subscribeToBreakpoints();
     this.getArticles();
   }

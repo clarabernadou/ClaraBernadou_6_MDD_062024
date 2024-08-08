@@ -1,5 +1,4 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Router } from '@angular/router';
 import { BreakpointService } from 'src/app/services/breakpoint.service';
 import { Subject, takeUntil } from 'rxjs';
 
@@ -15,12 +14,9 @@ export class ArticleDetailPage implements OnInit, OnDestroy {
 
   constructor(
     private breakpointService: BreakpointService,
-    private router: Router,
   ) {}
 
   ngOnInit() {
-    if (!sessionStorage.getItem('token')) this.router.navigate(['/login']);
-
     this.subscribeToBreakpoints();
   }
 

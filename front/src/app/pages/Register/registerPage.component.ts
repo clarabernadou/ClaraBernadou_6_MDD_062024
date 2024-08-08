@@ -1,6 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Router } from '@angular/router';
-import { Subject, Subscription } from 'rxjs';
+import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { BreakpointService } from 'src/app/services/breakpoint.service';
 
@@ -16,14 +15,9 @@ export class RegisterPage implements OnInit, OnDestroy {
 
   constructor(
     private breakpointService: BreakpointService,
-    private router: Router
   ) {}
 
   ngOnInit() {
-    if (sessionStorage.getItem('token')) {
-      this.router.navigate(['/articles']);
-    }
-
     this.breakpointService.isSmallScreen()
       .pipe(takeUntil(this.destroy$))
       .subscribe(isSmall => this.isSmallScreen = isSmall);

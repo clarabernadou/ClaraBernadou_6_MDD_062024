@@ -10,8 +10,6 @@ export class CreateArticlePage implements OnInit {
 
   constructor(private router: Router) {}
 
-  ngOnInit() {
-    if (!sessionStorage.getItem('token')) this.router.navigate(['/login']);
-  }
+  ngOnInit() {}
 }
 

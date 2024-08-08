@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-themes-page',
@@ -8,10 +7,8 @@ import { Router } from '@angular/router';
 })
 export class ThemesPage implements OnInit {
 
-  constructor(private router: Router) {}
+  constructor() {}
 
-  ngOnInit() {
-    if (!sessionStorage.getItem('token')) this.router.navigate(['/login']);
-  }
+  ngOnInit() {}
 }
 
