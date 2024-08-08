@@ -15,15 +15,31 @@ import org.springframework.validation.Validator;
 import javax.validation.ValidationException;
 import java.util.stream.Collectors;
 
+/**
+ * Implementation of ValidationService interface for validating various DTOs
+ * Uses Spring's Validator to validate fields of provided DTOs
+ */
 @Service
 public class ValidationServiceImpl implements ValidationService {
 
     private final Validator validator;
 
+    /**
+     * Constructs ValidationServiceImpl with given Validator
+     *
+     * @param validator Validator to use for validation
+     */
     public ValidationServiceImpl(Validator validator) {
         this.validator = validator;
     }
 
+    /**
+     * Validates an ArticleDTO object
+     * Throws ValidationException if any validation errors are found
+     *
+     * @param articleDTO ArticleDTO object to validate
+     * @throws ValidationException if validation errors are found
+     */
     @Override
     public void validateArticle(ArticleDTO articleDTO) {
         BindingResult bindingResult = new BeanPropertyBindingResult(articleDTO, "articleDTO");
@@ -37,6 +53,13 @@ public class ValidationServiceImpl implements ValidationService {
         }
     }
 
+    /**
+     * Validates RegisterDTO object
+     * Throws ValidationException if any validation errors are found
+     *
+     * @param registerDTO RegisterDTO object to validate
+     * @throws ValidationException if validation errors are found
+     */
     @Override
     public void validateRegister(RegisterDTO registerDTO) {
         BindingResult bindingResult = new BeanPropertyBindingResult(registerDTO, "registerDTO");
@@ -50,6 +73,13 @@ public class ValidationServiceImpl implements ValidationService {
         }
     }
 
+    /**
+     * Validates LoginDTO object
+     * Throws ValidationException if any validation errors are found
+     *
+     * @param loginDTO LoginDTO object to validate
+     * @throws ValidationException if validation errors are found
+     */
     @Override
     public void validateLogin(LoginDTO loginDTO) {
         BindingResult bindingResult = new BeanPropertyBindingResult(loginDTO, "loginDTO");
@@ -63,6 +93,14 @@ public class ValidationServiceImpl implements ValidationService {
         }
     }
 
+    /**
+     * Validates CommentDTO object
+     * Throws ValidationException if any validation errors are found
+     *
+     * @param commentDTO CommentDTO object to validate
+     * @param bindingResult BindingResult object for additional validation feedback
+     * @throws ValidationException if validation errors are found
+     */
     @Override
     public void validateComment(CommentDTO commentDTO, BindingResult bindingResult) {
         BindingResult result = new BeanPropertyBindingResult(commentDTO, "commentDTO");
@@ -76,6 +114,13 @@ public class ValidationServiceImpl implements ValidationService {
         }
     }
 
+    /**
+     * Validates UserDTO object for user update operations
+     * Throws ValidationException if any validation errors are found
+     *
+     * @param userDTO UserDTO object to validate
+     * @throws ValidationException if validation errors are found
+     */
     @Override
     public void validateUserUpdate(UserDTO userDTO) {
         BindingResult bindingResult = new BeanPropertyBindingResult(userDTO, "userDTO");

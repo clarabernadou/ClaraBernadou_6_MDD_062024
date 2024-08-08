@@ -10,14 +10,30 @@ import org.springframework.stereotype.Service;
 import java.time.temporal.ChronoUnit;
 import java.time.Instant;
 
+/**
+ * Service for generating JWT tokens
+ * This class provides functionality to create JWT tokens with specified claims and encoding parameters
+ */
 @Service
 public class JWTService {
     private final JwtEncoder jwtEncoder;
 
+    /**
+     * Constructs new JWTService with specified JwtEncoder
+     *
+     * @param jwtEncoder encoder used to encode JWT tokens
+     */
     public JWTService(JwtEncoder jwtEncoder) {
         this.jwtEncoder = jwtEncoder;
     }
 
+    /**
+     * Generates JWT token for given email or username
+     * The token is signed with HS256 algorithm and contains standard claims such as issuer, issue date, expiration date, and subject
+     *
+     * @param emailOrUsername email or username of user for whom token is generated
+     * @return generated JWT token as String
+     */
     public String generateToken(String emailOrUsername) {
         Instant now = Instant.now();
         JwtClaimsSet claims = JwtClaimsSet.builder()
