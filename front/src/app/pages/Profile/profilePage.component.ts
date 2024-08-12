@@ -13,7 +13,7 @@ export class ProfilePage implements OnInit {
   ngOnInit(): void {}
 
   public logout(): void {
-    sessionStorage.removeItem('token');
+    localStorage.removeItem('token');
     this.router.navigate(['/login']);
   }
 }

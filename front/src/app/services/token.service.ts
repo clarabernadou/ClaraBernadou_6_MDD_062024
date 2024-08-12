@@ -9,7 +9,7 @@ export class TokenService {
   constructor() {}
 
   public getAuthHeaders(): HttpHeaders {
-    const token = sessionStorage.getItem('token');
+    const token = localStorage.getItem('token');
     return new HttpHeaders({
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`
@@ -17,7 +17,7 @@ export class TokenService {
   }
 
   public getToken(): string | null {
-    return sessionStorage.getItem('token');
+    return localStorage.getItem('token');
   }
 
   public isTokenExpired(token: string): boolean {

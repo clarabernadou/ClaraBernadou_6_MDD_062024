@@ -9,7 +9,7 @@ export class AuthInterceptor implements HttpInterceptor {
   constructor(private router: Router) {}
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    const token = sessionStorage.getItem('token');
+    const token = localStorage.getItem('token');
 
     let authReq = req;
     if (token) {
@@ -23,7 +23,7 @@ export class AuthInterceptor implements HttpInterceptor {
     return next.handle(authReq).pipe(
       catchError((error: HttpErrorResponse) => {
         if (error.status === 401 || error.status === 403) {
-          sessionStorage.removeItem('token');
+          localStorage.removeItem('token');
           this.router.navigate(['/login']);
         }
         return throwError(() => error);

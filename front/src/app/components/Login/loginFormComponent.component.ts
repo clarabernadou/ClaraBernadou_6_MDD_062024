@@ -53,7 +53,7 @@ export class LoginFormComponent implements OnDestroy {
 
   private handleLoginSuccess(response: AuthToken): void {
     this.sessionService.logIn(response);
-    sessionStorage.setItem('token', response.token);
+    localStorage.setItem('token', response.token);
     this.loading = false;
     this.submitted = false;
     this.router.navigate(['/articles']);

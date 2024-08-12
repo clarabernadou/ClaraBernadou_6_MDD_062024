@@ -89,7 +89,7 @@ export class ProfileFormComponent implements OnInit, OnDestroy {
   private handleUserUpdateSuccess(user: User): void {
     this.user = user;
     this.loading = false;
-    sessionStorage.setItem('token', user.token!);
+    localStorage.setItem('token', user.token!);
   }
 
   ngOnDestroy(): void {
