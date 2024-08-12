@@ -9,17 +9,18 @@ import { CreateArticlePage } from './pages/CreateArticlePage/createArticlePage.c
 import { ProfilePage } from './pages/Profile/profilePage.component';
 import { ThemesPage } from './pages/ThemesPage/themesPage.component';
 import { NotFoundPage } from './pages/pageNotFound/notFoundPage.component';
-import { AuthGuard } from './utils/guards/auth.guard';
+import { RequireAuthGuard, PreventAuthAccessGuard } from './utils/guards/auth.guard';
 
 // consider a guard combined with canLoad / canActivate route option
 // to manage unauthenticated user to access private routes
 const routes: Routes = [
-  { path: '', component: HomePage },
-  { path: 'register', component: RegisterPage },
-  { path: 'login', component: LoginPage },
+  { path: '', component: HomePage, canActivate: [PreventAuthAccessGuard], canLoad: [PreventAuthAccessGuard], },
+  { path: 'register', component: RegisterPage, canActivate: [PreventAuthAccessGuard], canLoad: [PreventAuthAccessGuard], },
+  { path: 'login', component: LoginPage, canActivate: [PreventAuthAccessGuard], canLoad: [PreventAuthAccessGuard], },
   { 
     path: 'articles', 
-    canActivate: [AuthGuard], 
+    canActivate: [RequireAuthGuard],
+    canLoad: [RequireAuthGuard],
     children: [
       {
         path: '',
@@ -35,9 +36,9 @@ const routes: Routes = [
       },
     ]
   },
-  { path: 'profile', component: ProfilePage, canActivate: [AuthGuard] },
-  { path: 'themes', component: ThemesPage, canActivate: [AuthGuard] },
-  { path: 'page-not-found', component: NotFoundPage },
+  { path: 'profile', component: ProfilePage, canActivate: [RequireAuthGuard], canLoad: [RequireAuthGuard] },
+  { path: 'themes', component: ThemesPage, canActivate: [RequireAuthGuard], canLoad: [RequireAuthGuard] },
+  { path: 'page-not-found', component: NotFoundPage, canActivate: [RequireAuthGuard], canLoad: [RequireAuthGuard] },
   { path: '**', redirectTo: 'page-not-found' },
 ];
 

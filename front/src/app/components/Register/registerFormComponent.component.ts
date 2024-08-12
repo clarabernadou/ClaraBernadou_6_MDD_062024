@@ -52,7 +52,7 @@ export class RegisterFormComponent implements OnDestroy {
     this.sessionService.logIn(response);
     this.loading = false;
     this.submitted = false;
-    sessionStorage.setItem('token', response.token);
+    localStorage.setItem('token', response.token);
     this.router.navigate(['/articles']);
   }
 
