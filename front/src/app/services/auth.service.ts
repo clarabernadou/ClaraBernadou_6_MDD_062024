@@ -1,9 +1,8 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { AuthToken } from '../interfaces/authSession.interface';
 import { Login, Register } from '../interfaces/login.interface';
-import { environment } from '../../environments/environment';
 import { HttpOptionsService } from './httpOptions.service';
 import { ApiService } from './api.service';
 
@@ -11,25 +10,25 @@ import { ApiService } from './api.service';
   providedIn: 'root'
 })
 export class AuthService {
-  private baseAuthUrl: string;
+  private baseUrl: string;
 
   constructor(
     private httpClient: HttpClient,
     private httpOptionsService: HttpOptionsService,
     private apiService: ApiService,
   ) {
-    this.baseAuthUrl = this.apiService.getAuthUrl('');
+    this.baseUrl = this.apiService.getUrl('');
   }
 
   public login(loginRequest: Login): Observable<AuthToken> {
-    return this.httpClient.post<AuthToken>(`${this.baseAuthUrl}/login`, { 
+    return this.httpClient.post<AuthToken>(`${this.baseUrl}/login`, { 
       emailOrUsername: loginRequest.emailOrUsername, 
       password: loginRequest.password 
     }, this.httpOptionsService.getHttpOptions());
   }
 
   public register(registerRequest: Register): Observable<AuthToken> {
-    return this.httpClient.post<AuthToken>(`${this.baseAuthUrl}/register`, {
+    return this.httpClient.post<AuthToken>(`${this.baseUrl}/register`, {
       email: registerRequest.email,
       username: registerRequest.username,
       password: registerRequest.password
@@ -37,6 +36,6 @@ export class AuthService {
   }
 
   public isAuthenticated(): boolean {
-    return !!sessionStorage.getItem('token');
+    return !!localStorage.getItem('token');
   }
 }

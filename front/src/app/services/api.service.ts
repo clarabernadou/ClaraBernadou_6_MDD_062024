@@ -12,4 +12,8 @@ export class ApiService {
   getAuthUrl(path: string = ''): string {
     return `${this.baseUrl}/auth${path}`;
   }
+
+  getUrl(path: string = ''): string {
+    return `${this.baseUrl}${path}`;
+  }
 }
