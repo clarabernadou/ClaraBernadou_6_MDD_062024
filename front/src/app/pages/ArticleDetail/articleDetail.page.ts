@@ -3,8 +3,8 @@ import { BreakpointService } from 'src/app/services/breakpoint.service';
 import { Subject, takeUntil } from 'rxjs';
 
 @Component({
-  selector: 'app-article-detail-page',
-  templateUrl: './articleDetailPage.component.html',
+  selector: 'app-article-detail',
+  templateUrl: './articleDetail.page.html',
   styleUrls: ['../../app.component.scss'],
 })
 export class ArticleDetailPage implements OnInit, OnDestroy {

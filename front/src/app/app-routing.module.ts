@@ -1,14 +1,14 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { HomePage } from './pages/Home/homePage.component';
-import { RegisterPage } from './pages/Register/registerPage.component';
-import { LoginPage } from './pages/Login/loginPage.component';
-import { ArticlesPage } from './pages/Articles/articlesPage.component';
-import { ArticleDetailPage } from './pages/ArticleDetail/articleDetailPage.component';
-import { CreateArticlePage } from './pages/CreateArticle/createArticlePage.component';
-import { ProfilePage } from './pages/Profile/profilePage.component';
-import { ThemesPage } from './pages/Themes/themesPage.component';
-import { NotFoundPage } from './pages/NotFound/notFoundPage.component';
+import { HomePage } from './pages/Home/home.page';
+import { RegisterPage } from './pages/Register/register.page';
+import { LoginPage } from './pages/Login/login.page';
+import { ArticlesPage } from './pages/Articles/articles.page';
+import { ArticleDetailPage } from './pages/ArticleDetail/articleDetail.page';
+import { CreateArticlePage } from './pages/CreateArticle/createArticle.page';
+import { ProfilePage } from './pages/Profile/profile.page';
+import { ThemesPage } from './pages/Themes/themes.page';
+import { NotFoundPage } from './pages/NotFound/notFound.page';
 import { RequireAuthGuard, PreventAuthAccessGuard } from './utils/guards/auth.guard';
 
 // consider a guard combined with canLoad / canActivate route option

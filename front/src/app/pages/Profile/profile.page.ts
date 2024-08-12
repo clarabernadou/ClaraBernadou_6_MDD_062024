@@ -2,8 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
 @Component({
-  selector: 'app-profile-page',
-  templateUrl: './profilePage.component.html',
+  selector: 'app-profile',
+  templateUrl: './profile.page.html',
   styleUrls: ['../../app.component.scss'],
 })
 export class ProfilePage implements OnInit {

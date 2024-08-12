@@ -8,8 +8,8 @@ import { map, mergeMap, takeUntil } from 'rxjs/operators';
 import { extractErrorMessage } from 'src/app/utils/error.util';
 
 @Component({
-  selector: 'app-articles-page',
-  templateUrl: './articlesPage.component.html',
+  selector: 'app-articles',
+  templateUrl: './articles.page.html',
   styleUrls: ['../../app.component.scss'],
 })
 export class ArticlesPage implements OnInit, OnDestroy {
