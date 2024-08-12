@@ -4,8 +4,8 @@ import { takeUntil } from 'rxjs/operators';
 import { BreakpointService } from 'src/app/services/breakpoint.service';
 
 @Component({
-  selector: 'app-register-page',
-  templateUrl: './registerPage.component.html',
+  selector: 'app-register',
+  templateUrl: './register.page.html',
   styleUrls: ['../../app.component.scss'],
 })
 export class RegisterPage implements OnInit, OnDestroy {

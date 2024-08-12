@@ -1,20 +1,19 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Subject, takeUntil } from 'rxjs';
 import { BreakpointService } from 'src/app/services/breakpoint.service';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
 
 @Component({
-  selector: 'app-login-page',
-  templateUrl: './loginPage.component.html',
-  styleUrls: ['../../app.component.scss'],
+  selector: 'app-home',
+  templateUrl: './home.page.html',
+  styleUrls: ['./home.page.scss'],
 })
-export class LoginPage implements OnInit, OnDestroy {
+export class HomePage implements OnInit, OnDestroy {
   public isSmallScreen: boolean = false;
   public isLargeScreen: boolean = false;
   private destroy$ = new Subject<void>();
 
   constructor(
-    private breakpointService: BreakpointService,
+    private breakpointService: BreakpointService, 
   ) {}
 
   ngOnInit() {
