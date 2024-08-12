@@ -10,8 +10,8 @@ import { ThemeService } from 'src/app/services/theme.service';
 import { extractErrorMessage } from 'src/app/utils/error.util';
 
 @Component({
-  selector: 'app-create-article-component-form',
-  templateUrl: './createArticleFormComponent.component.html',
+  selector: 'app-create-article-form',
+  templateUrl: './createArticleForm.component.html',
   styleUrls: ['../../../app.component.scss'],
 })
 export class CreateArticleFormComponent implements OnInit, OnDestroy {

@@ -1,19 +1,19 @@
 import { Component, OnDestroy } from '@angular/core';
+import { AuthToken } from 'src/app/interfaces/authSession.interface';
+import { Login } from 'src/app/interfaces/login.interface';
+import { AuthService } from 'src/app/services/auth.service';
+import { SessionService } from 'src/app/services/session.service';
 import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
-import { AuthToken } from 'src/app/interfaces/authSession.interface';
-import { Register } from 'src/app/interfaces/login.interface';
-import { AuthService } from 'src/app/services/auth.service';
-import { SessionService } from 'src/app/services/session.service';
 import { extractErrorMessage } from 'src/app/utils/error.util';
 
 @Component({
-  selector: 'app-register-form-component',
-  templateUrl: './registerFormComponent.component.html',
+  selector: 'app-login-form',
+  templateUrl: './loginForm.component.html',
   styleUrls: ['../../app.component.scss'],
 })
-export class RegisterFormComponent implements OnDestroy {
+export class LoginFormComponent implements OnDestroy {
   public onError: boolean = false;
   public errorMessage: string = '';
   public loading: boolean = false;
@@ -21,16 +21,15 @@ export class RegisterFormComponent implements OnDestroy {
   private destroy$: Subject<void> = new Subject<void>();
 
   public form = this.fb.group({
-    email: ['', [Validators.required, Validators.email]],
-    username: ['', [Validators.required]],
-    password: ['', [Validators.required, Validators.minLength(3)]]
+    emailOrUsername: ['', [Validators.required]],
+    password: ['', [Validators.required, Validators.minLength(3)]],
   });
 
   constructor(
     private authService: AuthService,
     private sessionService: SessionService,
     private fb: FormBuilder,
-    private router: Router,
+    private router: Router
   ) {}
 
   public submit(): void {
@@ -39,24 +38,28 @@ export class RegisterFormComponent implements OnDestroy {
 
     this.loading = true;
 
-    const registerRequest = this.form.value as Register;
-    this.authService.register(registerRequest).pipe(
+    const loginRequest = this.form.value as Login;
+    this.authService.login(loginRequest).pipe(
       takeUntil(this.destroy$)
     ).subscribe({
-      next: (response: AuthToken) => this.handleSuccess(response),
-      error: (error) => this.handleError(error)
+      next: (response: AuthToken) => {
+        this.handleLoginSuccess(response);
+      },
+      error: (error) => {
+        this.handleLoginError(error);
+      },
     });
   }
 
-  private handleSuccess(response: AuthToken): void {
+  private handleLoginSuccess(response: AuthToken): void {
     this.sessionService.logIn(response);
+    localStorage.setItem('token', response.token);
     this.loading = false;
     this.submitted = false;
-    localStorage.setItem('token', response.token);
     this.router.navigate(['/articles']);
   }
 
-  private handleError(error: any): void {
+  private handleLoginError(error: any): void {
     this.loading = false;
     this.submitted = false;
     this.onError = true;

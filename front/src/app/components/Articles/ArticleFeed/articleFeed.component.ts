@@ -4,8 +4,8 @@ import { Subscription } from 'rxjs';
 import { Article } from 'src/app/interfaces/article.interface';
 
 @Component({
-  selector: 'app-article-feed-component',
-  templateUrl: './articleFeedComponent.component.html',
+  selector: 'app-article-feed',
+  templateUrl: './articleFeed.component.html',
   styleUrls: ['../../../app.component.scss'],
 })
 export class ArticleFeedComponent implements OnInit, OnDestroy {

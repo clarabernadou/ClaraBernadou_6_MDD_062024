@@ -1,9 +1,9 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 
 @Component({
-  selector: 'app-base-card-component',
-  templateUrl: './baseCardComponent.component.html',
-  styleUrls: ['./baseCardComponent.component.scss', '../../../app.component.scss'],
+  selector: 'app-base-card',
+  templateUrl: './baseCard.component.html',
+  styleUrls: ['./baseCard.component.scss', '../../../app.component.scss'],
 })
 export class BaseCardComponent {
   @Input() title: string = '';

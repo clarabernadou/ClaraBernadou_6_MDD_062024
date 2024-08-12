@@ -7,8 +7,8 @@ import { UserService } from 'src/app/services/user.service';
 import { Comment } from 'src/app/interfaces/comment.interface';
 
 @Component({
-  selector: 'app-comment-feed-component',
-  templateUrl: './commentFeedComponent.component.html',
+  selector: 'app-comment-feed',
+  templateUrl: './commentFeed.component.html',
   styleUrls: ['../../../app.component.scss'],
 })
 export class CommentFeedComponent implements OnInit, OnDestroy {

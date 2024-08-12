@@ -4,8 +4,8 @@ import { Subscription } from 'rxjs';
 import { BreakpointService } from 'src/app/services/breakpoint.service';
 
 @Component({
-  selector: 'app-base-navbar-component',
-  templateUrl: './baseNavbarComponent.component.html',
+  selector: 'app-base-navbar',
+  templateUrl: './baseNavbar.component.html',
   styleUrls: ['../../../app.component.scss'],
 })
 export class BaseNavBarComponent implements OnInit, OnDestroy {

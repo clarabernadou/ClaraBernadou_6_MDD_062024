@@ -8,8 +8,8 @@ import { Subscription } from 'rxjs';
 import { extractErrorMessage } from 'src/app/utils/error.util';
 
 @Component({
-  selector: 'app-create-comment-form-component',
-  templateUrl: './createCommentFormComponent.component.html',
+  selector: 'app-create-comment-form',
+  templateUrl: './createCommentForm.component.html',
   styleUrls: ['../../../app.component.scss'],
 })
 export class CreateCommentFormComponent implements OnInit, OnDestroy {
