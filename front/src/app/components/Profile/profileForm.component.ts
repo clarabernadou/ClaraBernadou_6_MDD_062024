@@ -7,8 +7,8 @@ import { Subscription } from 'rxjs';
 import { extractErrorMessage } from 'src/app/utils/error.util';
 
 @Component({
-  selector: 'app-profile-form-component',
-  templateUrl: './profileFormComponent.component.html',
+  selector: 'app-profile-form',
+  templateUrl: './profileForm.component.html',
   styleUrls: ['../../app.component.scss'],
 })
 export class ProfileFormComponent implements OnInit, OnDestroy {

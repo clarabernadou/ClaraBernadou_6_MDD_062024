@@ -10,8 +10,8 @@ import { UserService } from 'src/app/services/user.service';
 import { extractErrorMessage } from 'src/app/utils/error.util';
 
 @Component({
-  selector: 'app-theme-feed-component',
-  templateUrl: './themeFeedComponent.component.html',
+  selector: 'app-theme-feed',
+  templateUrl: './themeFeed.component.html',
   styleUrls: ['../../../app.component.scss'],
 })
 export class ThemeFeedComponent implements OnInit, OnDestroy {

@@ -5,8 +5,8 @@ import { Article } from 'src/app/interfaces/article.interface';
 import { ArticleDetailService } from 'src/app/services/articleDetail.service';
 
 @Component({
-  selector: 'app-article-detail-component',
-  templateUrl: './articleDetailComponent.component.html',
+  selector: 'app-article-detail',
+  templateUrl: './articleDetail.component.html',
   styleUrls: ['../../../app.component.scss'],
 })
 export class ArticleDetailComponent implements OnInit, OnDestroy {

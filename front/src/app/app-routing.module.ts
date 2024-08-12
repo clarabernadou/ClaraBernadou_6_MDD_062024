@@ -3,12 +3,12 @@ import { RouterModule, Routes } from '@angular/router';
 import { HomePage } from './pages/Home/homePage.component';
 import { RegisterPage } from './pages/Register/registerPage.component';
 import { LoginPage } from './pages/Login/loginPage.component';
-import { ArticlesPage } from './pages/ArticlesPage/articlesPage.component';
-import { ArticleDetailPage } from './pages/ArticleDetailPage/articleDetailPage.component';
-import { CreateArticlePage } from './pages/CreateArticlePage/createArticlePage.component';
+import { ArticlesPage } from './pages/Articles/articlesPage.component';
+import { ArticleDetailPage } from './pages/ArticleDetail/articleDetailPage.component';
+import { CreateArticlePage } from './pages/CreateArticle/createArticlePage.component';
 import { ProfilePage } from './pages/Profile/profilePage.component';
-import { ThemesPage } from './pages/ThemesPage/themesPage.component';
-import { NotFoundPage } from './pages/pageNotFound/notFoundPage.component';
+import { ThemesPage } from './pages/Themes/themesPage.component';
+import { NotFoundPage } from './pages/NotFound/notFoundPage.component';
 import { RequireAuthGuard, PreventAuthAccessGuard } from './utils/guards/auth.guard';
 
 // consider a guard combined with canLoad / canActivate route option
