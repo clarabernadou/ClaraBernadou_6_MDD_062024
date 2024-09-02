@@ -5,6 +5,7 @@ import { AuthToken } from '../interfaces/authSession.interface';
 import { Login, Register } from '../interfaces/login.interface';
 import { HttpOptionsService } from './httpOptions.service';
 import { ApiService } from './api.service';
+import { TokenService } from './token.service';
 
 @Injectable({
   providedIn: 'root'
@@ -16,6 +17,7 @@ export class AuthService {
     private httpClient: HttpClient,
     private httpOptionsService: HttpOptionsService,
     private apiService: ApiService,
+    private tokenService: TokenService,
   ) {
     this.baseUrl = this.apiService.getUrl('');
   }
@@ -36,6 +38,6 @@ export class AuthService {
   }
 
   public isAuthenticated(): boolean {
-    return !!localStorage.getItem('token');
+    return !!this.tokenService.getAuthHeaders();
   }
 }
