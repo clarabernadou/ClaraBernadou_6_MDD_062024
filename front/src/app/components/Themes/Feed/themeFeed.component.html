@@ -1,0 +1,13 @@
+<section class="w-full flex flex-wrap justify-between p-5 gap-5" [ngClass]="{'flex-col': isSmallScreen}">
+    <p *ngIf="!themes || themes.length === 0">No theme available at the moment</p>
+    <div *ngIf="themes && themes.length > 0" class="w-full flex flex-wrap justify-between" [ngClass]="{'flex-col': isSmallScreen}">
+        <app-base-card
+            *ngFor="let theme of themes"
+            [title]="theme.title"
+            [content]="theme.description"
+            [buttonText]="!theme.subscribed ? 'Subscribe' : 'Unsubscribe'"
+            (buttonClick)="!theme.subscribed ? subscribeToTheme(theme.id!) : unsubscribeToTheme(theme.id!)"
+            [ngStyle]="{'width': isLargeScreen ? 'calc(50% - 24px)' : '100%', 'margin-bottom': '24px'}" style="cursor: pointer;">
+        </app-base-card>
+    </div>
+</section>
