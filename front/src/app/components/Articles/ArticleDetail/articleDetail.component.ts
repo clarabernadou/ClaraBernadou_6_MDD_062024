@@ -5,7 +5,7 @@ import { Article } from 'src/app/interfaces/article.interface';
 import { ArticleDetailService } from 'src/app/services/articleDetail.service';
 
 @Component({
-  selector: 'app-article-detail',
+  selector: 'app-article-detail-component',
   templateUrl: './articleDetail.component.html',
   styleUrls: ['../../../app.component.scss'],
 })
