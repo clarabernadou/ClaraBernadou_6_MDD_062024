@@ -1,33 +1,32 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { environment } from '../../environments/environment';
 import { Article } from '../interfaces/article.interface';
-import { AuthService } from './auth.service';
-import { TokenService } from './token.service';
+import { HttpOptionsService } from './httpOptions.service';
+import { ApiService } from './api.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ArticleService {
-  private baseUrl = `${environment.baseUrl}/auth/article`;
+  private baseAuthUrl: string;
 
   constructor(
     private httpClient: HttpClient,
-    private tokenService: TokenService,
-  ) {}
+    private httpOptionsService: HttpOptionsService,
+    private apiService: ApiService,
+  ) {
+    this.baseAuthUrl = this.apiService.getAuthUrl('/article');
+  }
 
   public getAllArticles() {
-    const headers = this.tokenService.getAuthHeaders();
-    return this.httpClient.get<Article[]>(`${this.baseUrl}/`, { headers });
+    return this.httpClient.get<Article[]>(`${this.baseAuthUrl}/`, this.httpOptionsService.getHttpOptions());
   }
 
   public getArticleById(id: string) {
-    const headers = this.tokenService.getAuthHeaders();
-    return this.httpClient.get<Article>(`${this.baseUrl}/${id}`, { headers });
+    return this.httpClient.get<Article>(`${this.baseAuthUrl}/${id}`, this.httpOptionsService.getHttpOptions());
   }
 
   public createArticle(article: Article) {
-    const headers = this.tokenService.getAuthHeaders();
-    return this.httpClient.post<Article>(`${this.baseUrl}/`, article, { headers });
+    return this.httpClient.post<Article>(`${this.baseAuthUrl}/`, article, this.httpOptionsService.getHttpOptions());
   }
 }

@@ -18,6 +18,11 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+/**
+ * Service implementation for Articles
+ * This class implements {@link ArticleService} interface and provides
+ * functionality for creating, retrieving, and managing articles
+ */
 @Service
 public class ArticleServiceImpl implements ArticleService {
 
@@ -25,11 +30,19 @@ public class ArticleServiceImpl implements ArticleService {
     private final ArticleRepository articleRepository;
     private final ModelMapper modelMapper;
 
+    /**
+     * Constructs new ArticleServiceImpl with specified repositories and model mapper
+     *
+     * @param authenticationRepository repository for handling authentication-related operations
+     * @param articleRepository repository for handling article-related operations
+     * @param modelMapper model mapper for converting between DTOs and entities
+     */
     public ArticleServiceImpl(AuthenticationRepository authenticationRepository, ArticleRepository articleRepository, ModelMapper modelMapper) {
         this.authenticationRepository = authenticationRepository;
         this.articleRepository = articleRepository;
         this.modelMapper = modelMapper;
 
+        // Configures mapping between ArticleDTO and Article entities
         PropertyMap<ArticleDTO, Article> commentMap = new PropertyMap<ArticleDTO, Article>() {
             @Override
             protected void configure() {
@@ -40,6 +53,13 @@ public class ArticleServiceImpl implements ArticleService {
         this.modelMapper.addMappings(commentMap);
     }
 
+    /**
+     * Creates new article based on provided ArticleDTO
+     *
+     * @param articleDTO DTO containing article data
+     * @param principalUser currently authenticated user
+     * @return Optional containing success message if article is created
+     */
     @Override
     public Optional<String> createArticle(ArticleDTO articleDTO, Principal principalUser) {
         Article article = modelMapper.map(articleDTO, Article.class);
@@ -54,14 +74,27 @@ public class ArticleServiceImpl implements ArticleService {
         return Optional.of("Article created!");
     }
 
+    /**
+     * Retrieves article by ID
+     *
+     * @param id ID of article to retrieve
+     * @return ResponseEntity containing ArticleDTO of requested article
+     * @throws NotFoundException if article with specified ID is not found
+     */
     @Override
     public ResponseEntity<ArticleDTO> getArticle(Long id) {
         Article article = articleRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Article not found"));
 
-                return ResponseEntity.ok(modelMapper.map(article, ArticleDTO.class));
-            }
+        return ResponseEntity.ok(modelMapper.map(article, ArticleDTO.class));
+    }
 
+    /**
+     * Retrieves all articles
+     *
+     * @return list of ArticleDTOs representing all articles
+     * @throws NotFoundException if no articles are found
+     */
     @Override
     public List<ArticleDTO> getArticles() {
         List<Article> articles = StreamSupport.stream(articleRepository.findAll().spliterator(), false)

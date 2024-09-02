@@ -1,0 +1,14 @@
+<div class="flex flex-col items-center justify-center" >
+    <app-base-navbar></app-base-navbar>
+    <div class="w-screen flex flex-col p-5 gap-5">
+        <section class="w-full flex items-center justify-between gap-5" [ngClass]="{'flex-col': isSmallScreen}">
+            <button type="button" class="primary-btn" routerLink="/articles/create" >Create article</button>
+            <div class="flex items-center gap-2" (click)="sortArticles()" style="cursor: pointer;">
+                <p class="font-extrabold" style="font-size: 16px; font-weight: 700;">Sort by</p>
+                <mat-icon *ngIf="!isAscendingOrder" aria-hidden="false" aria-label="Sort items by dsc order" fontIcon="south"></mat-icon>
+                <mat-icon *ngIf="isAscendingOrder" aria-hidden="false" aria-label="Sort items by asc order" fontIcon="north"></mat-icon>
+            </div>
+        </section>
+        <app-article-feed [articles]="articles"></app-article-feed>
+    </div>
+</div>
