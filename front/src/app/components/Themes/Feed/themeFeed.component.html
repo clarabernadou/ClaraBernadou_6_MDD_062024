@@ -6,7 +6,8 @@
             [title]="theme.title"
             [content]="theme.description"
             [buttonText]="!theme.subscribed ? 'Subscribe' : 'Unsubscribe'"
-            (buttonClick)="!theme.subscribed ? subscribeToTheme(theme.id!) : unsubscribeToTheme(theme.id!)">
+            (buttonClick)="!theme.subscribed ? subscribeToTheme(theme.id!) : unsubscribeToTheme(theme.id!)"
+            [ngStyle]="{'width': isLargeScreen ? 'calc(50% - 24px)' : '100%', 'margin-bottom': '24px'}" style="cursor: pointer;">
         </app-base-card>
     </div>
 </section>
