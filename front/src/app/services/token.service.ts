@@ -8,12 +8,17 @@ import { jwtDecode } from 'jwt-decode';
 export class TokenService {
   constructor() {}
 
-  public getAuthHeaders(): HttpHeaders {
-    const token = localStorage.getItem('token');
-    return new HttpHeaders({
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`
-    });
+  public getAuthHeaders(): HttpHeaders | null {
+    const token = this.getToken();
+
+    if (token && !this.isTokenExpired(token)) {
+      return new HttpHeaders({
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      });
+    } else {
+      return null;
+    }
   }
 
   public getToken(): string | null {

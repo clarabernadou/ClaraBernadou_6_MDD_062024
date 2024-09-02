@@ -3,20 +3,22 @@ import { HttpInterceptor, HttpRequest, HttpHandler, HttpEvent, HttpErrorResponse
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { Router } from '@angular/router';
+import { TokenService } from 'src/app/services/token.service';
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    private tokenService: TokenService,
+  ) {}
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    const token = localStorage.getItem('token');
+    const headers = this.tokenService.getAuthHeaders();
 
     let authReq = req;
-    if (token) {
+    if (headers) {
       authReq = req.clone({
-        setHeaders: {
-          Authorization: `Bearer ${token}`
-        }
+        headers: headers
       });
     }
 
