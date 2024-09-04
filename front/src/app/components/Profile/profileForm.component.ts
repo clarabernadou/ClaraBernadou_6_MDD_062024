@@ -5,6 +5,7 @@ import { User } from 'src/app/interfaces/user.interface';
 import { Theme } from 'src/app/interfaces/theme.interface';
 import { Subscription } from 'rxjs';
 import { extractErrorMessage } from 'src/app/utils/error.util';
+import { TokenService } from 'src/app/services/token.service';
 
 @Component({
   selector: 'app-profile-form',
@@ -30,6 +31,7 @@ export class ProfileFormComponent implements OnInit, OnDestroy {
   constructor(
     private fb: FormBuilder,
     private userService: UserService,
+    private tokenService: TokenService,
   ) {}
 
   ngOnInit(): void {
@@ -89,7 +91,7 @@ export class ProfileFormComponent implements OnInit, OnDestroy {
   private handleUserUpdateSuccess(user: User): void {
     this.user = user;
     this.loading = false;
-    localStorage.setItem('token', user.token!);
+    this.tokenService.setToken(user.token!);
   }
 
   ngOnDestroy(): void {
