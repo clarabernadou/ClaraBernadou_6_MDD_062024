@@ -6,6 +6,7 @@ import { AuthToken } from 'src/app/interfaces/authSession.interface';
 import { Register } from 'src/app/interfaces/login.interface';
 import { AuthService } from 'src/app/services/auth.service';
 import { SessionService } from 'src/app/services/session.service';
+import { TokenService } from 'src/app/services/token.service';
 import { extractErrorMessage } from 'src/app/utils/error.util';
 
 @Component({
@@ -31,6 +32,7 @@ export class RegisterFormComponent implements OnDestroy {
     private sessionService: SessionService,
     private fb: FormBuilder,
     private router: Router,
+    private tokenService: TokenService,
   ) {}
 
   public submit(): void {
@@ -52,7 +54,7 @@ export class RegisterFormComponent implements OnDestroy {
     this.sessionService.logIn(response);
     this.loading = false;
     this.submitted = false;
-    localStorage.setItem('token', response.token);
+    this.tokenService.setToken(response.token);
     this.router.navigate(['/articles']);
   }
 

@@ -31,10 +31,6 @@ export class ThemeFeedComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    if (!localStorage.getItem('token')) {
-      this.router.navigate(['/login']);
-    }
-
     this.subscribeToBreakpoints();
     this.getThemes();
   }
