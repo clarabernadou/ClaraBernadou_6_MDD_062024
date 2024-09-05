@@ -54,34 +54,26 @@ export class CreateCommentFormComponent implements OnInit, OnDestroy {
     this.loading = true;
 
     const articleId = this.getArticleId();
-    const comment: Comment = this.createCommentObject();
+    const comment: Comment = { content: this.form.get('content')!.value! };
 
     this.commentService.createComment(articleId, comment).subscribe({
-      next: () => this.onCommentSuccess(),
-      error: (error) => this.handleError(error)
+      next: () => {
+        this.loading = false;
+        this.submitted = false;
+        this.form.reset();
+        this.commentService.notifyCommentUpdate();
+      },
+      error: (error) => {
+        this.loading = false;
+        this.submitted = false;
+        this.onError = true;
+        this.errorMessage = extractErrorMessage(error);
+      }
     });
   }
 
   private getArticleId(): number {
     return Number(this.activatedRouter.snapshot.paramMap.get('id')!);
-  }
-
-  private createCommentObject(): Comment {
-    return { content: this.form.get('content')!.value! };
-  }
-
-  private onCommentSuccess(): void {
-    this.loading = false;
-    this.submitted = false;
-    this.form.reset();
-    this.updateComments.emit();
-  }
-
-  private handleError(error: any): void {
-    this.loading = false;
-    this.submitted = false;
-    this.onError = true;
-    this.errorMessage = extractErrorMessage(error);
   }
 
   ngOnDestroy(): void {
