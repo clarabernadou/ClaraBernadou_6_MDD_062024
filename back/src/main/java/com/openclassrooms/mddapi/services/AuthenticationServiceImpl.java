@@ -4,6 +4,7 @@ import com.openclassrooms.mddapi.entity.Auth;
 import com.openclassrooms.mddapi.repository.AuthenticationRepository;
 import com.openclassrooms.mddapi.services.interfaces.AuthenticationService;
 import com.openclassrooms.mddapi.services.interfaces.ValidationService;
+import com.openclassrooms.mddapi.controllers.advice.exceptions.ConflictException;
 import com.openclassrooms.mddapi.controllers.advice.exceptions.UnauthorizedException;
 import com.openclassrooms.mddapi.dto.LoginDTO;
 import com.openclassrooms.mddapi.dto.RegisterDTO;
@@ -60,7 +61,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
         if (authenticationRepository.findByEmail(registerDTO.getEmail()).isPresent() ||
             authenticationRepository.findByUsername(registerDTO.getUsername()).isPresent()) {
-            throw new UnauthorizedException("User already exists!");
+            throw new ConflictException("User already exists!");
         }
 
         authenticationRepository.save(auth);

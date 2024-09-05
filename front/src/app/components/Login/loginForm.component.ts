@@ -7,6 +7,7 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
 import { extractErrorMessage } from 'src/app/utils/error.util';
+import { TokenService } from 'src/app/services/token.service';
 
 @Component({
   selector: 'app-login-form',
@@ -29,7 +30,8 @@ export class LoginFormComponent implements OnDestroy {
     private authService: AuthService,
     private sessionService: SessionService,
     private fb: FormBuilder,
-    private router: Router
+    private router: Router,
+    private tokenService: TokenService,
   ) {}
 
   public submit(): void {
@@ -53,7 +55,7 @@ export class LoginFormComponent implements OnDestroy {
 
   private handleLoginSuccess(response: AuthToken): void {
     this.sessionService.logIn(response);
-    localStorage.setItem('token', response.token);
+    this.tokenService.setToken(response.token);
     this.loading = false;
     this.submitted = false;
     this.router.navigate(['/articles']);
