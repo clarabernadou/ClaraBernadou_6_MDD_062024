@@ -43,31 +43,20 @@ export class ProfileFormComponent implements OnInit, OnDestroy {
     this.subscription.add(
       this.userService.getMe().subscribe({
         next: (user: User) => {
-          this.handleUserFetchSuccess(user);
+          this.user = user;
+          this.themes = user.subscriptions as unknown as Theme[];
+          this.form.patchValue({ username: user.username, email: user.email });
+          this.loading = false;
+          this.submitted = false;
         },
         error: (error) => {
-          this.handleError(error);
+          this.loading = false;
+          this.submitted = false;
+          this.onError = true;
+          this.errorMessage = extractErrorMessage(error);
         }
       })
     );
-  }
-
-  private handleUserFetchSuccess(user: User): void {
-    this.user = user;
-    this.themes = user.subscriptions as unknown as Theme[];
-    this.form.patchValue({
-      username: user.username,
-      email: user.email
-    });
-    this.loading = false;
-    this.submitted = false;
-  }
-
-  private handleError(error: any): void {
-    this.loading = false;
-    this.submitted = false;
-    this.onError = true;
-    this.errorMessage = extractErrorMessage(error);
   }
 
   public submit(): void {
@@ -79,19 +68,18 @@ export class ProfileFormComponent implements OnInit, OnDestroy {
     this.subscription.add(
       this.userService.updateMe(this.form.value as User).subscribe({
         next: (user: User) => {
-          this.handleUserUpdateSuccess(user);
+            this.user = user;
+            this.loading = false;
+            this.tokenService.setToken(user.token!);
         },
         error: (error) => {
-          this.handleError(error);
+            this.loading = false;
+            this.submitted = false;
+            this.onError = true;
+            this.errorMessage = extractErrorMessage(error);
         }
       })
     );
-  }
-
-  private handleUserUpdateSuccess(user: User): void {
-    this.user = user;
-    this.loading = false;
-    this.tokenService.setToken(user.token!);
   }
 
   ngOnDestroy(): void {
