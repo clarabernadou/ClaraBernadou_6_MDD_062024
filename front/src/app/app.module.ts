@@ -31,6 +31,7 @@ import { ArticleDetailComponent } from './components/Articles/ArticleDetail/arti
 import { CreateCommentFormComponent } from './components/Comments/CreateComment/createCommentForm.component';
 import { ProfileFormComponent } from './components/Profile/profileForm.component';
 import { AuthInterceptor } from './utils/interceptors/auth.interceptor';
+import { CookieService } from "ngx-cookie-service";
 
 @NgModule({
   declarations: [
@@ -71,7 +72,8 @@ import { AuthInterceptor } from './utils/interceptors/auth.interceptor';
     HttpClientModule, 
   ],
   providers: [
-    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
+    CookieService,
   ],
   bootstrap: [AppComponent],
 })

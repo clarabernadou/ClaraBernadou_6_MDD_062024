@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import com.openclassrooms.mddapi.controllers.advice.exceptions.BadRequestException;
+import com.openclassrooms.mddapi.controllers.advice.exceptions.ConflictException;
 import com.openclassrooms.mddapi.controllers.advice.exceptions.NotFoundException;
 import com.openclassrooms.mddapi.controllers.advice.exceptions.UnauthorizedException;
 
@@ -32,5 +33,10 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<String> handleNotFoundException(NotFoundException e) {
         return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(ConflictException.class)
+    public ResponseEntity<String> handleConflictException(ConflictException e) {
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
     }
 }

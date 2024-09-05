@@ -26,10 +26,9 @@ export class CommentFeedComponent implements OnInit, OnDestroy {
 
     ngOnInit(): void {
         this.loadComments();
-
-        this.subscription.add(
-            this.commentService.commentUpdated$.subscribe(() => this.loadComments())
-        );
+        this.commentService.commentCreated.subscribe(() => {
+            this.loadComments(); 
+        });
     }
 
     private loadComments(): void {

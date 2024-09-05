@@ -3,6 +3,7 @@ package com.openclassrooms.mddapi.services.interfaces;
 import java.security.Principal;
 import java.util.Optional;
 
+import com.openclassrooms.mddapi.controllers.advice.exceptions.ConflictException;
 import com.openclassrooms.mddapi.dto.UserDTO;
 import com.openclassrooms.mddapi.entity.Auth;
 import com.openclassrooms.mddapi.model.AuthResponse;
@@ -39,7 +40,7 @@ public interface UserService {
      * @param userDTO new user details
      * @return Optional containing updated AuthResponse with user details and JWT token
      * @throws NotFoundException if user is not found
-     * @throws UnauthorizedException if new email or username already exists
+     * @throws ConflictException if new email or username already exists
      */
     Optional<AuthResponse> updateMe(String username, UserDTO userDTO);
 
