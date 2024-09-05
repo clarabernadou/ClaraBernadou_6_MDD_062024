@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import com.openclassrooms.mddapi.controllers.advice.exceptions.ConflictException;
 import com.openclassrooms.mddapi.controllers.advice.exceptions.NotFoundException;
 import com.openclassrooms.mddapi.controllers.advice.exceptions.UnauthorizedException;
 import com.openclassrooms.mddapi.dto.UserDTO;
@@ -91,7 +92,7 @@ public class UserServiceImpl implements UserService {
             .filter(existingUser -> !existingUser.getUsername().equals(user.getUsername()))
             .isPresent();
 
-        if (emailExists || usernameExists) throw new UnauthorizedException("User already exists!");
+        if (emailExists || usernameExists) throw new ConflictException("User already exists!");
 
         user.setEmail(userDTO.getEmail());
         user.setUsername(userDTO.getUsername());
