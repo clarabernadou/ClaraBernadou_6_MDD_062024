@@ -16,7 +16,7 @@
 </form>
 
 
-<form *ngIf="isSmallScreen" [formGroup]="form" (ngSubmit)="submitComment()" class="w-screen custom-input bg-white fixed bottom-0 left-0 right-0">
+<form *ngIf="isSmallScreen" [formGroup]="form" (ngSubmit)="submitComment()" class="custom-input bg-white fixed bottom-0 left-0 right-0">
   <div class="flex">
     <div class="w-full flex flex-col">
       <textarea matInput formControlName="content" class="h-20" placeholder="Write your comment here"></textarea>
