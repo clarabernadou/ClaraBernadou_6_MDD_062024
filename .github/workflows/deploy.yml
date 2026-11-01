@@ -1,0 +1,55 @@
+name: Deploy demo to GitHub Pages
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: pages
+  cancel-in-progress: true
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: front
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 16
+          cache: npm
+          cache-dependency-path: front/package-lock.json
+      - run: npm ci --legacy-peer-deps
+      - name: Build the Angular app for the repository sub-path (source files untouched)
+        run: npx ng build --configuration development --base-href /ClaraBernadou_6_MDD_062024/
+      - name: Add the simulated API and the API documentation
+        run: |
+          cp ../demo/demo-api.js dist/front/
+          cp -r ../api-docs dist/front/api-docs
+          python3 - <<'PY'
+          import re
+          page = "dist/front/index.html"
+          html = open(page, encoding="utf-8").read()
+          html = re.sub(r'<script[^>]*weglot[^>]*></script>\s*<script>\s*Weglot\.initialize\([\s\S]*?\);\s*</script>', '', html)
+          html = html.replace('</head>', '<script src="demo-api.js"></script></head>', 1)
+          open(page, "w", encoding="utf-8").write(html)
+          PY
+          test "$(grep -ci weglot dist/front/index.html)" -eq 0
+          test "$(grep -c 'demo-api.js' dist/front/index.html)" -eq 1
+          cp dist/front/index.html dist/front/404.html
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: front/dist/front
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

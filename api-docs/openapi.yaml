@@ -1,0 +1,496 @@
+openapi: 3.0.3
+info:
+  title: MDD (Monde de Dév) — API back-end
+  version: 1.0.0
+  description: |
+    API REST de MDD, un réseau social pour développeurs : comptes, thèmes auxquels s'abonner, articles et commentaires.
+
+    Cette documentation est rédigée à partir du code du dépôt (contrôleurs, DTO, services et configuration de sécurité Spring). Elle décrit l'API ; aucun serveur n'est hébergé ici. La démonstration en ligne simule ces routes dans le navigateur avec des données fictives.
+
+    **Authentification** : seules les routes `/api/register` et `/api/login` sont publiques. Toutes les autres exigent un jeton JWT dans l'en-tête `Authorization: Bearer <jeton>`. Les dates sont renvoyées au format `aaaa/mm/jj` et les champs composés en snake_case (`theme_id`, `created_at`…).
+servers:
+  - url: http://localhost:8080
+    description: Serveur local
+tags:
+  - name: Authentification
+  - name: Utilisateurs
+  - name: Thèmes
+  - name: Articles
+  - name: Commentaires
+paths:
+  /api/register:
+    post:
+      tags: [Authentification]
+      summary: Créer un compte
+      description: "Renvoie directement un jeton : l'utilisateur est connecté après son inscription."
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+      responses:
+        '200':
+          description: Compte créé
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenResponse'
+        '400':
+          description: Champs manquants, e-mail invalide ou inscription refusée
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+        '409':
+          description: Nom d'utilisateur ou e-mail déjà utilisé
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+              example:
+                message: User already exists!
+  /api/login:
+    post:
+      tags: [Authentification]
+      summary: Se connecter
+      description: "La connexion se fait avec l'e-mail ou le nom d'utilisateur."
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Connexion réussie
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenResponse'
+        '400':
+          description: Connexion refusée
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+        '401':
+          description: Identifiants invalides
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+              example:
+                message: Invalid credentials!
+  /api/auth/user/me:
+    get:
+      tags: [Utilisateurs]
+      summary: Lire mon profil
+      description: Renvoie l'utilisateur connecté avec la liste des thèmes auxquels il est abonné.
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Profil de l'utilisateur connecté
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    put:
+      tags: [Utilisateurs]
+      summary: Modifier mon profil
+      description: "Modifie le nom d'utilisateur et l'e-mail. Un nouveau jeton est renvoyé, car le jeton dépend de l'identité de l'utilisateur."
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [username, email]
+              properties:
+                username:
+                  type: string
+                email:
+                  type: string
+                  format: email
+      responses:
+        '200':
+          description: Profil modifié
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          description: "Champs invalides (« Email is mandatory », « Username is mandatory », « Email should be valid »)"
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '409':
+          description: Nom d'utilisateur ou e-mail déjà utilisé
+  /api/auth/user/{id}:
+    get:
+      tags: [Utilisateurs]
+      summary: Lire un utilisateur
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/Id'
+      responses:
+        '200':
+          description: Utilisateur trouvé
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          description: Utilisateur introuvable
+          content:
+            application/json:
+              example:
+                message: User not found
+  /api/auth/theme/:
+    get:
+      tags: [Thèmes]
+      summary: Lister les thèmes
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Tous les thèmes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Theme'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /api/auth/theme/{id}:
+    get:
+      tags: [Thèmes]
+      summary: Lire un thème
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/Id'
+      responses:
+        '200':
+          description: Thème trouvé
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Theme'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          description: Thème introuvable
+          content:
+            application/json:
+              example:
+                message: Theme not found
+  /api/auth/theme/subscribe/{id}:
+    post:
+      tags: [Thèmes]
+      summary: S'abonner à un thème
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/Id'
+      responses:
+        '200':
+          description: Abonnement enregistré
+          content:
+            application/json:
+              schema:
+                type: string
+              example: Subscribed to theme!
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          description: Thème introuvable
+  /api/auth/theme/unsubscribe/{id}:
+    delete:
+      tags: [Thèmes]
+      summary: Se désabonner d'un thème
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/Id'
+      responses:
+        '200':
+          description: Abonnement retiré
+          content:
+            application/json:
+              schema:
+                type: string
+              example: Unsubscribed from theme!
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          description: Thème introuvable
+  /api/auth/article/:
+    get:
+      tags: [Articles]
+      summary: Lister les articles
+      description: "Renvoie tous les articles. Le tri et l'affichage de l'auteur (via `GET /api/auth/user/{id}`) sont faits côté application."
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Tous les articles
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Article'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          description: Aucun article en base
+          content:
+            application/json:
+              example:
+                message: No articles found
+    post:
+      tags: [Articles]
+      summary: Publier un article
+      description: "L'auteur est l'utilisateur connecté."
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [theme_id, title, content]
+              properties:
+                theme_id:
+                  type: integer
+                title:
+                  type: string
+                content:
+                  type: string
+      responses:
+        '200':
+          description: Article créé
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+              example:
+                message: Article created!
+        '400':
+          description: Titre ou contenu vide
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /api/auth/article/{id}:
+    get:
+      tags: [Articles]
+      summary: Lire un article
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/Id'
+      responses:
+        '200':
+          description: Article trouvé
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Article'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          description: Article introuvable
+          content:
+            application/json:
+              example:
+                message: Article not found
+  /api/auth/article/{articleId}/comment:
+    get:
+      tags: [Commentaires]
+      summary: Lister les commentaires
+      description: "Dans le code actuel, le contrôleur n'utilise pas l'identifiant de l'article pour filtrer : le service renvoie les commentaires enregistrés en base."
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/ArticleId'
+      responses:
+        '200':
+          description: Commentaires
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Comment'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          description: Aucun commentaire
+          content:
+            application/json:
+              example:
+                message: No comments found
+    post:
+      tags: [Commentaires]
+      summary: Commenter un article
+      description: "L'auteur est l'utilisateur connecté."
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/ArticleId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [content]
+              properties:
+                content:
+                  type: string
+      responses:
+        '200':
+          description: Commentaire créé
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+              example:
+                message: Comment created!
+        '400':
+          description: Commentaire vide
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          description: Article introuvable
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  parameters:
+    Id:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: integer
+        format: int64
+    ArticleId:
+      name: articleId
+      in: path
+      required: true
+      description: Identifiant de l'article
+      schema:
+        type: integer
+        format: int64
+  responses:
+    Unauthorized:
+      description: Jeton absent, invalide ou expiré
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Message'
+          example:
+            message: User is not authenticated
+  schemas:
+    Message:
+      type: object
+      properties:
+        message:
+          type: string
+    RegisterRequest:
+      type: object
+      required: [email, username, password]
+      properties:
+        email:
+          type: string
+          format: email
+        username:
+          type: string
+        password:
+          type: string
+    LoginRequest:
+      type: object
+      required: [emailOrUsername, password]
+      properties:
+        emailOrUsername:
+          type: string
+        password:
+          type: string
+    TokenResponse:
+      type: object
+      properties:
+        token:
+          type: string
+          description: Jeton JWT
+    Theme:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        description:
+          type: string
+        created_at:
+          type: string
+          example: 2024/05/02
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+        username:
+          type: string
+        email:
+          type: string
+        subscriptions:
+          type: array
+          items:
+            $ref: '#/components/schemas/Theme'
+        token:
+          type: string
+          description: Nouveau jeton, renvoyé après une modification du profil
+    Article:
+      type: object
+      properties:
+        id:
+          type: integer
+        theme_id:
+          type: integer
+        title:
+          type: string
+        content:
+          type: string
+        owner_id:
+          type: integer
+        created_at:
+          type: string
+          example: 2024/06/03
+        updated_at:
+          type: string
+          example: 2024/06/03
+    Comment:
+      type: object
+      properties:
+        id:
+          type: integer
+        content:
+          type: string
+        user_id:
+          type: integer
+        article_id:
+          type: integer
+        username:
+          type: string
