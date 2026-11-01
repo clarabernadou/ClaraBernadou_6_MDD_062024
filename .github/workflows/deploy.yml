@@ -30,6 +30,10 @@ jobs:
         run: |
           cp ../demo/demo-api.js dist/front/
           cp -r ../api-docs dist/front/api-docs
+          # the templates reference the logo with an absolute path: serve it from the repository sub-path
+          sed -i 's#"/assets/#"/ClaraBernadou_6_MDD_062024/assets/#g' dist/front/*.js
+          grep -l '/ClaraBernadou_6_MDD_062024/assets/logo_p6.png' dist/front/*.js
+          cp front/src/assets/logo_p6.png dist/front/assets/ 2>/dev/null || true
           python3 - <<'PY'
           import re
           page = "dist/front/index.html"
