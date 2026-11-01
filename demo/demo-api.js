@@ -213,21 +213,21 @@
 
   function handleAuthenticated(method, parts, body, user) {
     var data = parse(body);
-    if (parts[2] === 'user') {
-      if (parts[3] === 'me' && method === 'GET') {
+    if (parts[1] === 'user') {
+      if (parts[2] === 'me' && method === 'GET') {
         return reply(200, publicUser(user));
       }
-      if (parts[3] === 'me' && method === 'PUT') {
+      if (parts[2] === 'me' && method === 'PUT') {
         return updateMe(user, data);
       }
-      var found = store.users.filter(function (item) { return String(item.id) === parts[3]; })[0];
+      var found = store.users.filter(function (item) { return String(item.id) === parts[2]; })[0];
       return found ? reply(200, publicUser(found)) : reply(404, { message: 'User not found' });
     }
-    if (parts[2] === 'article') {
-      if (!parts[3] && method === 'GET') {
+    if (parts[1] === 'article') {
+      if (!parts[2] && method === 'GET') {
         return store.articles.length ? reply(200, store.articles) : reply(404, { message: 'No articles found' });
       }
-      if (!parts[3] && method === 'POST') {
+      if (!parts[2] && method === 'POST') {
         if (!data.title || !data.content || !data.theme_id) {
           return reply(400, { message: 'Title, content and theme are mandatory' });
         }
@@ -236,8 +236,8 @@
         saveStore();
         return reply(200, { message: 'Article created!' });
       }
-      var target = store.articles.filter(function (item) { return String(item.id) === parts[3]; })[0];
-      if (parts[4] === 'comment') {
+      var target = store.articles.filter(function (item) { return String(item.id) === parts[2]; })[0];
+      if (parts[3] === 'comment') {
         if (!target) {
           return reply(404, { message: 'Article not found' });
         }
@@ -256,12 +256,12 @@
       }
       return target ? reply(200, target) : reply(404, { message: 'Article not found' });
     }
-    if (parts[2] === 'theme') {
-      if (!parts[3] && method === 'GET') {
+    if (parts[1] === 'theme') {
+      if (!parts[2] && method === 'GET') {
         return reply(200, store.themes);
       }
-      if (parts[3] === 'subscribe' && method === 'POST') {
-        var themeToAdd = Number(parts[4]);
+      if (parts[2] === 'subscribe' && method === 'POST') {
+        var themeToAdd = Number(parts[3]);
         if (!store.themes.some(function (theme) { return theme.id === themeToAdd; })) {
           return reply(404, { message: 'Theme not found' });
         }
@@ -271,13 +271,13 @@
         }
         return reply(200, 'Subscribed to theme!');
       }
-      if (parts[3] === 'unsubscribe' && method === 'DELETE') {
-        var themeToRemove = Number(parts[4]);
+      if (parts[2] === 'unsubscribe' && method === 'DELETE') {
+        var themeToRemove = Number(parts[3]);
         user.subscriptions = user.subscriptions.filter(function (id) { return id !== themeToRemove; });
         saveStore();
         return reply(200, 'Unsubscribed from theme!');
       }
-      var theme = store.themes.filter(function (item) { return String(item.id) === parts[3]; })[0];
+      var theme = store.themes.filter(function (item) { return String(item.id) === parts[2]; })[0];
       return theme ? reply(200, theme) : reply(404, { message: 'Theme not found' });
     }
     return reply(404, { message: 'Not found' });
